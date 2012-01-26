@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: Magic Action Box Lite
+ * Plugin Name: Magic Action Box
  * Plugin URI: http://magicactionbox.com
  * Description: Supercharge your blog posts!
- * Version: 2.6
+ * Version: 2.6.1
  * Author: Prosulum, LCC
  * Author URI: http://prosulum.com
  * License: GPLv2
@@ -29,7 +29,7 @@ class ProsulumMabBase{
 	}
 	
 	function __construct(){
-		define( 'MAB_VERSION', '2.6');
+		define( 'MAB_VERSION', '2.6.1');
 		//e.g. /var/www/example.com/wordpress/wp-content/plugins/after-post-action-box
 		define( "MAB_DIR", plugin_dir_path( __FILE__ ) );
 		//e.g. http://example.com/wordpress/wp-content/plugins/after-post-action-box
