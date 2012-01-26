@@ -1,0 +1,130 @@
+/**
+ * Basic
+ */
+.clear{ clear: both; }
+	
+/*********************************
+ * Default Styles
+ *********************************/
+.magic-action-box{
+	background: #f8f8f8;
+	background: -moz-linear-gradient(top,  #f8f8f8 0%, #e8e8e8 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f8f8f8), color-stop(100%,#e8e8e8));
+	background: -webkit-linear-gradient(top,  #f8f8f8 0%,#e8e8e8 100%);
+	background: -o-linear-gradient(top,  #f8f8f8 0%,#e8e8e8 100%);
+	background: -ms-linear-gradient(top,  #f8f8f8 0%,#e8e8e8 100%);
+	background: linear-gradient(top,  #f8f8f8 0%,#e8e8e8 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f8f8f8', endColorstr='#e8e8e8',GradientType=0 );
+	border: 3px solid #ccc;
+	clear: both;
+	color: #282828 !important;
+	font-size: 14px !important;
+	margin: 20px 0;
+}
+
+.mab-wrap{ padding: 15px; }
+
+.mab-aside{
+	position: relative;
+	z-index: 8;
+}
+
+.mab-aside-right .mab-aside{
+	float: right;
+	margin-left: 15px;
+}
+
+.mab-aside-left .mab-aside{
+	float: left;
+	margin-right: 15px;
+}
+
+.mab-aside-top .mab-aside{
+	display: block;
+	margin-bottom: 10px;
+	text-align: center;
+	width: 100%;
+}
+
+
+/* Content */
+.mab-content{
+	position: relative;
+	z-index: 10;
+}
+
+.magic-action-box .mab-heading{
+	clear: none;
+	font-size: 160% !important;
+	font-weight: bold !important;
+	letter-spacing: 0 !important;
+	line-height: 1.4 !important;
+	margin: 0 0 7px !important;
+	text-transform: none !important;
+}
+
+.magic-action-box .mab-subheading{
+	clear: none;
+	font-size: 120% !important;
+	font-weight: bold !important;
+	line-height: 1.4 !important;
+	margin: 0 0 10px !important;
+}
+
+.magic-action-box .mab-main-copy{
+}
+
+.mab-main-action-wrap{
+	overflow: hidden;
+}
+
+/* Form */
+.magic-action-box form{
+	margin: 10px 0;
+	overflow: hidden;
+}
+
+.magic-action-box form .mab-field{
+	display: inline-block;
+	margin: 0 10px 10px 0 !important;
+	width: 46%;
+}
+
+.magic-action-box form .mab-field label{
+	display: block;
+	font-size: 90% !important;
+}
+
+.magic-action-box form .mab-field input, .magic-action-box form .mab-field textarea{
+	background: #fff !important;
+	border: 1px solid #999 !important;
+	border-radius: 2px !important;
+	box-shadow: none;
+	color: #555 !important;
+	margin: 0 !important;
+	padding: 3px !important;
+	width: 95% !important;
+}
+
+.magic-action-box form .mab-field input:focus, .magic-action-box form .mab-field textarea:focus{
+	border-color: #888 !important;
+	box-shadow: 0 0 2px #c7c7c7 !important;
+	color: #444 !important;
+}
+
+.magic-action-box form input[type="submit"]{
+	background: #333 !important;
+	border: 1px solid #222 !important;
+	border-radius: 3px !important;
+	clear: both;
+	color: #fff !important;
+	padding: 3px 13px !important;
+	text-shadow: -1px -1px 0 #111 !important;
+}
+
+.magic-action-box form input[type="submit"]:hover, .magic-action-box form input[type="submit"]:focus{
+	background: #555 !important;
+	border-color: #333 !important;
+	text-shadow: -1px -1px 0 #272727 !important;
+	
+}

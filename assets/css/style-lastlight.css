@@ -1,0 +1,168 @@
+.mab-wrap{ padding: 15px; }
+
+.magic-action-box{
+	background: url(../images/gradient-bluegrey.png) repeat-x 0 0 #212A30; /* Old browsers */
+	background-image: -moz-linear-gradient(top,  #41535e 0%, #222b31 100%); /* FF3.6+ */
+	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#41535e), color-stop(100%,#222b31)); /* Chrome,Safari4+ */
+	background-image: -webkit-linear-gradient(top,  #41535e 0%,#222b31 100%); /* Chrome10+,Safari5.1+ */
+	background-image: -o-linear-gradient(top,  #41535e 0%,#222b31 100%); /* Opera 11.10+ */
+	background-image: -ms-linear-gradient(top,  #41535e 0%,#222b31 100%); /* IE10+ */
+	background-image: linear-gradient(top,  #41535e 0%,#222b31 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#41535e', endColorstr='#222b31',GradientType=0 ); /* IE6-9 */
+	-moz-border-radius: 15px;
+	-webkit-border-radius: 15px;
+	border-radius: 15px;
+	border: 4px solid #6B787F;
+	-moz-box-shadow: 0 0 4px #383838 inset;
+	-webkit-box-shadow: 0 0 4px #383838 inset;
+	box-shadow: 0 0 4px #383838 inset;
+	color: #fff;
+	font-size: 14px !important;
+	line-height: 1.3 !important;
+	margin: 20px 0;
+	text-shadow: 1px 2px 1px #282828;
+}
+
+.mab-aside{
+	position: relative;
+	z-index: 8;
+}
+
+.mab-aside-right .mab-aside{
+	float: right;
+	margin-left: 15px;
+}
+
+.mab-aside-left .mab-aside{
+	float: left;
+	margin-right: 15px;
+}
+
+.mab-aside-top .mab-aside{
+	display: block;
+	margin-bottom: 10px;
+	text-align: center;
+	width: 100%;
+}
+
+
+/* Content */
+.mab-content{
+	position: relative;
+	z-index: 10;
+}
+
+.mab-content a{
+	color: #FB9500 !important;
+	text-decoration: none !important;
+}
+
+.mab-content a:hover{
+	text-decoration: underline !important;
+}
+
+.magic-action-box h3.mab-heading{
+	clear: none;
+	color: #fff;
+	font-size: 160% !important;
+	font-weight: bold !important;
+	letter-spacing: 0;
+	line-height: 1.1 !important;
+	margin: 0 0 7px !important;
+	text-transform: none !important;
+}
+
+.magic-action-box h4.mab-subheading{
+	clear: none;
+	color: #fff;
+	font-size: 120% !important;
+	font-weight: bold !important;
+	line-height: 1.2 !important;
+	margin: 0 0 10px !important;
+}
+
+.magic-action-box .mab-main-copy{
+}
+
+.magic-action-box .mab-secondary-copy{
+
+}
+
+.mab-main-action-wrap{}
+
+/* Form */
+.magic-action-box form{
+	margin: 8px 0;
+	overflow: hidden;
+	padding: 5px 0;
+}
+
+.magic-action-box form .mab-field{
+	display: inline-block;
+	margin: 0 10px 10px 0 !important;
+	width: 46%;
+}
+
+.magic-action-box form .mab-field label{
+	display: block;
+	font-size: 90%;
+}
+
+.magic-action-box form .mab-field input, .magic-action-box form .mab-field textarea{
+	/*float: left;*/
+	font-size: 100% !important;
+	margin: 0 !important;
+	padding: 3px 6px !important;
+	width: 91% !important;
+}
+
+.magic-action-box .mab-elements-pos-inline form .mab-field{
+}
+
+.magic-action-box .mab-elements-pos-stacked form .mab-field{
+	display: block;
+	width: 95%;
+}
+
+.magic-action-box .mab-elements-pos-inline form .mab-field input, .magic-action-box .mab-elements-pos-inline form .mab-field textarea{
+}
+
+.magic-action-box .mab-elements-pos-stacked form .mab-field input, .magic-action-box .mab-elements-pos-stacked form .mab-field textarea{
+}
+
+.magic-action-box form .mab-field input:focus, .magic-action-box form .mab-field textarea:focus{
+}
+
+.magic-action-box form input[type="submit"], .magic-action-box form .submit, .magic-action-box form .mab-optin-submit{
+	background: url(../images/gradient-buttons-sprite.png) repeat-x 0 -101px #ff9a00; /* Old browsers */
+	background: -moz-linear-gradient(top, #ff9a00 0%, #d86801 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ff9a00), color-stop(100%,#d86801));
+	background: -webkit-linear-gradient(top, #ff9a00 0%,#d86801 100%);
+	background: -o-linear-gradient(top, #ff9a00 0%,#d86801 100%);
+	background: -ms-linear-gradient(top, #ff9a00 0%,#d86801 100%);
+	background: linear-gradient(top, #ff9a00 0%,#d86801 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff9a00', endColorstr='#d86801',GradientType=0 );
+	-moz-box-shadow: 1px 1px 2px #1a1a1a;
+	border: none !important;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	color: #fff;
+	cursor: pointer;
+	font-size: 107% !important;
+	font-weight: bold;
+	padding: 4px 15px !important;
+	text-transform: none;
+	text-shadow: -1px -1px 0 #733F00;
+}
+
+.magic-action-box form input[type="submit"]:hover, .magic-action-box form input[type="submit"]:focus{
+	background: url(../images/gradient-buttons-sprite.png) repeat-x 0 -156px #f8c302;
+	background: -moz-linear-gradient(top,  #f8c302 0%, #bd7900 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f8c302), color-stop(100%,#bd7900));
+	background: -webkit-linear-gradient(top,  #f8c302 0%,#bd7900 100%);
+	background: -o-linear-gradient(top,  #f8c302 0%,#bd7900 100%);
+	background: -ms-linear-gradient(top,  #f8c302 0%,#bd7900 100%);
+	background: linear-gradient(top,  #f8c302 0%,#bd7900 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f8c302', endColorstr='#bd7900',GradientType=0 );
+}

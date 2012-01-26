@@ -1,0 +1,100 @@
+/**
+ * Basic
+ */
+.clear{ clear: both; }
+
+/**
+ * Global
+ */
+.magic-action-box{
+	clear: both;
+}
+
+.mab-wrap{ }
+	
+/*********************************
+ * Default Styles
+ *********************************/
+
+.mab-aside{
+	position: relative;
+	z-index: 8;
+}
+
+.mab-aside-right .mab-aside{
+	float: right;
+}
+
+.mab-aside-left .mab-aside{
+	float: left;
+}
+
+.mab-aside-top .mab-aside{
+	display: block;
+	text-align: center;
+	width: 100%;
+}
+
+
+/* Content */
+.mab-content{
+	position: relative;
+	z-index: 10;
+}
+
+.mab-heading{
+	clear: none;
+}
+
+.mab-subheading{
+	clear: none;
+}
+
+.magic-action-box .mab-main-copy{
+}
+
+.mab-main-action-wrap{
+	overflow: hidden;
+}
+
+/* Form */
+.magic-action-box form{
+	margin: 10px 0;
+}
+
+.mab-main-action-wrap .mab-field{
+	display: inline-block;
+	margin: 0 10px 10px 0;
+}
+
+.mab-main-action-wrap .mab-field label{
+	display: block;
+}
+
+.mab-main-action-wrap .mab-field input, .mab-main-action-wrap .mab-field textarea{
+	border: none;
+	border-radius: 2px;
+	box-shadow: none;
+	color: #777;
+	margin: 0;
+	padding: 3px;
+}
+
+.mab-main-action-wrap .mab-field input:focus, .mab-main-action-wrap .mab-field textarea:focus{
+	color: #555
+}
+
+.magic-action-box form input[type="submit"]{
+	/*clear: both;*/
+	cursor: pointer;
+	margin: 0;
+}
+
+.magic-action-box form input[type="submit"]:hover, .magic-action-box form input[type="submit"]:focus{
+	
+}
+
+/** BUTTONS **/
+.mab-main-button{
+	display: inline-block;
+}

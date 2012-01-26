@@ -1,0 +1,123 @@
+.magic-action-box{
+	font-size: 14px !important;
+	line-height: 1.3 !important;
+	margin: 20px 0;
+}
+
+.mab-wrap{
+	padding: 15px;
+}
+
+.mab-aside{
+	position: relative;
+	z-index: 8;
+}
+
+.mab-aside-right .mab-aside{
+	float: right;
+	margin-left: 15px;
+}
+
+.mab-aside-left .mab-aside{
+	float: left;
+	margin-right: 15px;
+}
+
+.mab-aside-top .mab-aside{
+	display: block;
+	margin-bottom: 10px;
+	text-align: center;
+	width: 100%;
+}
+
+
+/* Content */
+.mab-content{
+	position: relative;
+	z-index: 10;
+}
+
+.magic-action-box .mab-heading{
+	clear: none;
+	font-size: 160% !important;
+	font-weight: bold !important;
+	letter-spacing: 0 !important;
+	line-height: 1.4 !important;
+	margin: 0 0 7px !important;
+	text-transform: none !important;
+}
+
+.magic-action-box .mab-subheading{
+	clear: none;
+	font-size: 120% !important;
+	font-weight: bold !important;
+	line-height: 1.4 !important;
+	margin: 0 0 10px !important;
+}
+
+.magic-action-box .mab-main-copy{
+}
+
+.magic-action-box .mab-secondary-copy{
+
+}
+
+.mab-main-action-wrap{}
+
+/* Form */
+.magic-action-box form{
+	margin: 10px 0;
+	overflow: hidden;
+}
+
+.magic-action-box form .mab-field{
+	display: inline-block;
+	margin: 0 10px 10px 0 !important;
+	width: 46%;
+}
+
+.magic-action-box .mab-elements-pos-inline form .mab-field{
+}
+
+.magic-action-box .mab-elements-pos-stacked form .mab-field{
+	display: block;
+	width: 95%;
+}
+
+.magic-action-box form .mab-field label{
+	display: block;
+	font-size: 90%;
+}
+
+.magic-action-box .mab-elements-pos-inline form .mab-field label{
+}
+
+.magic-action-box .mab-elements-pos-stacked form .mab-field label{
+}
+
+.magic-action-box form .mab-field input, .magic-action-box form .mab-field textarea{
+	font-size: 100% !important;
+	margin: 0 !important;
+	padding: 3px 10px !important;
+	width: 90% !important;
+}
+
+.magic-action-box .mab-elements-pos-inline form .mab-field input, .magic-action-box .mab-elements-pos-inline form .mab-field textarea{
+}
+
+.magic-action-box .mab-elements-pos-stacked form .mab-field input, .magic-action-box .mab-elements-pos-stacked form .mab-field textarea{
+}
+
+.magic-action-box form .mab-field input:focus, .magic-action-box form .mab-field textarea:focus{
+}
+
+.magic-action-box form input[type="submit"]{
+	display: inline-block;
+	cursor: pointer;
+	font-size: 100% !important;
+	padding: 3px 13px !important;
+	text-transform: none !important;
+}
+
+.magic-action-box form input[type="submit"]:hover, .magic-action-box form input[type="submit"]:focus{
+}
