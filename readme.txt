@@ -12,7 +12,7 @@ Magic Action Box is an easy to use but powerful lead generation plugin.
 
 Magic Action Box is an easy to use but powerful lead generation plugin that lets you create a focused and high converting action box in minutes.
 
-[Upgrade to Pro Version](http://www.magicactionbox.com/
+[Upgrade to Pro Version](http://www.magicactionbox.com/)
 
 Some features:
 
@@ -33,7 +33,7 @@ Some features:
 
 = Can I place an action box on my website's sidebar? =
 
-Maybe on later updates. But, that is not the main reason this plugin was created. The primary purpose of magic action box is for you to follow two very effective marketing strategies. You can read all about this tip [here](http://www.magicactionbox.com/magic-action-box-training-1-the-key-to-making-more-sales-and-version-2-0-sneak-peak/)
+Maybe on later updates. But, that is not the main reason this plugin was created. The primary purpose of magic action box is for you to follow two very effective marketing strategies. You can read all about this tip [here](http://www.magicactionbox.com/magic-action-box-training-1-the-key-to-making-more-sales-and-version-2-0-sneak-peak/).
 
 = My action box doesn't seem to have any styles to it. What's wrong? =
 
