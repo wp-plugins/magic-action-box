@@ -13,7 +13,7 @@
 			<option value="<?php echo $key; ?>" <?php selected( $meta['style'], $key ); ?> ><?php echo $style['name']; ?></option>
 		<?php endforeach; ?>
 	</select>
-	<p class="description">More styles available in <a href="http://magicactionbox.com">Magic Action Box Pro</a>.</p>
+	<p class="description">More styles available in <a href="http://www.magicactionbox.com/features/?aff=7" target="_blank">Magic Action Box Pro</a>.</p>
 	<h4 id="mab-style-preview-heading"><?php _e('Thumbnail Preview','mab'); ?><br />
 	<small>Note: This is only a representation of the design and does not reflect the actual look.</small></h4>
 	<ul id="mab-style-preview">
