@@ -36,7 +36,9 @@
 <?php $optin = $data['optin']; 
 $others = $data['others']; ?>
 <h3>Email Providers</h3>
-<p>Action Box integrates with several opt in providers, including Aweber, Constant Contact, and MailChimp. Enter your information below to use this services.</p>
+<p>Action Box has built-in support for Aweber and MailChimp. Enter your information below to use this services.</p>
+
+<p class="mab-notice">You may still use other e-mail marketing services as long as you are able to generate the HTML code for the form from your provider. In fact, you can even use Aweber or MailChimp without entering any the information below. Just follow the instructions provided when you <a href="<?php echo admin_url('post-new.php?post_type=action-box'); ?>">create an opt-in form type action box</a>.</p>
 
 <h4>Aweber</h4>
 <table class="form-table">

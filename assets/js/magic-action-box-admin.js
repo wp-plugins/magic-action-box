@@ -50,7 +50,7 @@ jQuery(document).ready(function(){
 		var $button = jQuery( '#mab-example-button' );
 		var $this = jQuery( this );
 		$button.text( $this.val() );
-	});
+	}).blur();
 	
 	/**
 	 * Optin Settings

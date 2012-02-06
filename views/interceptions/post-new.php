@@ -25,7 +25,7 @@ global $MabAdmin;
 					<?php esc_html_e($info['description'], 'mab' ); ?>
 				<?php else: ?>
 					<span class="disabled-type"><?php esc_html_e($info['name'], 'mab' ); ?></span><br />
-					<em><small>(Available in <a href="http://magicactionbox.com">Magic Action Box Pro</a>)</small></em><br />
+					<em><small>(Available in <a href="http://www.magicactionbox.com/features/?aff=7" target="_blank">Magic Action Box Pro</a>)</small></em><br />
 					<?php esc_html_e($info['description'], 'mab' ); ?><br />
 					
 				<?php endif; ?>
@@ -35,15 +35,18 @@ global $MabAdmin;
 		?>
 	</ul>
 	<div class="mab-ad updated">
-		<p>Get additional action box types by getting <a href="http://magicactionbox.com">Magic Action Box Pro</a>.</p>
-		<h4>Some of the features available in the full version:</h4>
-		<ul>
-			<li>Use all action box types</li>
-			<li>Professional Customer Support</li>
-			<li>More pre-configured styles</li>
-			<li>Conversion Tips and Advice</li>
-			<li>Create and upload your own buttons</li>
-			<li><a href="http://magicactionbox.com/">And more...</a></li>
-		</ul>
+		<a href="http://www.magicactionbox.com/features/?aff=7" target="_blank"><img src="<?php echo MAB_ASSETS_URL . 'images/adbox.png'; ?>" alt="" class="mab-ad-img" width="200"/></a>
+		<div class="mab-ad-content">
+			<p>Get additional action box types by getting <a href="http://www.magicactionbox.com/features/?aff=7" target="_blank">Magic Action Box Pro</a>.</p>
+			<h4>Some of the features available in the full version:</h4>
+			<ul>
+				<li>Use all action box types</li>
+				<li>Professional Customer Support</li>
+				<li>More pre-configured styles</li>
+				<li>Conversion Tips and Advice</li>
+				<li>Create and upload your own buttons</li>
+				<li><a href="http://www.magicactionbox.com/features/?aff=7" target="_blank">And more...</a></li>
+			</ul>
+		</div>
 	</div>
 </div>

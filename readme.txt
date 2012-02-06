@@ -1,10 +1,10 @@
 === Magic Action Box ===
 Contributors: prosulum, pogidude
 Developer: Prosulum
-Tags: opt in, call to action
+Tags: opt in, call to action, aweber, email, email marketing, form, mailing list, marketing, newsletter, webform, mailchimp, constant contact
 Requires at least: 3.1
 Tested up to: 3.3.1
-Stable tag: 2.6
+Stable tag: 2.6.2
 
 Magic Action Box is an easy to use but powerful lead generation plugin.
 
@@ -12,7 +12,7 @@ Magic Action Box is an easy to use but powerful lead generation plugin.
 
 Magic Action Box is an easy to use but powerful lead generation plugin that lets you create a focused and high converting action box in minutes.
 
-[Upgrade to Pro Version](http://www.magicactionbox.com/
+[Upgrade to Pro Version](http://www.magicactionbox.com/)
 
 Some features:
 
@@ -25,15 +25,19 @@ Some features:
 == Installation ==
 
 1. Download the zip-archive and extract it into your computer.
-2. Upload the magic-action-box-lite folder to the /wp-content/plugins/ directory in your web site.
+2. Upload the magic-action-box folder to the /wp-content/plugins/ directory in your web site.
 3. Activate the plugin through the 'Plugins' menu in your WordPress administration page.
 
 
 == Frequently Asked Questions ==
 
+= My autoresponder is not on the list. Can I use it with the plugin? =
+
+Yes you can. As long as your autoresponder lets you create html forms that you can copy and paste, then you are all good. Watch this [video tutorial](http://www.magicactionbox.com/how-use-magic-action-box-with-any-email-marketing-service/) to learn more.
+
 = Can I place an action box on my website's sidebar? =
 
-Maybe on later updates. But, that is not the main reason this plugin was created. The primary purpose of magic action box is for you to follow two very effective marketing strategies. You can read all about this tip [here](http://www.magicactionbox.com/magic-action-box-training-1-the-key-to-making-more-sales-and-version-2-0-sneak-peak/)
+Maybe on later updates. But, that is not the main reason this plugin was created. The primary purpose of magic action box is for you to follow two very effective marketing strategies. You can read all about this tip [here](http://www.magicactionbox.com/magic-action-box-training-1-the-key-to-making-more-sales-and-version-2-0-sneak-peak/).
 
 = My action box doesn't seem to have any styles to it. What's wrong? =
 
@@ -57,6 +61,12 @@ Try checking the *Reorder post content filter priorities* checkbox found in WP A
 5. Action Box Settings Screen
 
 == Changelog ==
+
+= 2.6.2 =
+* Improved UI copy on Opt-In box settings screen.
+
+= 2.6.1 =
+* Fixed styling issue where all visited links on the page are overriden by the plugin's stylesheet.
 
 = 2.6 =
 * Fixed stylesheet not loading when selecting User Settings
@@ -105,11 +115,7 @@ Try checking the *Reorder post content filter priorities* checkbox found in WP A
 
 == Upgrade Notice ==
 
+= 2.6.1 = Fix minor issue with visited links being overriden by plugin's stylesheet
+
 = 2.6 =
 This version fixes the issue where stylesheet is not loading when User Settings in the style setting is selected.
-
-= 1.0 =
-Upgrade notices describe the reason a user should upgrade.  No more than 300 characters.
-
-= 0.5 =
-This version fixes a security related bug.  Upgrade immediately.
