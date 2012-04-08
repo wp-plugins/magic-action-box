@@ -20,8 +20,19 @@ ul#mab-type-choice li span.disabled-type{
 	
 }
 
-.mab-ad{
+div.mab-ad{
 	max-width: 816px;
+	overflow: hidden;
+	padding: 0.6em 0.6em 0;
+}
+
+div.mab-ad .mab-ad-content{
+	overflow: hidden;
+}
+
+div.mab-ad img.mab-ad-img{
+	float: left;
+	margin: 5px 20px 0 5px;
 }
 
 .mab-ad ul{
@@ -39,6 +50,13 @@ ul#mab-type-choice li span.disabled-type{
 
 #wpcontent select.large-text{
 	min-width: 170px; 
+}
+
+.mab-notice{
+	background: #FFFFE0;
+	border: 1px solid #E6DB55;
+	border-radius: 3px;
+	padding: 6px 10px;
 }
 
 /**

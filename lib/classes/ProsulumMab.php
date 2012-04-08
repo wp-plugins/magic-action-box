@@ -50,7 +50,8 @@ class ProsulumMab{
 			}
 
 			//TODO: check if page has action box
-			add_action( 'wp_print_styles', array( &$this, 'printStylesScripts' ) );
+			//add_action( 'wp_print_styles', array( &$this, 'printStylesScripts' ) );
+			add_action( 'wp_enqueue_scripts', array( &$this, 'printStylesScripts' ) );
 			add_filter( "the_content", array( &$this, 'showActionBox'), $mab_priority);
 		}
 	}
@@ -66,8 +67,9 @@ class ProsulumMab{
 		$postmeta = $MabBase->get_mab_meta( $post->ID, 'post' );
 		
 		//return $content if action box is disabled or placement is set to 'manual'
-		if( $postmeta['post-action-box'] === '' || $postmeta['post-action-box-placement'] == 'manual' )
+		if( !isset( $postmeta['post-action-box'] ) || $postmeta['post-action-box'] === '' || $postmeta['post-action-box-placement'] == 'manual' ){
 			return $content;
+		}
 		
 		$actionBox = $this->getActionBox( $postmeta['post-action-box'] );
 		
@@ -279,9 +281,12 @@ class ProsulumMab{
 		
 		$actionBoxId = $this->getIdOfActionBoxUsed( $post->ID );
 		
+		if( empty( $actionBoxId ) )
+			return;
+		
 		//check which style should be used. i.e. 'default', 'user'...
 		$style = $this->getActionBoxStyle( $actionBoxId );
-		
+
 		//TODO: later on $key will be taken from settings and not from post id
 		$key = $actionBoxId;
 		

@@ -34,7 +34,7 @@ function mab_get_mapping(){
 
 			),
 		),
-		'.magic-action-box a, a:visited' => array( ## LINKS
+		'.magic-action-box a, .magic-action-box a:visited' => array( ## LINKS
 			'background-color' => 'main_link_background',
 
 			'background-color_select' => 'main_link_background_select',
@@ -59,7 +59,10 @@ function mab_get_mapping(){
 				array( '!important', 'fixed_string')
 			),
 
-			'text-decoration' => 'main_link_hover_decoration'
+			'text-decoration' => array(
+				array('main_link_hover_decoration'),
+				array('!important', 'fixed_string' ),
+			)
 		),
 		'.mab-wrap' => array( ## WRAP
 			'background-color' => 'main_background_color',
@@ -234,6 +237,9 @@ function mab_get_mapping(){
 				array('input_font_family','string'),
 				array( '!important', 'fixed_string')
 			),
+			'font-size' => array(
+				array('input_font_size','px')
+			),
 			'font-style' => array(
 				array('input_font_style','string'),
 				array( '!important', 'fixed_string')
@@ -266,6 +272,7 @@ function mab_get_mapping(){
 
 			),
 			'-moz-border-radius' => array( array('button_border_radius','px') ),
+
 
 			'-khtml-border-radius' => array( array('button_border_radius','px') ),
 
