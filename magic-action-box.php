@@ -3,12 +3,29 @@
  * Plugin Name: Magic Action Box
  * Plugin URI: http://magicactionbox.com
  * Description: Supercharge your blog posts!
- * Version: 2.6.2
+ * Version: 2.7.2
  * Author: Prosulum, LCC
  * Author URI: http://prosulum.com
  * License: GPLv2
  */
 
+define( 'MAB_VERSION', '2.7.2');
+//e.g. /var/www/example.com/wordpress/wp-content/plugins/after-post-action-box
+define( "MAB_DIR", plugin_dir_path( __FILE__ ) );
+//e.g. http://example.com/wordpress/wp-content/plugins/after-post-action-box
+define( "MAB_URL", plugin_dir_url( __FILE__ ) );
+define( 'MAB_THEMES_DIR', trailingslashit( MAB_DIR ) . 'themes/' );
+define( 'MAB_THEMES_URL', trailingslashit( MAB_URL ) . 'themes/' );
+define( 'MAB_STYLES_DIR', trailingslashit( MAB_DIR ) . 'styles/' );
+define( 'MAB_STYLES_URL', trailingslashit( MAB_URL ) . 'styles/' );
+//e.g. after-post-action-box/after-post-action-box.php
+define( 'MAB_BASENAME', plugin_basename( __FILE__ ) );
+define( 'MAB_LIB_DIR', trailingslashit( MAB_DIR ) . 'lib/' );
+define( 'MAB_CLASSES_DIR', trailingslashit( MAB_LIB_DIR ) . 'classes/' );
+define( 'MAB_VIEWS_DIR', trailingslashit( MAB_DIR ) . 'views/' );
+define( 'MAB_ASSETS_URL', trailingslashit( MAB_URL ) . 'assets/' );
+define( 'MAB_POST_TYPE', 'action-box' );
+		
 class ProsulumMabBase{
 	
 	var $_post_type = 'action-box';
@@ -19,6 +36,7 @@ class ProsulumMabBase{
 	var $_metakey_DesignSettings = '_mab_design_settings';
 	var $_option_CurrentVersion = '_mab_current_version';
 	var $_option_NagNotice = '_mab_nag_notice';
+	var $_option_PromoNotice = '_mab_promo_notice';
 	
 	var $_optin_MailChimp_Lists = array();
 	var $_optin_MailChimpMergeVars = array();
@@ -29,22 +47,7 @@ class ProsulumMabBase{
 	}
 	
 	function __construct(){
-		define( 'MAB_VERSION', '2.6.2');
-		//e.g. /var/www/example.com/wordpress/wp-content/plugins/after-post-action-box
-		define( "MAB_DIR", plugin_dir_path( __FILE__ ) );
-		//e.g. http://example.com/wordpress/wp-content/plugins/after-post-action-box
-		define( "MAB_URL", plugin_dir_url( __FILE__ ) );
-		define( 'MAB_THEMES_DIR', trailingslashit( MAB_DIR ) . 'themes/' );
-		define( 'MAB_THEMES_URL', trailingslashit( MAB_URL ) . 'themes/' );
-		define( 'MAB_STYLES_DIR', trailingslashit( MAB_DIR ) . 'styles/' );
-		define( 'MAB_STYLES_URL', trailingslashit( MAB_URL ) . 'styles/' );
-		//e.g. after-post-action-box/after-post-action-box.php
-		define( 'MAB_BASENAME', plugin_basename( __FILE__ ) );
-		define( 'MAB_LIB_DIR', trailingslashit( MAB_DIR ) . 'lib/' );
-		define( 'MAB_CLASSES_DIR', trailingslashit( MAB_LIB_DIR ) . 'classes/' );
-		define( 'MAB_VIEWS_DIR', trailingslashit( MAB_DIR ) . 'views/' );
-		define( 'MAB_ASSETS_URL', trailingslashit( MAB_URL ) . 'assets/' );
-		define( 'MAB_POST_TYPE', 'action-box' );
+
 		
 		//register post type
 		add_action( 'setup_theme', array( $this, 'register_post_type' ) );
@@ -52,12 +55,6 @@ class ProsulumMabBase{
 		
 		//initialize
 		add_action( 'init', array( $this, 'init' ) );
-		
-		/*remove_filter( 'the_content', 'wpautop' );
-		remove_filter( 'the_content', 'wptexturize' );
-		add_filter( 'the_content', 'wpautop',8 );
-		add_filter( 'the_content', 'wptexturize', 8 );
-		*/
 		
 		//Notices
 		add_action('admin_notices',array( $this, 'updated_plugin_notice') );
@@ -392,24 +389,50 @@ class ProsulumMabBase{
 	}
 
 	function updated_plugin_notice(){
-		global $current_user;
+		global $current_user, $post, $pagenow;
+		
+		$screen = get_current_screen();
+		$is_mab_page = false;
+		$user_id = $current_user->ID;
 		
 		if ( current_user_can( 'manage_options' ) ){
-			//check that this noticed hasn't already been dismissed
-			if( !get_option( $this->_option_NagNotice . $this->get_current_version() ) ){
-			
+			/** Update Notice **/
+			//check that the user hasn't already clicked to ignore this message.
+			//if( !get_option( $this->_option_NagNotice . $this->get_current_version() ) ){
+			if( !get_user_meta( $user_id, $this->_option_NagNotice . $this->get_current_version() ) ){
 				echo '<div class="updated"><p>';
 				printf( __('Magic Action Box updated to version %1$s. To ensure that the action boxes display correctly, please clear your cache in the <a href="%2$s">Main Settings</a> page. <a href="%3$s">Hide Notice</a>.','mab'), $this->get_current_version(), add_query_arg( array('page'=>'mab-main'), admin_url('admin.php') ), add_query_arg( array('mab-hide-update-notice' => 'true' ) ) );
 				echo '</p></div>';
 			}
+			
+			/** Promo Notice - show only on plugin pages **/
+			if( $screen->parent_base == 'mab-main' || $screen->post_type == $this->get_post_type() ){
+				$is_mab_page = true;
+			}
+			if( $is_mab_page && !get_user_meta( $user_id, $this->_option_PromoNotice . $this->get_current_version() ) ){
+				echo '<div class="updated"><p>';
+				printf( __('Get access to more action box types: <strong>Sales Box &amp Share Box</strong> by <a href="%1$s">upgrading to Pro</a>. <a href="%2$s">Hide Notice</a>.','mab'), 'http://www.magicactionbox.com/features/?aff=7', add_query_arg( array('mab-hide-promo-notice' => 'true' ) ) );
+				echo '</p></div>';
+			}
+			
 		}
 	}
 	
 	function updated_plugin_notice_hide(){
-		/*if user clicks to ignore the notice, then save that setting to option */
+		global $current_user;
+		$user_id = $current_user->ID;
+		/** Hide nag notice **/
 		if( isset( $_GET['mab-hide-update-notice'] ) && 'true' == $_GET['mab-hide-update-notice'] ){
 			$val = 1;
-			update_option( $this->_option_NagNotice . $this->get_current_version(), $val );
+			//update_option( $this->_option_NagNotice . $this->get_current_version(), $val );
+			add_user_meta( $user_id, $this->_option_NagNotice . $this->get_current_version(), $val, true );
+		}
+		
+		/** Hide Promo notice **/
+		if( isset( $_GET['mab-hide-promo-notice'] ) && 'true' == $_GET['mab-hide-promo-notice'] ){
+			$val = 1;
+			//update_option( $this->_option_NagNotice . $this->get_current_version(), $val );
+			add_user_meta( $user_id, $this->_option_PromoNotice . $this->get_current_version(), $val, true );
 		}
 	}
 

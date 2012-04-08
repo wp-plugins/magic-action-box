@@ -237,6 +237,9 @@ function mab_get_mapping(){
 				array('input_font_family','string'),
 				array( '!important', 'fixed_string')
 			),
+			'font-size' => array(
+				array('input_font_size','px')
+			),
 			'font-style' => array(
 				array('input_font_style','string'),
 				array( '!important', 'fixed_string')
@@ -269,6 +272,7 @@ function mab_get_mapping(){
 
 			),
 			'-moz-border-radius' => array( array('button_border_radius','px') ),
+
 
 			'-khtml-border-radius' => array( array('button_border_radius','px') ),
 

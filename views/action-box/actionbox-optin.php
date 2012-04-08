@@ -5,7 +5,7 @@ $id = $meta['ID'];
 $action_box_type = $data['action-box-type'];
 
 $placement_class = empty( $meta['optin-image-placement'] ) ? '' : 'mab-aside-' . $meta['optin-image-placement'];
-$style_class = isset($meta['style']) ? 'mab-'.$meta['style'] : '';//'mab-default';
+$style_class = isset($meta['style']) ? 'mabstyle-'.$meta['style'] : '';//'mab-default';
 $image_width = empty( $meta['optin-image-width'] ) ? '' : 'width="' . $meta['optin-image-width'] . '"';
 $image_height = empty( $meta['optin-image-height'] ) ? '' : 'height="' . $meta['optin-image-height'] . '"';
 

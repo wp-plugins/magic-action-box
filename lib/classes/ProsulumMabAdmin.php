@@ -74,6 +74,8 @@ class ProsulumMabAdmin{
 
 		$this->addActionBoxType('sales-box', __('Sales Box','mab'), __('A simple sales box. Use it to lead visitors to your sales page.','mab') );
 		
+		$this->addActionBoxType('share-box', __('Share Box (New)', 'mab'), __('Go viral with this action box made for sharing your content. Combines social sharing features with an Opt In form.','mab') );
+		
 		//TODO: add a way to add new box types using actions/filters? Must be able to check
 		//that the displayed Action Boxes in the post screen is valid though.
 	}
@@ -1239,7 +1241,7 @@ class ProsulumMabAdmin{
 	
 	function possiblyEndOutputBuffering(){
 		global $pagenow, $MabBase;
-		
+		$data = array();
 		if($pagenow == 'post-new.php' && $_GET['post_type'] == $MabBase->get_post_type()) {
 			$result = ob_get_clean();
 			$filename = 'interceptions/post-new.php';	

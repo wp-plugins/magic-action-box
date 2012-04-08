@@ -20,6 +20,7 @@ global $MabAdmin;
 				$url = add_query_arg( $query_args, admin_url('post.php') );
 				$url = wp_nonce_url( $url, 'action_box_set' );
 				?>
+
 				<?php if( $type === 'optin' ) : ?>
 					<a class="mab-type-title" href="<?php echo esc_attr($url); ?>"><?php esc_html_e($info['name'], 'mab' ); ?></a><br />
 					<?php esc_html_e($info['description'], 'mab' ); ?>
@@ -34,13 +35,16 @@ global $MabAdmin;
 		}
 		?>
 	</ul>
+
 	<div class="mab-ad updated">
 		<a href="http://www.magicactionbox.com/features/?aff=7" target="_blank"><img src="<?php echo MAB_ASSETS_URL . 'images/adbox.png'; ?>" alt="" class="mab-ad-img" width="200"/></a>
 		<div class="mab-ad-content">
 			<p>Get additional action box types by getting <a href="http://www.magicactionbox.com/features/?aff=7" target="_blank">Magic Action Box Pro</a>.</p>
 			<h4>Some of the features available in the full version:</h4>
 			<ul>
-				<li>Use all action box types</li>
+				<li>Use Sales Box action box type</li>
+				<li>Use Share Box action box type (Coming Soon)</li>
+				<li>Future action box types not available in the lite version.</li>
 				<li>Professional Customer Support</li>
 				<li>More pre-configured styles</li>
 				<li>Conversion Tips and Advice</li>
