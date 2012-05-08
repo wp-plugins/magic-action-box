@@ -21,9 +21,9 @@
  * @since 0.9.5
  * @version 0.9.8
  */
-function mab_get_fresh_design_option( $opt, $key = '' ) {
+function mab_get_fresh_design_option( $opt, $key = null ) {
 	global $MabDesign;
-	$setting = $MabDesign->getSettings( $key );
+	$setting = $MabDesign->getConfiguredStyle( $key );
 	if( isset( $setting[$opt] ) )
 		return $setting[$opt];
 
@@ -132,7 +132,7 @@ function mab_add_text_setting($id, $label, $size = 25) {
  * @return string HTML markup
  */
 function mab_add_checkbox_setting($id, $label) {
-	return '<input type="checkbox" id="' . $id . '" name="' . 'mab-design' . '[' . $id . ']" value="true" class="checkbox" ' . checked(mab_get_fresh_design_option($id), 'true', false) . '/>' . mab_add_label($id, $label, true, false);
+	return mab_add_label($id, $label, true, false) . '<input type="checkbox" id="' . $id . '" name="' . 'mab-design' . '[' . $id . ']" value="true" class="checkbox" ' . checked(mab_get_fresh_design_option($id), 'true', false) . '/>';
 }
 
 /**
@@ -218,6 +218,25 @@ function mab_add_label( $id, $label, $add_end_tag = true, $add_colon = true ) {
 	if ( $add_end_tag )
 		$return .= '</label>';
 		
+	return $return;
+}
+
+/**
+ * Adds a wrapping div around the input/select/textarea
+ *
+ * @author Ryann Micua
+ * @param string $input
+ * @param boolean $add_end_tag Optionally add closing div tag (default = true)
+ * @return string HTML markup for the control
+ */
+function mab_add_control( $the_control, $add_end_tag = true ){
+	if( strlen( $input ) <= 0 )
+		return '';
+		
+	$return = '<div class="mab-control">' . $the_control;
+	if( $add_end_tag )
+		$return .= '</div>';
+	
 	return $return;
 }
 

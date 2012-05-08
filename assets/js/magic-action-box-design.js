@@ -136,18 +136,53 @@ jQuery(document).ready(function(){
     });
     
     /**
-     * Show or hide the hex color input.
-     * 
-     * @author Gary Jones
-     * @param {String} jQuery object for a Select element
-     * @since 0.9.7
+     * Tabs on Design/Button Settings
      */
-    function mabShowHideHexColor($selectElement) {
-        // Use of hide() and show() look bad, as it makes it display:block before display:none / inline.
-        $selectElement.next().css('display','none');
-        if ($selectElement.val() == 'hex') {
-            $selectElement.next().css('display', 'inline');
-        }
-    }
+	// Switches tab group on load
+	jQuery('.group').hide();
+	var activetab = '';
+	if (typeof(localStorage) != 'undefined' ) {
+		activetab = localStorage.getItem("activetab");
+	}
+	if (activetab != '' && jQuery(activetab).length ) {
+		jQuery(activetab).fadeIn();
+	} else {
+		jQuery('.group:first').fadeIn();
+	}
+
+	//Switches tab on load
+	if (activetab != '' && jQuery(activetab + '-tab').length ) {
+		jQuery(activetab + '-tab').addClass('nav-tab-active');
+	}
+	else {
+		jQuery('.nav-tab-wrapper a:first').addClass('nav-tab-active');
+	}
+	//Switches groups when clicking on the tab
+	jQuery('.nav-tab-wrapper a').click(function(evt) {
+		jQuery('.nav-tab-wrapper a').removeClass('nav-tab-active');
+		jQuery(this).addClass('nav-tab-active').blur();
+		var clicked_group = jQuery(this).attr('href');
+		if (typeof(localStorage) != 'undefined' ) {
+			localStorage.setItem("activetab", jQuery(this).attr('href'));
+		}
+		jQuery('.group').hide();
+		jQuery(clicked_group).fadeIn();
+		evt.preventDefault();
+	});
 
 });
+
+/**
+	* Show or hide the hex color input.
+	* 
+	* @author Gary Jones
+	* @param {String} jQuery object for a Select element
+	* @since 0.9.7
+	*/
+function mabShowHideHexColor($selectElement) {
+	// Use of hide() and show() look bad, as it makes it display:block before display:none / inline.
+	$selectElement.next().css('display','none');
+	if ($selectElement.val() == 'hex') {
+		$selectElement.next().css('display', 'inline');
+	}
+}
