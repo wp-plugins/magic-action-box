@@ -10,8 +10,11 @@
 	<h4><label for="mab-optin-provider"><?php _e('Select Mailing List Provider','mab' ); ?></label></h4>
 	<p><?php _e('Magic Action Box has integrated support for Aweber and MailChimp only as of the moment. But, you may still use other mailing list providers by selecting <em>Others (Copy & Paste)</em> option. <strong>**Note:</strong> you can even use Aweber or MailChimp with the <em>Others (Copy & Paste)</em> option.','mab' ); ?></p>
 	<select id="mab-optin-provider" class="large-text" name="mab[optin-provider]" >
+		<?php
+			$selected_provider = isset( $meta['optin-provider'] ) ? $meta['optin-provider'] : '';
+		?>
 		<?php foreach( $optin_providers as $key => $provider ) : ?>
-			<option value="<?php echo $key; ?>" <?php selected( $meta['optin-provider'], $key ); ?> ><?php echo $provider; ?></option>
+			<option value="<?php echo $key; ?>" <?php selected( $selected_provider, $key ); ?> ><?php echo $provider; ?></option>
 		<?php endforeach; ?>
 	</select>
 	
@@ -50,19 +53,19 @@
 		<h4><label for="mab-optin-aweber-submit-value"><?php _e( 'Text for submit button','mab' ); ?></label></h4>
 		<p>You can specify the text for your submit button (ex: "Subscribe" or "Get it now") Leave this blank to use default value. <strong>Default:</strong> Submit
 		</p>
-		<input id="mab-optin-aweber-submit-value" type="text" name="mab[optin][aweber][submit-value]" value="<?php echo $meta['optin']['aweber']['submit-value']; ?>" />
+		<input id="mab-optin-aweber-submit-value" type="text" name="mab[optin][aweber][submit-value]" value="<?php echo isset( $meta['optin']['aweber']['submit-value'] ) ? $meta['optin']['aweber']['submit-value'] : ''; ?>" />
 		
 		<br />
 		<br />
 		<h4><label for="mab-optin-aweber-thankyou"><?php _e('Thank You Page', 'mab' ); ?></label></h4>
 		<p><?php _e('Enter URL to thank you page where users will be redirected to after signing up. Leave blank to use default URL used by Aweber.','mab' ); ?></p>
-		<input type="text" class="large-text" id="mab-optin-aweber-thankyou" name="mab[optin][aweber][thank-you]" value="<?php echo $meta['optin']['aweber']['thank-you']; ?>" />
+		<input type="text" class="large-text" id="mab-optin-aweber-thankyou" name="mab[optin][aweber][thank-you]" value="<?php echo isset( $meta['optin']['aweber']['thank-you'] ) ? $meta['optin']['aweber']['thank-you'] : ''; ?>" />
 		
 		<br />
 		<br />
 		<h4><label for="mab-optin-aweber-tracking-code"><?php _e('Aweber Tracking Code', 'mab' ); ?></label></h4>
 		<p><?php _e('The ad tracking value you\'d like assigned to subscribers who use this form (Optional).'); ?></p>
-		<input type="text" id="mab-optin-aweber-tracking-code" name="mab[optin][aweber][tracking-code]" value="<?php echo $meta['optin']['aweber']['tracking-code']; ?>" />
+		<input type="text" id="mab-optin-aweber-tracking-code" name="mab[optin][aweber][tracking-code]" value="<?php echo isset( $meta['optin']['aweber']['tracking-code'] ) ? $meta['optin']['aweber']['tracking-code'] : ''; ?>" />
 		
 	</div>
 	<?php endif; ?>
@@ -81,7 +84,7 @@
 			$selected_list = !empty($meta['optin']['mailchimp']['list']) ? $meta['optin']['mailchimp']['list'] : '';
 			foreach( $lists as $list ):		
 		?>
-			<option value="<?php echo $list['id']; ?>" <?php selected( $meta['optin']['mailchimp']['list'], $list['id'] ); ?> ><?php echo $list['name']; ?></option>
+			<option value="<?php echo $list['id']; ?>" <?php selected( $selected_list, $list['id'] ); ?> ><?php echo $list['name']; ?></option>
 		<?php endforeach; ?>
 		</select>
 		<a id="mab-optin-mailchimp-get-list" class="button mab-optin-get-list" href="#">Update List</a>
@@ -106,22 +109,22 @@
 		<h4><label for="mab-optin-mailchimp-submit-value"><?php _e( 'Text for submit button','mab' ); ?></label></h4>
 		<p>You can specify the text for your submit button (ex: "Subscribe" or "Get it now") Leave this blank to use default value. <strong>Default value:</strong> Submit.
 		</p>
-		<input id="mab-optin-mailchimp-submit-value" type="text" name="mab[optin][mailchimp][submit-value]" value="<?php echo $meta['optin']['mailchimp']['submit-value']; ?>" />
+		<input id="mab-optin-mailchimp-submit-value" type="text" name="mab[optin][mailchimp][submit-value]" value="<?php echo isset( $meta['optin']['mailchimp']['submit-value'] ) ? $meta['optin']['mailchimp']['submit-value'] : ''; ?>" />
 	</div>
 	<?php endif; ?>
 	
 	<!-- #MANUAL -->
 	<?php if( isset( $optin_providers['manual'] ) ) : ?>
 	<div id="mab-manual-settings" class="mab-dependent-container mab-optin-list-dependent-container mab-manual-dependent-container">
-		<p class="mab-notice">This option allows you to use just about any autoresponder service or email list provider with Magic Action Box as long as your service allows you to generate an HTML - not Javascript - code for you to copy and paste on your website. To learn more about this feature, <a href="http://www.magicactionbox.com/how-use-magic-action-box-with-any-email-marketing-service/" target="_blank">watch this video tutorial</a>.</p>
+		<p class="mab-notice">This option allows you to use just about any autoresponder service or email list provider with Magic Action Box as long as your service allows you to generate an HTML - not Javascript - code for you to copy and paste on your website. To learn more about this feature, <a href="http://www.magicactionbox.com/how-use-magic-action-box-with-any-email-marketing-service/?pk_campaign=LITE&pk_kwd=editScreen-videoTut" target="_blank">watch this video tutorial</a>.</p>
 		<h4><label for="mab-optin-manual-code"><?php _e('Opt In Form Code','mab'); ?></label></h4>
 		<p>Paste your opt-in form code here. This HTML code is generated by your email service provider for you to place on your website. Make sure this isn't the javascript version, but the full or raw HTML version of the optin form. Then click on the <strong>Process Code</strong> button below.</p>
-		<textarea id="mab-optin-manual-code" class="code large-text" name="mab[optin][manual][code]" rows="5"><?php echo $meta['optin']['manual']['code']; ?></textarea>
+		<textarea id="mab-optin-manual-code" class="code large-text" name="mab[optin][manual][code]" rows="5"><?php echo isset( $meta['optin']['manual']['code'] ) ? $meta['optin']['manual']['code'] : ''; ?></textarea>
 		<br />
 		<h4><label for="mab-optin-submit-value"><?php _e( 'Text for submit button','mab' ); ?></label></h4>
 		<p>You can specify the text for your submit button (ex: "Subscribe" or "Get it now") Leave this blank to use the value specified in the Opt In Form Code you entered above.
 		</p>
-		<input id="mab-optin-submit-value" type="text" name="mab[optin][manual][submit-value]" value="<?php echo $meta['optin']['manual']['submit-value']; ?>" />
+		<input id="mab-optin-submit-value" type="text" name="mab[optin][manual][submit-value]" value="<?php echo isset( $meta['optin']['manual']['submit-value'] ) ? $meta['optin']['manual']['submit-value'] : ''; ?>" />
 		<br />
 		<br />
 		<a id="mab-process-manual-optin-code" href="#" class="button-secondary">Process Code</a>
@@ -130,7 +133,7 @@
 		<br />
 		<h4><label for="mab-optin-manual-processed-code"><?php _e('Processed Opt In Form Code','mab'); ?></label></h4>
 		<p>This is the resulting code that will be used in your opt in form. It is generated by placing your email service provider's raw HTML code in the text field above and clicking on the Process Code button.</p>
-		<textarea id="mab-optin-manual-processed-code" class="code large-text" name="mab[optin][manual][processed]" rows="5"><?php echo $meta['optin']['manual']['processed']; ?></textarea>
+		<textarea id="mab-optin-manual-processed-code" class="code large-text" name="mab[optin][manual][processed]" rows="5"><?php echo isset( $meta['optin']['manual']['processed'] ) ? $meta['optin']['manual']['processed'] : ''; ?></textarea>
 		
 		<?php /*TODO: add the following block later 
 		<br />
@@ -151,7 +154,3 @@
 	<input type="text" class="large-text" id="mab-optin-thankyou" name="mab[optin][thank-you]" value="<?php echo $meta['optin']['thank-you']; ?>" />
 </div>
 */ ?>
-
-<?php 
-/* Load Style Select Box */
-include_once( 'template-style-settings.php' ); ?>

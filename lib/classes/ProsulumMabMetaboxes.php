@@ -19,11 +19,10 @@ class ProsulumMabMetaBoxes{
 		remove_meta_box( 'commentsdiv' , $MabBase->get_post_type() , 'normal' ); //removes comments
 		
 		//general design settings
-		add_meta_box( 'mab-general-design-settings', __('Design Setting: General', 'mab' ), array( &$this, 'generalDesignSettings' ), $post_type, 'advanced', 'high' );
+		//add_meta_box( 'mab-general-design-settings', __('Design Setting: General', 'mab' ), array( &$this, 'generalDesignSettings' ), $post_type, 'advanced', 'high' );
 		
 		//heading design settings
-		add_meta_box( 'mab-heading-design-settings', __('Design Setting: Headings', 'mab' ), array(&$this, 'headingDesignSettings' ), $post_type, 'advanced', 'high' );
-		
+		//add_meta_box( 'mab-heading-design-settings', __('Design Setting: Headings', 'mab' ), array(&$this, 'headingDesignSettings' ), $post_type, 'advanced', 'high' );
 		
 		//show metaboxes specific to action box type
 		$type = $MabBase->get_actionbox_type( $post->ID );
@@ -32,7 +31,8 @@ class ProsulumMabMetaBoxes{
 		$this->loadActionBoxSpecificMetaboxes( $type );
 		
 		//other design settings
-		add_meta_box( 'mab-other-design-settings', __('Design Setting: Others', 'mab' ), array(&$this, 'otherDesignSettings' ), $post_type, 'advanced', 'high' );
+		//add_meta_box( 'mab-other-design-settings', __('Design Setting: Others', 'mab' ), array(&$this, 'otherDesignSettings' ), $post_type, 'advanced', 'high' );
+		add_meta_box( 'mab-custom-css-settings', __('Design Settings: Custom CSS', 'mab' ), array( &$this, 'customCssBox' ), $post_type, 'advanced', 'high' );
 		
 		//this is to allow developers to add their own metaboxes
 		do_action( 'mab_loadActionBoxMetabox', $type );
@@ -47,18 +47,13 @@ class ProsulumMabMetaBoxes{
 		
 		switch( $type ){
 			case 'optin':
+				add_meta_box( 'mab-actionbox-settings', __('Action Box: General Settings', 'mab' ), array( &$this, 'actionBoxSettings' ), $post_type, 'normal', 'high' );
 				//optin metaboxes
 				add_meta_box( 'mab-optin-settings', __('Opt In Form Settings','mab' ), array( &$this, 'optInSettings' ), $post_type, 'normal', 'high' );
 				add_meta_box( 'mab-optin', __( 'Opt In Copy', 'mab' ), array( &$this, 'optIn' ), $post_type, 'normal', 'high' );
-				//optin form design settings
-				add_meta_box( 'mab-optin-form-design', __("Design Setting: Opt In Form", 'mab' ), array( &$this, 'optinFormDesignSettings' ), $post_type, 'advanced', 'high' );
-				//optin form image design settings
-				add_meta_box( 'mab-optin-form-image', __('Design Setting: Opt In Form Image', 'mab' ), array(&$this, 'asideDesignSettings' ), $post_type, 'advanced', 'high' );
-				
+				add_meta_box( 'mab-actionbox-aside', __('Action Box: Side Content', 'mab' ), array( &$this, 'actionBoxAside' ), $post_type, 'normal', 'high' );
 				break; ##BREAK
-				
 			default:
-				add_meta_box( 'mab-aside-design-settings', __('Design Setting: Side Item (Image/Video)', 'mab' ), array(&$this, 'asideDesignSettings' ), $post_type, 'advanced', 'high' );
 				break;
 		}
 
@@ -73,11 +68,13 @@ class ProsulumMabMetaBoxes{
 	/* General Design Settings */
 	function generalDesignSettings( $post ){
 		mab_general_design_settings( $post );
+		mab_main_copy_design_settings( $post );
 	}
 	
 	/* Headings */
 	function headingDesignSettings( $post ){
 		mab_heading_design_settings( $post );
+		mab_sub_heading_design_settings( $post );
 	}
 	
 	/* Action Box Aside - usually contains an image */
@@ -88,6 +85,16 @@ class ProsulumMabMetaBoxes{
 	/* Other Design Settings */
 	function otherDesignSettings( $post ){
 		mab_other_design_settings( $post );
+	}
+	
+	/*  Custom CSS Settings */
+	function customCssBox( $post ){
+		global $MabBase;
+		$meta = $MabBase->get_mab_meta( $post->ID, 'design' );
+		$data['custom_css'] = isset( $meta['mab_custom_css'] ) ? $meta['mab_custom_css'] : '';
+		$filename = 'metaboxes/metabox-customcss.php';
+		$box = ProsulumMabCommon::getView( $filename, $data );
+		echo $box;
 	}
 	
 	/** ALL ACTION BOXES **/
@@ -122,7 +129,7 @@ class ProsulumMabMetaBoxes{
 		global $MabBase, $MabAdmin;
 
 		$data['meta'] = $MabBase->get_mab_meta( $post->ID );
-		$data['assets-url'] = MAB_ASSETS_URL;
+		$data['assets-url'] = MAB_ASSETS_URL;		
 		$filename = 'metaboxes/type/actionbox-aside.php';
 		$box = ProsulumMabCommon::getView( $filename, $data );
 		echo $box;
@@ -157,9 +164,8 @@ class ProsulumMabMetaBoxes{
 	}
 	
 	function optinFormDesignSettings( $post ){
-		mab_optin_form_design_settings( $post );
+		mab_form_design_settings( $post );
 	}
-	
 	
 	/** OTHER CUSTOM POST TYPES METABOX **/
 	//put metabox in selected content types

@@ -1,6 +1,6 @@
-.mab-wrap{ padding: 15px; }
+.mabstyle-royalty .mab-wrap{ padding: 15px; }
 
-.magic-action-box{
+.mabstyle-royalty.magic-action-box{
 	background: url(images/gradient-blue.png) repeat-x 0 0 #011E2F;
 	border: 2px solid #09202E;
 	-moz-border-radius: 4px;
@@ -13,22 +13,22 @@
 	text-shadow: 1px 1px 2px #07293D;
 }
 
-.mab-aside{
+.mabstyle-royalty .mab-aside{
 	position: relative;
 	z-index: 8;
 }
 
-.mab-aside-right .mab-aside{
+.mabstyle-royalty .mab-aside-right .mab-aside{
 	float: right;
 	margin-left: 15px;
 }
 
-.mab-aside-left .mab-aside{
+.mabstyle-royalty .mab-aside-left .mab-aside{
 	float: left;
 	margin-right: 15px;
 }
 
-.mab-aside-top .mab-aside{
+.mabstyle-royalty .mab-aside-top .mab-aside{
 	display: block;
 	margin-bottom: 10px;
 	text-align: center;
@@ -36,12 +36,12 @@
 }
 
 /* Content */
-.mab-content{
+.mabstyle-royalty .mab-content{
 	position: relative;
 	z-index: 10;
 }
 
-.magic-action-box .mab-heading{
+.mabstyle-royalty.magic-action-box .mab-heading{
 	clear: none;
 	color: #FAAB31 !important;
 	font-size: 175% !important;
@@ -53,7 +53,7 @@
 	text-shadow: 1px 1px 3px #07293D !important;
 }
 
-.magic-action-box .mab-subheading{
+.mabstyle-royalty.magic-action-box .mab-subheading{
 	clear: none;
 	color: #fff !important;
 	font-size: 120% !important;
@@ -64,34 +64,34 @@
 	text-shadow: 1px 1px 3px #07293D !important;
 }
 
-.magic-action-box .mab-main-copy{
+.mabstyle-royalty.magic-action-box .mab-main-copy{
 }
 
-.magic-action-box .mab-secondary-copy{
+.mabstyle-royalty.magic-action-box .mab-secondary-copy{
 	font-size: 95% !important;
 }
 
-.mab-main-action-wrap{ overflow: hidden; }
+.mabstyle-royalty .mab-main-action-wrap{ overflow: hidden; }
 
 /* Form */
-.magic-action-box form{
+.mabstyle-royalty.magic-action-box form{
 	margin: 10px 0;
 }
 
-.magic-action-box form .mab-field{
+.mabstyle-royalty.magic-action-box form .mab-field{
 	display: inline-block;
 	margin: 0 10px 10px 0 !important;
 	width: 46%;
 }
 
-.magic-action-box form .mab-field label{
+.mabstyle-royalty.magic-action-box form .mab-field label{
 	color: #fff !important;
 	display: block;
 	font-size: 85%!important;
 	margin-bottom: 1px;
 }
 
-.magic-action-box form .mab-field input, .magic-action-box form .mab-field textarea{
+.mabstyle-royalty.magic-action-box form .mab-field input, .mabstyle-royalty.magic-action-box form .mab-field textarea{
 	background: #fff !important;
 	background-image: linear-gradient(bottom, #fff, #ccc) !important;
 	background-image: -o-linear-gradient(bottom, #fff, #ccc) !important;
@@ -122,12 +122,12 @@
 
 }
 
-.magic-action-box form .mab-field input:focus, .magic-action-box form .mab-field textarea:focus{
+.mabstyle-royalty.magic-action-box form .mab-field input:focus, .mabstyle-royalty.magic-action-box form .mab-field textarea:focus{
 	box-shadow: 0 0 3px #000;
 	color: #111 !important;
 }
 
-.magic-action-box form input[type="submit"]{
+.mabstyle-royalty.magic-action-box form input[type="submit"]{
 	background: url(images/gradient-buttons2-sprite.png) repeat-x 0 -69px !important;
 	border: none;
 	-moz-border-radius: 3px;
@@ -144,7 +144,7 @@
 	text-shadow: -1px -1px 0 #854100;
 }
 
-.magic-action-box form input[type="submit"]:hover, .magic-action-box form input[type="submit"]:focus{
+.mabstyle-royalty.magic-action-box form input[type="submit"]:hover, .mabstyle-royalty.magic-action-box form input[type="submit"]:focus{
 	background-position: 0 -108px;
 	-moz-box-shadow: 0 0 3px #000;
 	-webkit-box-shadow: 0 0 3px #000;

@@ -260,3 +260,47 @@ ul#mab-style-preview li .mab-style-description strong{
 	clear: both;
 	padding-top: 20px;
 }
+
+#mab-style-settings-header{
+	margin-bottom: 20px;
+}
+
+.mab-design-settings-page .nav-tab-wrapper{
+}
+
+.mab-design-settings-page .metabox-holder{
+}
+
+.mab-design-settings-page .postbox{
+	background: #fff;
+	max-width: 800px;
+}
+
+.mab-design-settings-page .mab-option-box{
+	border: none;
+}
+
+.mab-design-settings-page .mab-option-box p{
+}
+
+.mab-design-settings-page .mab-option-box p label{
+ 
+}
+
+.mab-design-settings-page-submit-wrap{
+	background: rgb(249,249,249);
+	background: -moz-linear-gradient(top, rgba(249,249,249,1) 0%, rgba(236,236,236,1) 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(249,249,249,1)), color-stop(100%,rgba(236,236,236,1)));
+	background: -webkit-linear-gradient(top, rgba(249,249,249,1) 0%,rgba(236,236,236,1) 100%);
+	background: -o-linear-gradient(top, rgba(249,249,249,1) 0%,rgba(236,236,236,1) 100%);
+	background: -ms-linear-gradient(top, rgba(249,249,249,1) 0%,rgba(236,236,236,1) 100%);
+	background: linear-gradient(top, rgba(249,249,249,1) 0%,rgba(236,236,236,1) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f9f9f9', endColorstr='#ececec',GradientType=0 );
+	border-top: 1px solid #ececec;
+	overflow: hidden;
+	padding: 7px 10px;
+}
+
+.mab-design-settings-page-submit-wrap .button-primary{
+	float: right;
+}
