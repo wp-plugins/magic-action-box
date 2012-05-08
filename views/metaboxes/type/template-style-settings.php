@@ -4,22 +4,38 @@
  * this template is loaded using php include
  */
 ?>
-<?php $styles = $data['styles']; ?>
+<?php 
+global $MabDesign;
+$preconfiguredStyles = $data['styles']; 
+$userStyles = $MabDesign->getStyleSettings(); 
+?>
 <div class="mab-option-box">
 	<h4><label for="mab-style"><?php _e('Action Box Style', 'mab' ); ?></label></h4>
 	<p>Choose a style for this Action Box. Select <strong>User Settings</strong> to use the design settings specified below.</p>
 	<select id="mab-style" class="large-text" name="mab[style]">
-		<?php foreach( $styles as $key => $style ): ?>
+		<option value="user">User Styles</option>
+		<option value="none">None</option>
+		
+		<?php //PRECONFIGURED STYLES ?>
+		<optgroup label="Pre-configured Styles">
+		<?php foreach( $preconfiguredStyles as $key => $style ): ?>
 			<option value="<?php echo $key; ?>" <?php selected( $meta['style'], $key ); ?> ><?php echo $style['name']; ?></option>
 		<?php endforeach; ?>
+		</optgroup>
+		
 	</select>
-	<p class="description">More styles available in <a href="http://www.magicactionbox.com/features/?aff=7" target="_blank">Magic Action Box Pro</a>.</p>
+	<select id="mab-user-style" class="large-text" name="mab[userstyle]" style="display: none;">
+		<?php foreach( $userStyles as $key => $style ) : ?>
+			<option value="<?php echo $key; ?>" <?php selected( $meta['userstyle'], $key ); ?> ><?php echo $style['title']; ?></option>
+		<?php endforeach; ?>
+	</select>
+	<p class="description">More styles available in <a href="http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=editScreen-moreStyles" target="_blank">Magic Action Box Pro</a>.</p>
 	<h4 id="mab-style-preview-heading"><?php _e('Thumbnail Preview','mab'); ?><br />
 	<small>Note: This is only a representation of the design and does not reflect the actual look.</small></h4>
 	<ul id="mab-style-preview">
-		<li id="mab-style-user-preview" style="display:none;"></li>
+		<li id="mab-style-user-preview" style="display:none;"><span class="mab-style-caption">You can create your owns styles</span></li>
 		<li id="mab-style-none-preview" style="display:none;"><span class="mab-style-caption"><strong>Note:</strong> CSS styles specified in the Custom CSS box <em>(under Design Setting: Others)</em> will still be applied.</span></li>
-		<?php foreach( $styles as $key => $style ): ?>
+		<?php foreach( $preconfiguredStyles as $key => $style ): ?>
 			<?php $styleThumb = $MabAdmin->getActionBoxStyleThumb( $key ); ?>
 			<li id="mab-style-<?php echo $key; ?>-preview" <?php if( $key != $meta['style'] ):?> style="display: none;" <?php endif; ?>>
 				<div class="mab-style-thumb">

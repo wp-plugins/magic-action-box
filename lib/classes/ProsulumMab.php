@@ -112,23 +112,22 @@ class ProsulumMab{
 		//check if the specified action box exists
 		$actionBoxPost = get_post( $actionBoxId );
 		if( !empty( $actionBoxPost ) && !empty( $actionBoxId ) ){
-		
 			global $MabBase;
 			
 			//$meta = $MabBase->get_mab_meta( $actionBoxId );
 			
 			//Determine actionbox type. Then load the appropriate Action Box meta
 			$type = get_post_meta( $actionBoxId, $MabBase->get_meta_key('type'), true );
-			
 			switch( $type ){
 				case 'optin':
 					$actionBox = $this->getActionBoxOptin( $actionBoxPost );
 					break;
+
 				default:
 					return ''; //empty string
 					break;
 			}
-			
+			//error_log( serialize( $actionBox ) );
 			return $actionBox;
 			
 		} else {
@@ -142,7 +141,7 @@ class ProsulumMab{
 	/**
 	 * ACTION BOXES
 	 * =======================* /
-
+	
 	/**
 	 * OPTIN FORM
 	 *
@@ -158,7 +157,10 @@ class ProsulumMab{
 		//get Opt In Form
 		$optInForm = $this->getOptInForm( $meta );
 		
-		$data['meta'] = $meta;
+		//$data['meta'] = $meta;
+		//convert old optin settings keys to keys used by other action boxes
+		$data['meta'] = $this->convertOptinKeys( $meta );
+		
 		$data['form'] = $optInForm;
 		$data['action-box-type'] = $MabBase->get_mab_meta( $actionBoxObj->ID, 'type' );
 		
@@ -167,6 +169,53 @@ class ProsulumMab{
 		$mainTemplate = $this->getActionBoxTemplateLocation('optin');
 		$actionBox = ProsulumMabCommon::getView( $mainTemplate, $data );
 		return $actionBox;
+	}
+	
+	function convertOptinKeys( $settings ){
+		global $MabBase;
+		$settingsChanged = false;
+		$new = array();
+		$meta = $settings;
+
+		if( !empty( $meta['optin-image-url'] ) && empty( $meta['aside-image-url'] ) ){
+			$settingsChanged = true;
+			$meta['aside-image-url'] = $meta['optin-image-url'];
+		}
+		if( !empty( $meta['optin-image-width'] ) && empty( $meta['aside-image-width'] ) ){
+			$settingsChanged = true;
+			$meta['aside-image-width'] = $meta['optin-image-width'];
+		}
+		if( !empty( $meta['optin-image-height'] ) && empty( $meta['aside-image-height'] ) ){
+			$settingsChanged = true;
+			$meta['aside-image-height'] = $meta['optin-image-height'];
+		}
+		if( !empty( $meta['optin-image-placement'] ) && empty( $meta['aside-image-placement'] ) ){
+			$settingsChanged = true;
+			$meta['aside-image-placement'] = $meta['optin-image-placement'];
+		}
+		if( !empty( $meta['optin-heading'] ) && empty( $meta['main-heading'] ) ){
+			$settingsChanged = true;
+			$meta['main-heading'] = $meta['optin-heading'];
+		}
+		if( !empty( $meta['optin-subheading'] ) && empty( $meta['subheading'] ) ){
+			$settingsChanged = true;
+			$meta['subheading'] = $meta['optin-subheading'];
+		}
+		if( !empty( $meta['optin-main-copy'] ) && empty( $meta['main-copy'] ) ){
+			$settingsChanged = true;
+			$meta['main-copy'] = $meta['optin-main-copy'];
+		}
+		
+		if( $settingsChanged ){
+			//save the new settings and return new settings
+			$new = $meta;
+			unset( $new['ID'] );
+			$MabBase->update_mab_meta( $meta['ID'], $new );
+			$new['ID'] = $meta['ID'];
+			return $new;
+		}
+		
+		return $meta;
 	}
 	
 	/**
@@ -233,16 +282,12 @@ class ProsulumMab{
 	function getActionBoxTemplateLocation( $type = '' ){
 		$filename = '';
 		$viewDir = 'action-box/';
-		switch( $type ){
-			case 'optin':
-				$filename = $viewDir . 'actionbox-optin.php';
-				break;
-			case 'sales-box':
-				$filename = $viewDir . 'actionbox-sales-box.php';
-				break;
-			default:
-				//$filename = $viewDir . 'actionbox-optin.php';
-				break;
+		$ext = '.php';
+		
+		$boxes = ProsulumMabCommon::getActionBox();
+		
+		if( isset( $boxes[$type] ) && isset( $boxes[$type]['template'] ) ){
+			$filename = $viewDir . 'actionbox-' . $boxes[$type]['template'] . $ext;
 		}
 		
 		return $filename;
@@ -277,49 +322,55 @@ class ProsulumMab{
 	}
 	
 	function printStylesScripts(){
-		global $post; //this is the current content type object where action boxes are used.
+		global $post, $MabBase; //this is the current content type object where action boxes are used.
 		
 		$actionBoxId = $this->getIdOfActionBoxUsed( $post->ID );
 		
+		$this->printActionBoxAssets( $actionBoxId );
+		
+	}
+	
+	function printActionBoxAssets( $actionBoxId = null ){
+		global $post, $MabBase; //this is the current content type object where action boxes are used.
+		
+		if( null === $actionBoxId ){
+			$actionBoxId = $this->getIdOfActionBoxUsed( $post->ID );
+		}
+		
+		//stop if there is no action box
+		if( empty( $actionBoxId ) && $actionBoxId !== 0 ){
+			return;
+		}
+
 		if( empty( $actionBoxId ) )
 			return;
 		
 		//check which style should be used. i.e. 'default', 'user'...
 		$style = $this->getActionBoxStyle( $actionBoxId );
-
-		//TODO: later on $key will be taken from settings and not from post id
-		$key = $actionBoxId;
+		
+		$actionBoxMeta = $MabBase->get_mab_meta( $actionBoxId );
 		
 		switch( $style ){
 			case 'user':
+				//get user style key
+				$userStyleKey = $actionBoxMeta['userstyle'];
+				
 				//use style set by user
-				$mab_stylesheet = mab_get_settings_stylesheet_path( $key );
+				$mabStylesheet = mab_get_settings_stylesheet_path( $userStyleKey );
 				
 				//create stylesheet file if its not created yet
-				if( !file_exists( $mab_stylesheet ) || trim( mab_get_settings_stylesheet_contents( $key ) ) == '' ){
-					mab_create_stylesheet( $key );
+				if( !file_exists( $mabStylesheet ) || trim( mab_get_settings_stylesheet_contents( $userStyleKey ) ) == '' ){
+					mab_create_stylesheet( $userStyleKey );
 				}
 				
-				if( file_exists( $mab_stylesheet ) ){
+				if( file_exists( $mabStylesheet ) ){
 					//actionbox specific stylesheet
-					wp_enqueue_style( 'mab-user-style', mab_get_settings_stylesheet_url($key), array( 'mab-base-style' ), filemtime( $mab_stylesheet ) );
+					wp_enqueue_style( 'mab-user-style', mab_get_settings_stylesheet_url($userStyleKey), array( 'mab-base-style' ), filemtime( $mabStylesheet ) );
 				}
 				break; 
 				// ===================
 			
 			case 'none':
-				//get stylesheet which should contain only CSS in Custom CSS box under Design Setting: Others
-				$mab_stylesheet = mab_get_settings_stylesheet_path( $key );
-				
-				//create stylesheet file if its not created yet
-				if( !file_exists( $mab_stylesheet ) || trim( mab_get_settings_stylesheet_contents( $key ) ) == '' ){
-					mab_create_stylesheet( $key, 'custom' );
-				}
-				
-				if( file_exists( $mab_stylesheet ) ){
-					//actionbox specific stylesheet
-					wp_enqueue_style( 'mab-user-style', mab_get_settings_stylesheet_url($key), array( ), filemtime( $mab_stylesheet ) );
-				}
 				break;
 				
 			default:
@@ -331,30 +382,33 @@ class ProsulumMab{
 				$preconfigured_style = MAB_STYLES_URL . "{$style}/style.css";
 				
 				//if( file_exists( $preconfigured_style  ) ){ this is a url.. tsk.
-					wp_enqueue_style( "mab-style-{$style}", $preconfigured_style , array('mab-base-style'), "1.0" );
+					wp_enqueue_style( "mab-preconfigured-style-{$style}", $preconfigured_style , array('mab-base-style'), "1.0" );
 				//} else {
 					//wp_enqueue_style( "mab-style-default", MAB_ASSETS_URL . 'css/style-default.css', array(), "1.0" );
 				//}
 				
 				//wp_redirect( "{$preconfigured_style}" );
 				
-				/** LOAD CUSTOM CSS **/
-				//get stylesheet which should contain only CSS in Custom CSS box under Design Setting: Others
-				$mab_stylesheet = mab_get_settings_stylesheet_path( $key );
-				
-				//create stylesheet file if its not created yet
-				if( !file_exists( $mab_stylesheet ) || trim( mab_get_settings_stylesheet_contents( $key ) ) == '' ){
-					mab_create_stylesheet( $key, 'custom' );
-				}
-				
-				if( file_exists( $mab_stylesheet ) ){
-					//actionbox specific stylesheet
-					wp_enqueue_style( 'mab-user-style', mab_get_settings_stylesheet_url($key), array( ), filemtime( $mab_stylesheet ) );
-				}
+
 				break;
 				// ==========================
 		}//switch
 		
+		/** LOAD CUSTOM CSS **/
+		//get stylesheet which should contain only CSS in Custom CSS box under Design Setting: Custom CSS
+		$custom_css_stylesheet = mab_get_actionbox_stylesheet_path( $actionBoxId );
+		
+		//create stylesheet file if its not created yet
+		if( !file_exists( $custom_css_stylesheet ) || trim( mab_get_actionbox_stylesheet_contents( $actionBoxId ) ) == '' ){
+			mab_create_actionbox_stylesheet( $actionBoxId );
+		}
+		
+		if( file_exists( $custom_css_stylesheet ) ){
+			//actionbox specific stylesheet
+			wp_enqueue_style( 'mab-actionbox-style', mab_get_actionbox_stylesheet_url($actionBoxId), array( ), filemtime( $custom_css_stylesheet ) );
+		}
+		
+		/** LOAD BUTTONS CSS **/
 		/* create custom buttons stylesheet if its not there */
 		if( !file_exists( mab_get_custom_buttons_stylesheet_path() ) ){
 			global $MabButton;

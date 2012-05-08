@@ -1,6 +1,9 @@
 <?php
 
 class ProsulumMabDesign{
+	
+	var $_option_StyleSettings = '_mab_style_settings';
+
 	function ProsulumMabDesign(){
 		$this->__construct();
 	}
@@ -10,6 +13,8 @@ class ProsulumMabDesign{
 	
 	function getDefaultSettings(){
 		$defaults = array(
+		
+		'title' => 'My Style',
 		
 		###### General Design
 		'main_background_color' => '#F5F5F5',
@@ -127,34 +132,156 @@ class ProsulumMabDesign{
 		return apply_filters( 'mab_style_defaults', $defaults );
 	}
 	
+	/**
+	 * Get style settings attached to action_box custom post type. 
+	 * Data is from POSTMETA table.
+	 * TODO: Convert this for use with Settings-type options?
+	 */
 	function getSettings( $postId = '' ){
 		global $post, $MabBase;
+		$is_settings_type = false;
 		
-		if( empty( $postId ) ){
-			$postId = $post->ID;
+		if( !is_object( $post ) ){
+			$is_settings_type = true;
 		}
-		//get style settings stored in post metadata
-		$settings = $MabBase->get_mab_meta( $postId, 'design' );
 		
+		if( $is_settings_type ){
+		//style settings is stored as option
+			$settings = false; //TODO: set as false for now.
+		} else {
+		//style settings is stored as postmeta
+		
+			if( empty( $postId ) ){
+				$postId = $post->ID;
+			}
+			//get style settings stored in post metadata
+			$settings = $MabBase->get_mab_meta( $postId, 'design' );
+		
+		}
+
 		if( !is_array( $settings ) ){
 			$settings = $this->getDefaultSettings();
 		}
-		
+
 		return $settings;
 	}
 	
+	/**
+	 * Saves design settings for action_box custom post type. This is saved in the POSTMETA table.
+	 */
 	function updateSettings( $postId, $meta, $metaKey = '' ){
 		global $MabBase;
 		$MabBase->update_mab_meta( $postId, $meta, 'design' );
 	}
 	
-	//NOTE: Not to be used?
-	function getConfiguredStyle( $key = null ){
-		$styles = $this->getSettings();
+	/**
+	 * Gets style settings data from OPTIONS table
+	 * @return array saved style settings or a default setting
+	 */
+	function getStyleSettings(){
+		global $MabBase;
+		
+		//TODO: get from cache?
+		$settings = get_option( $this->_option_StyleSettings );
+		
+		if( !is_array( $settings ) ){
+			//create default style settings array
+			$settings = $this->getDefaultSettings();
+			$settings['timesaved'] = current_time( 'timestamp' );
+			$settings['title'] = __('Default','mab');
+			$settings = array( 0 => $settings );
+			update_option( $this->_option_StyleSettings, $settings );
+		}
+
+		return $settings;
 	}
 	
+	/**
+	 * Saves global design settings. This is saved in the OPTIONS table
+	 */
+	function updateStyleSettings($settings, $key = 'all' ){
+		//TODO: save to cache too?
+		
+		if( !is_array( $settings ) ){
+			return $key;
+		}
+		
+		if( $key == 'all' ){
+			update_option( $this->_option_StyleSettings, $settings );
+			return '';
+		}
+		
+		$existing = $this->getStyleSettings();
+		$settings['timesaved'] = current_time( 'timestamp' );
+		
+		//make sure we have a title
+		if( !empty( $settings['title'] ) ){
+			$settings['title'] = strip_tags( $settings['title'] );
+		} else {
+			$settings['title'] = 'My Style';
+		}
+		
+		if( isset( $existing[$key] ) ){
+			$existing[$key] = $settings;
+		} elseif ( isset( $settings['id'] ) ){
+			//key is saved along in the $settings array
+			$key = $settings['id'];
+			$existing[$key] = $settings;
+		} else {
+			$existing[] = $settings;
+			//pop the key value of the last saved settings
+			$key = array_pop( array_keys( $existing ) );
+		}
+		
+		update_option( $this->_option_StyleSettings, $existing );
+		return $key;
+	}
 	
+	/**
+	 * Returns a configured style
+	 * @param int $key array index of the style
+	 * @param bool $defaultIfMissing returns default style setting if TRUE and key is not found.
+	 * @return array | bool if $key is not found and $defaultIfMissing is true then return
+	 *		default settings. Otherwise, return FALSE.
+	 */
+	function getConfiguredStyle( $key = null, $defaultIfMissing = true ){
+		global $mabStyleKey;
+		
+		$settings = $this->getStyleSettings();
+		
+		//TODO: need to get $key across to mab_fresh_design_option() @ design-utilities.php
+		
+		if( null === $key ){
+			$key = $mabStyleKey;
+		}
+		
+		if( !$defaultIfMissing ){
+			if( $key === null || !isset( $settings[$key] ) ){
+				return false;
+			} else {
+				return $settings[$key];
+			}
+		} else {
+			if( $key === null || !isset( $settings[$key] ) ){
+				return $this->getDefaultSettings();
+			} else {
+				return $settings[$key];
+			}
+		}
+		
+		return $this->getDefaultSettings();
+	}
 	
+	function deleteConfiguredStyle( $key = '' ){
+		$style = $this->getStyleSettings();
+		if( empty( $style ) || !isset( $style[$key] ) ){
+			return false;
+		} else {
+			unset( $style[$key] );
+			$this->updateStyleSettings( $style );
+		}
+		return $key;
+	}
 	
 }
 

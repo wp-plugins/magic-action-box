@@ -71,6 +71,25 @@ function mab_get_settings_stylesheet_name($key) {
 }
 
 /**
+ * Get the name of the generated action box specific stylesheet.
+ */
+function mab_get_actionbox_stylesheet_name( $postId ){
+	return apply_filters( 'mab_get_actionbox_stylesheet_name', mab_get_stylesheet_name( 'actionbox', $postId ) );
+}
+
+function mab_get_actionbox_stylesheet_path( $postId ){
+	return apply_filters( 'mab_get_actionbox_stylesheet_path', mab_get_stylesheet_location('path') . mab_get_actionbox_stylesheet_name( $postId ) );
+}
+
+function mab_get_actionbox_stylesheet_url( $postId ){
+	return apply_filters( 'mab_get_actionbox_stylesheet_url', mab_get_stylesheet_location('url') . mab_get_actionbox_stylesheet_name( $postId ) );
+}
+
+function mab_get_actionbox_stylesheet_contents( $postId ){
+	return apply_filters( 'mab_get_actionbox_stylesheet_contents', file_get_contents( mab_get_actionbox_stylesheet_path( $postId ) ) );
+}
+
+/**
  * Get the name of the custom stylesheet.
  *
  * Default filename is custom-style.css, although this is filterable via mab_get_custom_stylesheet_name.
@@ -207,10 +226,12 @@ function mab_get_custom_stylesheet_editor_querystring() {
  * @uses mab_get_mapping()
  * @version 1.0
  */
-function mab_prepare_settings_stylesheet($key, $section = 'all') {
+function mab_prepare_settings_stylesheet($key, $section = 'all', $css_lead_selector = '.userstyle-' ) {
 	$mapping = mab_get_mapping();
 
 	$output = array();
+	
+	$css_lead_selector = $css_lead_selector . $key; //ex. userstyle-4
 	
 	switch( $section ){
 		case 'custom':
@@ -220,7 +241,7 @@ function mab_prepare_settings_stylesheet($key, $section = 'all') {
 		case 'all':
 			foreach( $mapping as $selector => $declaration ) {
 				if ( 'mab_custom_css' != $selector && 'minify_css' != $selector ) {
-					$output[] = $selector . ' {';
+					$output[] = "{$css_lead_selector}{$selector}" . ' {';
 					foreach ( $declaration as $property => $value ) {
 						if ( strpos( $property, '_select' ) ) {
 							if ( mab_get_fresh_design_option( $value, $key ) == 'hex' )
@@ -272,6 +293,28 @@ function mab_prepare_settings_stylesheet($key, $section = 'all') {
 	return apply_filters( 'mab_prepare_stylesheet', implode( "\n", $output ), $key );
 }
 
+
+/**
+ * Creates CSS for actionboxes
+ */
+function mab_prepare_actionbox_stylesheet( $postId, $section = 'all' ){
+	global $MabBase;
+	$output= array();
+	
+	$styleSettings = $MabBase->get_mab_meta( $postId, 'design' );
+	
+	switch( $section ){
+		case 'all':
+		case 'custom':
+		default:
+			$output[] = '/* Custom CSS */';
+			$output[] = isset( $styleSettings['mab_custom_css'] ) ? $styleSettings['mab_custom_css'] : '';
+			break;
+	} //switch
+	
+	return apply_filters( 'mab_prepare_actionbox_stylesheet', implode( "\n", $output ), $postId, $output );
+}
+
 /**
  * Calculates the width of the primary or secondary nav elements, or the child
  * UL elements, based on the border settings choices.
@@ -320,6 +363,20 @@ function mab_make_stylesheet_path_writable() {
 }
 
 /**
+ * Create the custom stylesheet for each action box
+ */
+function mab_create_actionbox_stylesheet( $postId, $section='all'){
+	mab_make_stylesheet_path_writable();
+	
+	$css = '/* ' . __( 'This file is auto-generated from the style design settings. Any direct edits here will be lost if the style is saved or updated', 'mab' ) . ' */'."\n";
+	$css .= mab_prepare_actionbox_stylesheet( $postId, $section );
+	
+	$handle = @fopen( mab_get_actionbox_stylesheet_path( $postId ), 'w' );
+	@fwrite( $handle, $css );
+	@fclose( $handle );
+}
+
+/**
  * Uses the mapping output to write the beautified CSS to a file.
  *
  * @author Gary Jones
@@ -329,7 +386,7 @@ function mab_make_stylesheet_path_writable() {
 function mab_create_settings_stylesheet( $key, $section = 'all' ) {
     mab_make_stylesheet_path_writable();
 
-    $css = '/* ' . __( 'This file is auto-generated from the action box design settings. Any direct edits here will be lost if the action box is saved or updated', 'mab' ) . ' */'."\n";
+    $css = '/* ' . __( 'This file is auto-generated from the style design settings. Any direct edits here will be lost if the style is saved or updated', 'mab' ) . ' */'."\n";
     $css .= mab_prepare_settings_stylesheet( $key, $section );
     $handle = @fopen( mab_get_settings_stylesheet_path( $key ), 'w' );
     @fwrite( $handle, $css );

@@ -34,7 +34,7 @@ function mab_get_mapping(){
 
 			),
 		),
-		'.magic-action-box a, .magic-action-box a:visited' => array( ## LINKS
+		'.magic-action-box a' => array( ## LINKS
 			'background-color' => 'main_link_background',
 
 			'background-color_select' => 'main_link_background_select',
@@ -60,11 +60,11 @@ function mab_get_mapping(){
 			),
 
 			'text-decoration' => array(
-				array('main_link_hover_decoration'),
+				array('main_link_hover_decoration', 'string'),
 				array('!important', 'fixed_string' ),
 			)
 		),
-		'.mab-wrap' => array( ## WRAP
+		'.magic-action-box .mab-wrap' => array( ## WRAP
 			'background-color' => 'main_background_color',
 			'background-color_select' => 'main_background_color_select',
 			'background-position' => array(
@@ -101,16 +101,19 @@ function mab_get_mapping(){
 
 			'border-radius' => array( array('main_corner_radius','px') ),
 			'width' => array( array('main_width','px') ),
-			'color' => 'main_font_color',
+			'color' => array( 
+				array( 'main_font_color', 'string' ),
+				array( '!important', 'fixed_string')
+			),
 			'font-family' => 'main_font_family',
 
 			'font-size' => array( array('main_font_size', 'px') ),
 
 			'line-height' => array( array('main_line_height', 'px') ),
 		),
-		'.mab-content' => array( ## CONTENT
+		'.magic-action-box .mab-content' => array( ## CONTENT
 		),
-		'.mab-wrap .mab-heading' => array( ## MAIN HEADING <h3 class="mab-heading">
+		'.magic-action-box .mab-wrap .mab-heading' => array( ## MAIN HEADING <h3 class="mab-heading">
 			'margin-top' => array( 
 				array( 'heading_margin_top', 'px' ),
 				array( '!important', 'fixed_string')
@@ -149,7 +152,7 @@ function mab_get_mapping(){
 				array( '!important', 'fixed_string')
 			),
 		),
-		'.mab-wrap .mab-subheading' => array( ## SUBHEADING <h4 class="mab-subheading">
+		'.magic-action-box .mab-wrap .mab-subheading' => array( ## SUBHEADING <h4 class="mab-subheading">
 			'margin-top' => array( 
 				array( 'subheading_margin_top', 'px' ),
 				array( '!important', 'fixed_string')
@@ -176,7 +179,7 @@ function mab_get_mapping(){
 				array( '!important', 'fixed_string')
 			),
 			'font-weight' => array(
-				array('subheading_font_weight','string'),
+				array( 'subheading_font_weight','string'),
 				array( '!important', 'fixed_string')
 			),
 			'line-height' => array( 
@@ -184,21 +187,21 @@ function mab_get_mapping(){
 				array( '!important', 'fixed_string')
 			),
 			'text-transform' => array(
-				array('subheading_text_transform','string'),
+				array( 'subheading_text_transform','string'),
 				array( '!important', 'fixed_string')
 			),
 		),
-		'.mab-main-copy' => array( ## MAIN COPY
+		'.magic-action-box .mab-main-copy' => array( ## MAIN COPY
 		),
-		'.mab-secondary-copy' => array( ## SECONDARY COPY
+		'.magic-action-box .mab-secondary-copy' => array( ## SECONDARY COPY
 		),
-		'.mab-main-action-wrap' => array( ## MAIN ACTION WRAP
+		'.magic-action-box .mab-main-action-wrap' => array( ## MAIN ACTION WRAP
 		),
-		'.mab-main-action-wrap form' => array( ## OPTIN FORMS?
+		'.magic-action-box .mab-main-action-wrap form' => array( ## OPTIN FORMS?
 		),
-		'.mab-main-action-wrap .mab-field' => array( ## FIELD WRAPS
+		'.magic-action-box .mab-main-action-wrap .mab-field' => array( ## FIELD WRAPS
 		),
-		'.mab-main-action-wrap .mab-field label' => array( ## LABEL
+		'.magic-action-box .mab-main-action-wrap .mab-field label' => array( ## LABEL
 			'color' => 'input_label_font_color',
 			'font-size' => array(array('input_label_font_size','px')),
 			'font-family' => 'input_label_font_family',
@@ -209,7 +212,7 @@ function mab_get_mapping(){
 				array( '!important', 'fixed_string')
 			)
 		),
-		'.mab-main-action-wrap .mab-field input' => array( ## INPUT
+		'.magic-action-box .mab-main-action-wrap .mab-field input' => array( ## INPUT
 			'background-color' => array(
 				array('input_background_color','string'),
 				array( '!important', 'fixed_string')
@@ -253,7 +256,7 @@ function mab_get_mapping(){
 				array( '!important', 'fixed_string')
 			)
 		),
-		'.mab-main-action-wrap form input[type="submit"], .mab-main-action-wrap form input.submit' => array( ## FORM SUBMIT
+		'.magic-action-box .mab-main-action-wrap form input[type="submit"], .magic-action-box .mab-main-action-wrap form input.submit' => array( ## FORM SUBMIT
 			'background-color' => array(
 				array('button_background_color','string'),
 				array( '!important', 'fixed_string')
@@ -308,8 +311,7 @@ function mab_get_mapping(){
 			),
 			'text-transform' => 'button_text_transform'
 		),
-		'.mab-main-action-wrap form input[type="submit"]:hover, 
-		.mab-main-action-wrap form input.submit:hover' => array(
+		'.magic-action-box .mab-main-action-wrap form input[type="submit"]:hover' => array(
 			'background-color' => 'button_background_hover_color',
 
 			'background-color_select' => 'button_background_hover_color_select',
@@ -317,7 +319,15 @@ function mab_get_mapping(){
 			'color' => 'button_font_hover_color',
 			'text-shadow' => 'button_text_shadow'
 		),
-		'.mab-aside' => array( ## ASIDE
+		'.magic-action-box .mab-main-action-wrap form input.submit:hover' => array(
+			'background-color' => 'button_background_hover_color',
+
+			'background-color_select' => 'button_background_hover_color_select',
+			'border-color' => 'button_hover_border_color',
+			'color' => 'button_font_hover_color',
+			'text-shadow' => 'button_text_shadow'
+		),
+		'.magic-action-box .mab-aside' => array( ## ASIDE
 			'background-color' => 'aside_background_color',
 
 			'background-color_select' => 'aside_background_color_select',
@@ -338,13 +348,13 @@ function mab_get_mapping(){
 			'margin-bottom' => array( array( 'aside_margin_bottom', 'px' ) ),
 			'margin-left' => array( array( 'aside_margin_left', 'px' ) ),
 			'margin-right' => array( array( 'aside_margin_right', 'px' ) ),
-			'padding' => array( array( 'aside_padding' ) ),
+			'padding' => array( array( 'aside_padding','px' ) ),
 			'-moz-border-radius' => array( array('aside_corner_radius','px') ),
 			'-khtml-border-radius' => array( array('aside_corner_radius','px') ),
 			'-webkit-border-radius' => array( array('aside_corner_radius','px') ),
 			'border-radius' => array( array('aside_corner_radius','px') )
 		),
-		'.mab-aside img' => array( ## IMG INsidE AsIDE
+		'.magic-action-box .mab-aside img' => array( ## IMG INsidE AsIDE
 		),
 		
 		'minify_css' => 'minify_css',
@@ -504,7 +514,7 @@ function mab_create_options($compare, $type) {
 	/** GLOBAL DESIGN - applies to all action boxes? **/
 	
 	/* General Design Settings */
-	function mab_general_design_settings( $post ){
+	function mab_general_design_settings( $post = null ){
 		//functions here are from lib/design-utilities.php
 		echo '<div class="mab-option-box">';
 		
@@ -526,6 +536,12 @@ function mab_create_options($compare, $type) {
 		mab_setting_line(mab_add_note(__('Leave blank to set width automatically.', 'mab' )));
 		
 		echo '</div>';
+		
+		do_action('mab_design_settings_general');
+	}
+	
+	/* Main Copy */
+	function mab_main_copy_design_settings( $post = null ){
 		echo '<div class="mab-option-box">';
 		mab_add_heading( 'Main font settings. Can be overriden by other sections.' );
 		mab_setting_line(mab_add_color_setting('main_font_color', 'Color'));
@@ -541,13 +557,13 @@ function mab_create_options($compare, $type) {
 		mab_setting_line(mab_add_background_color_setting('main_link_hover_background', 'Hover Background'));
 		mab_setting_line(mab_add_color_setting('main_link_hover', 'Hover Color'));
 		mab_setting_line(mab_add_select_setting('main_link_hover_decoration', 'Hover Decoration', 'decoration'));
+
 		echo '</div>';
-		
-		do_action('mab_design_settings_general');
+		do_action('mab_main_copy_design_settings');
 	}
 	
 	/* Headings */
-	function mab_heading_design_settings( $post ){
+	function mab_heading_design_settings( $post = null ){
 		### MAIN HEADING
 		echo '<div class="mab-option-box">';
 		mab_add_heading( 'The following apply to the Main Heading.' );
@@ -564,6 +580,10 @@ function mab_create_options($compare, $type) {
 		mab_setting_line(mab_add_select_setting('heading_text_transform', 'Heading Text Transform', 'transform'));
 		echo '</div>';
 		
+	}
+	
+	function mab_sub_heading_design_settings( $post = null ){
+		
 		### SUBHEADING
 		echo '<div class="mab-option-box">';
 		mab_add_heading( 'The following apply to the Sub-heading' );
@@ -579,13 +599,11 @@ function mab_create_options($compare, $type) {
 		mab_setting_line(mab_add_select_setting('subheading_font_weight', 'Sub-heading Font Weight', 'weight'));
 		mab_setting_line(mab_add_select_setting('subheading_text_transform', 'Sub-heading Text Transform', 'transform'));
 		echo '</div>';
-		
-		### MAIN COPY - add styling for main secondary copy?
-		
 	}
 	
+	
 	/* Action Box Aside - usually contains an image */
-	function mab_aside_design_settings( $post ){
+	function mab_aside_design_settings( $post = null ){
 		echo '<div class="mab-option-box">';
 		mab_setting_line( mab_add_background_color_setting('aside_background_color', 'Background' ) );
 		mab_setting_line(mab_add_border_setting('aside_border', 'Border'));
@@ -602,13 +620,13 @@ function mab_create_options($compare, $type) {
 	}
 	
 	/* Other */
-	function mab_other_design_settings( $post ){
+	function mab_other_design_settings( $post = null ){
 		mab_setting_line( mab_add_textarea_setting( 'mab_custom_css', __( 'Custom CSS', 'mab' ), 25, 10 ) );
 	}
 	
 	/** OPT IN SPECIFIC **/
 
-	function mab_optin_form_design_settings( $post ){
+	function mab_form_design_settings( $post = null ){
 		### LABELS
 		echo '<div class="mab-option-box">';
 		mab_add_heading( 'Form Labels' );
@@ -631,6 +649,7 @@ function mab_create_options($compare, $type) {
 		mab_setting_line(mab_add_select_setting('input_font_style', 'Font Style', 'style'));
 		mab_setting_line(mab_add_size_setting('input_width', 'Input Field Width'));
 		mab_setting_line(mab_add_size_setting('input_border_radius', 'Rounded Corner Radius'));
+
 		echo '</div>';
 		
 		### SUBMIT BUTTON
