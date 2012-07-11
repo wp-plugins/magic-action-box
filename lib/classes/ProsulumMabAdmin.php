@@ -98,6 +98,9 @@ class ProsulumMabAdmin{
 		## MAIN SETTINGS
 		$hooks[] = add_submenu_page( 'mab-main', __('Main Settings', 'mab' ), __('Main Settings', 'mab' ), 'manage_options', 'mab-main', array( &$this, 'displaySettingsPage' ) );
 		
+		## ACTION BOX SETTINGS
+		//$hooks[] = add_submenu_page( 'mab-main', __('Action Box Settings', 'mab' ), __('Action Box Settings', 'mab' ), 'manage_options', 'mab-actionbox-settings', array( &$this, 'displayActionBoxSettingsPage' ) );
+		
 		## DESIGN
 		
 		$hooks[] = add_submenu_page( 'mab-main', __('Styles &amp; Buttons', 'mab' ), __('Styles &amp; Buttons', 'mab' ), 'manage_options', 'mab-design', array( &$this, 'displayDesignsPage' ) );
@@ -179,7 +182,20 @@ class ProsulumMabAdmin{
 		
 		$data = $this->getSettings();
 		
+		//create actio box content type array
+		$actionBoxes = array();
+		$actionBoxes['none'] = 'None';
+		$actionBoxes['default'] = 'Use Default';
+		
+		//get all categories and store in array
+		$categoriesObj = get_categories( array( 'hide_empty' => 0 ) );
+		foreach( $categoriesObj as $cat ){
+			$categories[ $cat->cat_ID ] = $cat->cat_name;
+		}
+		
 		//add other variables as keys to the data array
+		$data['actionboxList'] = $actionBoxes;
+		$data['categories'] = $categories;
 		$data['_optin_AweberAuthenticationUrl'] = $this->_optin_AweberAuthenticationUrl;
 		$data['_optin_AweberApplicationId'] = $this->_optin_AweberApplicationId;
 		
@@ -195,6 +211,10 @@ class ProsulumMabAdmin{
 		
 		//use a switch block here
 		//include( MAB_VIEWS_DIR . 'settings/main.php' );
+	}
+	
+	function displayActionBoxSettingsPage(){
+		global $MabBase;
 	}
 	
 	function displayButtonSettingsPage(){
@@ -542,6 +562,8 @@ class ProsulumMabAdmin{
 		//process manual opt in form. Created for consistency.
 		$settings['optin']['allowed']['manual'] = 1;
 
+
+		/* TODO: Process Global ActionBox Setting */
 		
 
 		//save settings
@@ -652,6 +674,7 @@ class ProsulumMabAdmin{
 				
 				}
 			} elseif ( $type == 'sales-box' ){
+				$mab['main-button-attributes'] = esc_attr( $mab['main-button-attributes'] );
 			}
 			
 			$MabBase->update_mab_meta( $postId, $mab );

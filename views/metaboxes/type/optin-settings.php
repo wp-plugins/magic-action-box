@@ -76,7 +76,7 @@
 		<p class="mab-notice">You selected to use an integrated opt-in form. This form displays two input fields to take the visitor's name and e-mail address. If you wish to use other input field arrangements, <em>(i.e. use only one field for e-mail address)</em>, then select <em>Other (Copy & Paste)</em> in the <label for="mab-optin-provider"><strong>Mailing List Provider</strong></label> select box.</p>
 		<h4><label for="mab-optin-mailchimp-list"><?php _e('List','mab'); ?></label></h4>
 		<p><?php _e('Select list to subscribe users to. Click on the Update List button below if you just recently added/removed a list from MailChimp.', 'mab' ); ?></p>
-		<select id="mab-optin-mailchimp-list" class="large-text" name="mab[optin][mailchimp][list]">
+		<select id="mab-optin-mailchimp-list" class="large-text mab-optin-list" name="mab[optin][mailchimp][list]">
 		<?php
 			//get lists for mailchimp if provider is allowed
 			$lists = array();

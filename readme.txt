@@ -3,8 +3,8 @@ Contributors: prosulum, pogidude
 Developer: Prosulum
 Tags: opt in, call to action, aweber, email, email marketing, form, mailing list, marketing, newsletter, webform, mailchimp, constant contact
 Requires at least: 3.1
-Tested up to: 3.3.1
-Stable tag: 2.8.1
+Tested up to: 3.4.1
+Stable tag: 2.8.2
 
 Magic Action Box is an easy to use but powerful lead generation plugin.
 
@@ -72,6 +72,10 @@ Try checking the *Reorder post content filter priorities* checkbox found in WP A
 5. Action Box Settings Screen
 
 == Changelog ==
+= 2.8.2 =
+* added core improvements.
+* reorganized main settings page to have the same layout as pro
+
 = 2.8.1 =
 * Forgot to add unversioned files
 

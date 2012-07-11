@@ -3,18 +3,20 @@
 class ProsulumMab{
 	
 	var $_html_UniqueId = '_mab_html_unique_id';
+	private $_defaultActionBoxId = '';
+	private $_defaultActionBoxPlacement = 'bottom';
 	
 	function ProsulumMab(){
 		return $this->__construct();
 	}
 	
 	function __construct(){
+	//	$this->setUpDefaults();
 		$this->add_actions();
 		$this->add_filters();
 	}
 	
 	function add_actions(){
-		
 		add_action( 'template_redirect', array( &$this, 'registerStyles' ) );
 		add_action( 'template_redirect', array( &$this, 'setupContentTypeActionBox' ) );
 
@@ -24,11 +26,36 @@ class ProsulumMab{
 		//add_filter('the_content', array( &$this, 'showActionBox' ) );
 	}
 	
+	function setUpDefaults(){
+		global $MabBase, $wp_query;
+		
+		$post = $wp_query->get_queried_object();
+		
+		if( $MabBase->is_allowed_content_type( $post->post_type ) ){
+			$context = $this->getContext();
+			//$this->_defaultActionBoxId 
+			$defaults = $this->getActionBoxDefaultsFromContext( $context );
+			$this->_defaultActionBoxId = $defaults['id'];
+			$this->_defaultActionBoxPlacement = $defaults['placement'];
+		}
+
+	}
+	
+	function getDefaultActionBoxId(){
+		return $this->_defaultActionBoxId;
+	}
+	
+	function getDefaultActionBoxPlacement(){
+		return $this->_defaultActionBoxPlacement;
+	}
+	
 	function setupContentTypeActionBox(){
-		global $post, $MabBase, $wp_query;
+		global $MabBase, $wp_query;
+		
+		$post = $wp_query->get_queried_object();
 		
 		//stop if the content type is not supposed to show action box
-		if( !$MabBase->is_allowed_content_type( $post->post_type ) )
+		if( (!is_object( $post ) || !$MabBase->is_allowed_content_type( $post->post_type ) ) && !( is_home() && $wp_query->post_count == 1) )
 			return;
 		
 		//Show Action box only on singular pages or when it is on blog index but set only to show
@@ -48,7 +75,9 @@ class ProsulumMab{
 				add_filter('the_content', 'wpautop', 8 );
 				$mab_priority = 9;
 			}
-
+			
+			$this->setUpDefaults();
+			
 			//TODO: check if page has action box
 			//add_action( 'wp_print_styles', array( &$this, 'printStylesScripts' ) );
 			add_action( 'wp_enqueue_scripts', array( &$this, 'printStylesScripts' ) );
@@ -59,25 +88,39 @@ class ProsulumMab{
 	function showActionBox( $content ){
 		global $post, $MabBase;
 		
+		if( !$MabBase->is_allowed_content_type( $post->post_type ) ){
+			return $content;
+		}
+		
 		//if( !is_singular() )
 		//	return $content;
+		
+		$defaultActionBoxId = $this->getDefaultActionBoxId();
+		$placement = $this->getDefaultActionBoxPlacement();
 		
 		//get postmeta. NOTE: This is not postmeta from Action Box but
 		//from a regular post/CPT where Action Box is to be shown
 		$postmeta = $MabBase->get_mab_meta( $post->ID, 'post' );
 		
 		//return $content if action box is disabled or placement is set to 'manual'
+		/*
 		if( !isset( $postmeta['post-action-box'] ) || $postmeta['post-action-box'] === '' || $postmeta['post-action-box-placement'] == 'manual' ){
 			return $content;
 		}
+		*/
+
+		if( $defaultActionBoxId === '' || $placement == 'manual' ){
+			return $content;
+		}
 		
-		$actionBox = $this->getActionBox( $postmeta['post-action-box'] );
+		$actionBox = $this->getActionBox( $defaultActionBoxId );
+		//$actionBox = $this->getActionBox( $postmeta['post-action-box'] );
 		
 		//$content = wptexturize( wpautop( $content ) );
 		
 		//check placement of action box
-		$placement = $postmeta['post-action-box-placement'];
-		
+		$placement = isset( $placement ) ? $placement : 'bottom';
+
 		if( $placement === 'top' ){
 			return $actionBox . "\n" . $content;
 		} elseif( $placement === 'bottom' ){
@@ -87,6 +130,142 @@ class ProsulumMab{
 		//return $content;
 	}
 	
+	/**
+	 * Returns current context
+	 * @return string 
+	 */
+	function getContext(){
+		if( is_front_page() ){
+		//FRONT PAGE
+			$context = 'front_page';
+		} elseif( is_home() ){
+		//BLOG PAGE
+			$context = 'blog';
+		} elseif ( is_single() ){
+		//SINGLE BLOG POST
+			$context = 'single';
+		} elseif ( is_page() ){
+		//SINGLE PAGE
+			$context = 'page';
+		} elseif( is_category() ){
+		//CATEGORY PAGE
+			$context = 'category';
+		} elseif ( is_tag() ){
+		//TAG PAGE
+			$context = 'tag';
+		} elseif( is_archive() ){
+		//ANY DATE-BASED PAGE i.e. category, tags, date
+			$context = 'archive';
+		} else {
+		//DEFAULT
+			$context = 'default';
+		}
+		
+		return $context;
+	}
+	
+	/**
+	 * @param string $context - single | page | default
+	 * @return int|bool Post ID of Action Box or FALSE if actionbox is not specified for a context
+	 */
+	function getActionBoxDefaultsFromContext( $context = 'default' ){
+		global $MabBase;
+		
+		$settings = $this->getSettings();
+		$globalMab = $settings['global-mab'];
+		
+		$default = ( isset( $globalMab['default']['actionbox'] ) && $globalMab['default']['actionbox'] != 'none' ) ? $globalMab['default']['actionbox'] : '';
+		
+		$defaultPlacement = $placement = isset( $globalMab['default']['placement'] ) ? $globalMab['default']['placement'] : 'bottom';
+
+		switch( $context ){
+			case 'single':
+				global $post;
+				if( !is_object( $post ) ){
+					//something's wrong
+					$actionBoxId = '';
+					break;
+				}
+				
+				/** Single Post Setting **/
+				$postmeta = $MabBase->get_mab_meta( $post->ID, 'post' );
+				$singleActionBoxId = isset($postmeta['post-action-box']) ? $postmeta['post-action-box'] : '';
+				
+				//if $pageActionBoxId is empty string, then action box is not yet set
+				if( '' !== $singleActionBoxId && 'default' != $singleActionBoxId ){
+					//specific action box set for Post
+					$actionBoxId = $singleActionBoxId;
+					$placement = isset( $postmeta['post-action-box-placement'] ) ? $postmeta['post-action-box-placement'] : $defaultPlacement;
+					
+				} else {
+					//use global settings
+					
+					/** Global Single Post Setting **/
+					$actionBoxId = isset( $globalMab['post']['actionbox'] ) ? $globalMab['post']['actionbox'] : 'default';
+					$placement = isset( $globalMab['post']['placement'] ) ? $globalMab['post']['placement'] : $defaultPlacement;
+					
+					/** Global Category Setting - will override Global Single Post Setting **/
+					$terms = get_the_terms( $post->ID, 'category' );
+					if( $terms && !is_wp_error( $terms ) ){
+						foreach( $terms as $term ){
+							//catch the first category set
+							if( isset( $globalMab['category'][$term->term_id]['actionbox'] ) AND $globalMab['category'][$term->term_id]['actionbox'] != 'default' ){
+								$actionBoxId = $globalMab['category'][$term->term_id]['actionbox'];
+								$placement = $globalMab['category'][$term->term_id]['placement'];
+								break; //break out of foreach loop
+							}//endif
+						}//endforeach
+					}//endif
+					
+				}//endif
+				
+				break;
+			
+			case 'page':
+				global $post;
+				if( !is_object( $post ) ){
+					//something's wrong
+					$actionBoxId = '';
+				}
+				
+				$postmeta = $MabBase->get_mab_meta( $post->ID, 'post' );
+				$pageActionBoxId = isset($postmeta['post-action-box']) ? $postmeta['post-action-box'] : '';
+				
+				//if $pageActionBoxId is empty string, then action box is not yet set
+				if( '' !== $pageActionBoxId && 'default' != $pageActionBoxId ){
+					//specific action box set for Page
+					$actionBoxId = $pageActionBoxId;
+					$placement = isset( $postmeta['post-action-box-placement'] ) ? $postmeta['post-action-box-placement'] : $defaultPlacement;
+					
+				} else {
+					//use global setting
+					$actionBoxId = isset( $globalMab['page']['actionbox'] ) ? $globalMab['page']['actionbox'] : 'default';
+					$placement = isset( $globalMab['page']['placement'] ) ? $globalMab['page']['placement'] : $defaultPlacement;
+					
+				}
+				
+				break;
+			
+			case 'tag':
+			case 'archive':
+			case 'front_page':
+			case 'blog':
+			case 'category':
+			default: 
+				$actionBoxId = '';
+				break;
+		}//endswitch
+		
+		if( $actionBoxId == 'default' ){
+			$actionBoxId = $default;
+		} elseif( $actionBoxId == 'none' ){
+			$actionBoxId = '';
+		}
+		
+		return array( 'id' => $actionBoxId, 'placement' => $placement );
+		//return $actionBoxId;
+	}
+	
 	function getActionBoxStyle( $actionBoxId ){
 		global $MabBase;
 		return $MabBase->get_selected_style( $actionBoxId );
@@ -94,6 +273,7 @@ class ProsulumMab{
 	
 	/**
 	 * @param int $postId ID of post where Action Box is enabled
+	 * @return int|string ID of action box used OR "default" OR "none" OR empty string if not yet set
 	 */
 	function getIdOfActionBoxUsed( $postId = '' ){
 		global $post, $MabBase;
@@ -225,7 +405,7 @@ class ProsulumMab{
 		global $MabBase;
 		
 		$viewDir = 'optinforms/';
-		$settings = ProsulumMabCommon::getSettings();
+		$settings = $this->getSettings();
 		$optIn = '';
 		
 		//get provider
@@ -324,7 +504,9 @@ class ProsulumMab{
 	function printStylesScripts(){
 		global $post, $MabBase; //this is the current content type object where action boxes are used.
 		
-		$actionBoxId = $this->getIdOfActionBoxUsed( $post->ID );
+		$actionBoxId = $this->getDefaultActionBoxId();
+		
+		//$actionBoxId = $this->getIdOfActionBoxUsed( $post->ID );
 		
 		$this->printActionBoxAssets( $actionBoxId );
 		
@@ -405,7 +587,7 @@ class ProsulumMab{
 		
 		if( file_exists( $custom_css_stylesheet ) ){
 			//actionbox specific stylesheet
-			wp_enqueue_style( 'mab-actionbox-style', mab_get_actionbox_stylesheet_url($actionBoxId), array( ), filemtime( $custom_css_stylesheet ) );
+			wp_enqueue_style( "mab-actionbox-style-{$actionBoxId}", mab_get_actionbox_stylesheet_url($actionBoxId), array( ), filemtime( $custom_css_stylesheet ) );
 		}
 		
 		/** LOAD BUTTONS CSS **/
@@ -417,6 +599,11 @@ class ProsulumMab{
 		//load buttons stylesheet
 		wp_enqueue_style( 'mab-custom-buttons-css', mab_get_custom_buttons_stylesheet_url() );
 		
+	}
+	
+	function getSettings(){
+		global $MabBase;
+		return $MabBase->get_settings();
 	}
 	
 }
