@@ -4,7 +4,7 @@ Developer: Prosulum
 Tags: opt in, call to action, aweber, email, email marketing, form, mailing list, marketing, newsletter, webform, mailchimp, constant contact
 Requires at least: 3.1
 Tested up to: 3.4.1
-Stable tag: 2.8.2
+Stable tag: 2.8.3
 
 Magic Action Box is an easy to use but powerful lead generation plugin.
 
@@ -72,6 +72,9 @@ Try checking the *Reorder post content filter priorities* checkbox found in WP A
 5. Action Box Settings Screen
 
 == Changelog ==
+= 2.8.3 =
+* fixed issue where action box does not show up on the page set as the front page (Happens when Settings > Reading -> Front Page Display is set to a static page and the "Front Page" value is the current Page being displayed
+
 = 2.8.2 =
 * added core improvements.
 * reorganized main settings page to have the same layout as pro

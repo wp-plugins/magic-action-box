@@ -174,6 +174,8 @@ class ProsulumMab{
 		$settings = $this->getSettings();
 		$globalMab = $settings['global-mab'];
 		
+		$actionBoxId = '';
+		
 		$default = ( isset( $globalMab['default']['actionbox'] ) && $globalMab['default']['actionbox'] != 'none' ) ? $globalMab['default']['actionbox'] : '';
 		
 		$defaultPlacement = $placement = isset( $globalMab['default']['placement'] ) ? $globalMab['default']['placement'] : 'bottom';
@@ -245,10 +247,39 @@ class ProsulumMab{
 				}
 				
 				break;
-			
+			case 'front_page':
+				global $wp_query;
+				
+				//make sure that the front page is set to display a static page
+				if( !is_page() ){
+					break;
+				}
+				
+				$post = $wp_query->get_queried_object();
+				if( !is_object( $post ) ){
+					//something's wrong
+					$actionBoxId = '';
+				}
+				
+				$postmeta = $MabBase->get_mab_meta( $post->ID, 'post' );
+				$pageActionBoxId = isset($postmeta['post-action-box']) ? $postmeta['post-action-box'] : '';
+				
+				//if $pageActionBoxId is empty string, then action box is not yet set
+				if( '' !== $pageActionBoxId && 'default' != $pageActionBoxId ){
+					//specific action box set for Page
+					$actionBoxId = $pageActionBoxId;
+					$placement = isset( $postmeta['post-action-box-placement'] ) ? $postmeta['post-action-box-placement'] : $defaultPlacement;
+					
+				} else {
+					//use global setting
+					$actionBoxId = isset( $globalMab['page']['actionbox'] ) ? $globalMab['page']['actionbox'] : 'default';
+					$placement = isset( $globalMab['page']['placement'] ) ? $globalMab['page']['placement'] : $defaultPlacement;
+					
+				}
+				
+				break;
 			case 'tag':
 			case 'archive':
-			case 'front_page':
 			case 'blog':
 			case 'category':
 			default: 
