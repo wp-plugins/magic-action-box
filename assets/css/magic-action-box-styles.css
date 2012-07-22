@@ -98,3 +98,28 @@
 .mab-main-button{
 	display: inline-block;
 }
+
+/** Share Box **/
+.mab-type-share-box .mab-content{
+	overflow: hidden;
+}
+
+.mab-sharebox{
+}
+
+.mab-sharebox .mab-share-buttons{
+}
+
+.mab-type-share-box .mab-aside-top .mab-aside .mab-share-buttons{
+	display: inline-block;
+	zoom: 1;/* for IE */
+}
+
+.mab-sharebox .mab-share-buttons a.mab-share-button{
+	display: inline-block;
+	margin-bottom: 5px;
+}
+
+.mab-sharebox .mab-share-buttons-small a.mab-share-button{
+	float: none;
+}

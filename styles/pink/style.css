@@ -1,6 +1,6 @@
-.mab-wrap{ padding: 15px; }
+.mabstyle-pink .mab-wrap{ padding: 15px; }
 
-.magic-action-box{
+.mabstyle-pink.magic-action-box{
 	background: #E7316A;
 	background: -moz-linear-gradient(top,  #f16390 0%, #e7316a 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f16390), color-stop(100%,#e7316a));
@@ -20,22 +20,22 @@
 	text-shadow: 0 0 3px #8F002C;
 }
 
-.mab-aside{
+.mabstyle-pink .mab-aside{
 	position: relative;
 	z-index: 8;
 }
 
-.mab-aside-right .mab-aside{
+.mabstyle-pink .mab-aside-right .mab-aside{
 	float: right;
 	margin-left: 15px;
 }
 
-.mab-aside-left .mab-aside{
+.mabstyle-pink .mab-aside-left .mab-aside{
 	float: left;
 	margin-right: 15px;
 }
 
-.mab-aside-top .mab-aside{
+.mabstyle-pink .mab-aside-top .mab-aside{
 	display: block;
 	margin-bottom: 10px;
 	text-align: center;
@@ -44,13 +44,13 @@
 
 
 /* Content */
-.mab-content{
+.mabstyle-pink .mab-content{
 	font-size: 13px !important;
 	position: relative;
 	z-index: 10;
 }
 
-.magic-action-box .mab-heading{
+.mabstyle-pink.magic-action-box .mab-heading{
 	clear: none;
 	font-size: 170% !important;
 	font-weight: bold !important;
@@ -60,7 +60,7 @@
 	text-transform: none !important;
 }
 
-.magic-action-box .mab-subheading{
+.mabstyle-pink.magic-action-box .mab-subheading{
 	clear: none;
 	font-size: 120% !important;
 	font-weight: bold !important;
@@ -68,31 +68,31 @@
 	margin: 0 0 10px !important;
 }
 
-.magic-action-box .mab-main-copy{
+.mabstyle-pink.magic-action-box .mab-main-copy{
 }
 
-.magic-action-box .mab-secondary-copy{
+.mabstyle-pink.magic-action-box .mab-secondary-copy{
 
 }
 
 /* Form */
-.magic-action-box form{
+.mabstyle-pink.magic-action-box form{
 	margin: 10px 0;
 	overflow: hidden;
 }
 
-.magic-action-box form .mab-field{
+.mabstyle-pink.magic-action-box form .mab-field{
 	display: inline-block;
 	margin: 0 10px 10px 0 !important;
 	width: 46%;
 }
 
-.magic-action-box form .mab-field label{
+.mabstyle-pink.magic-action-box form .mab-field label{
 	display: block;
 	font-size: 90% !important;
 }
 
-.magic-action-box form .mab-field input, .magic-action-box form .mab-field textarea{
+.mabstyle-pink.magic-action-box form .mab-field input, .mabstyle-pink.magic-action-box form .mab-field textarea{
 	border: 2px solid #CC0F49 !important;
 	-moz-border-radius: 15px;
 	-webkit-border-radius: 15px;
@@ -105,11 +105,11 @@
 	width: 90% !important;
 }
 
-.magic-action-box form .mab-field input:focus, .magic-action-box form .mab-field textarea:focus{
+.mabstyle-pink.magic-action-box form .mab-field input:focus, .mabstyle-pink.magic-action-box form .mab-field textarea:focus{
 	color: #111 !important;
 }
 
-.magic-action-box .mab-main-action-wrap  form input[type="submit"]{
+.mabstyle-pink.magic-action-box .mab-main-action-wrap  form input[type="submit"]{
 	background: #FFEA9C ;
 	background: url(images/gradient-buttons-sprite.png) repeat-x 0 -152px;
 	border: 2px solid #CC0F49;
@@ -122,6 +122,6 @@
 	text-transform: none
 }
 
-.magic-action-box mab-main-action-wrap  form input[type="submit"]:hover, .magic-action-box form input[type="submit"]:focus{
+.mabstyle-pink.magic-action-box mab-main-action-wrap  form input[type="submit"]:hover, .mabstyle-pink.magic-action-box form input[type="submit"]:focus{
 	background: #FFE37D;
 }

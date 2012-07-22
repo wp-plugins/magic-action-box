@@ -3,13 +3,13 @@
  * Plugin Name: Magic Action Box
  * Plugin URI: http://magicactionbox.com
  * Description: Supercharge your blog posts!
- * Version: 2.7.2
- * Author: Prosulum, LCC
+ * Version: 2.8.3
+ * Author: Prosulum, LLC
  * Author URI: http://prosulum.com
  * License: GPLv2
  */
 
-define( 'MAB_VERSION', '2.7.2');
+define( 'MAB_VERSION', '2.8.3');
 //e.g. /var/www/example.com/wordpress/wp-content/plugins/after-post-action-box
 define( "MAB_DIR", plugin_dir_path( __FILE__ ) );
 //e.g. http://example.com/wordpress/wp-content/plugins/after-post-action-box
@@ -193,6 +193,13 @@ class ProsulumMabBase{
 	
 	function is_mab_post_type( $type = '' ){
 		global $post;
+		
+		/*
+		if( !is_object( $post ) ){
+			return false;
+		}
+		*/
+		
 		if( empty($type) ){
 			//return is_singular( $this->_post_type );
 			$type = $post->post_type;
@@ -210,6 +217,11 @@ class ProsulumMabBase{
 	
 	function is_allowed_content_type( $type = '' ){
 		global $post;
+		
+		if( !is_object( $post ) ){
+			return false;
+		}
+		
 		if( empty( $type ) ){
 			$type = $post->post_type;
 		}
@@ -325,6 +337,10 @@ class ProsulumMabBase{
 		require_once( MAB_LIB_DIR . 'stylesheets.php' );
 		mab_create_stylesheet( $key, $section );
 	}
+	function create_actionbox_stylesheet( $postId = null, $section = 'all' ){
+		require_once( MAB_LIB_DIR . 'stylesheets.php' );
+		mab_create_actionbox_stylesheet( $postId, $section );
+	}
 	
 	/**
 	 * MailChimp
@@ -411,7 +427,13 @@ class ProsulumMabBase{
 			}
 			if( $is_mab_page && !get_user_meta( $user_id, $this->_option_PromoNotice . $this->get_current_version() ) ){
 				echo '<div class="updated"><p>';
-				printf( __('Get access to more action box types: <strong>Sales Box &amp Share Box</strong> by <a href="%1$s">upgrading to Pro</a>. <a href="%2$s">Hide Notice</a>.','mab'), 'http://www.magicactionbox.com/features/?aff=7', add_query_arg( array('mab-hide-promo-notice' => 'true' ) ) );
+				printf( __('Get access to more action box types: <strong>Sales Box &amp Share Box</strong> by <a href="%1$s">upgrading to Pro</a>. <a href="%2$s">Hide Notice</a>.','mab'), 'http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=promoNotice', add_query_arg( array('mab-hide-promo-notice' => 'true' ) ) );
+				echo '</p></div>';
+			}
+			
+			if( $is_mab_page && !get_user_meta( $user_id, $this->_option_PromoNotice . $this->get_current_version() . '_styling_issue' ) ){
+				echo '<div class="updated"><p>';
+				printf( __('User styles created prior to Magic Action Box 2.8 will now seem to <em>disappear</em>. Don\'t worry as this is due to the big improvements in the code and you can get them back by following the steps in <a href="%1$s">this article</a>. <a href="%2$s">Hide Notice</a>.','mab'), 'http://www.magicactionbox.com/fixing-action-box-styles-v2-8-upgrade/?pk_campaign=LITE&pk_kwd=upgradeNotice', add_query_arg( array('mab-hide-promo-notice-styling-issue' => 'true' ) ) );
 				echo '</p></div>';
 			}
 			
@@ -434,6 +456,13 @@ class ProsulumMabBase{
 			//update_option( $this->_option_NagNotice . $this->get_current_version(), $val );
 			add_user_meta( $user_id, $this->_option_PromoNotice . $this->get_current_version(), $val, true );
 		}
+		
+		if( isset( $_GET['mab-hide-promo-notice-styling-issue'] ) && 'true' == $_GET['mab-hide-promo-notice-styling-issue'] ){
+			$val = 1;
+			//update_option( $this->_option_NagNotice . $this->get_current_version(), $val );
+			add_user_meta( $user_id, $this->_option_PromoNotice . $this->get_current_version() . '_styling_issue', $val, true );
+		}
+		
 	}
 
 }

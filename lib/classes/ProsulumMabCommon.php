@@ -6,42 +6,6 @@
  */
 
 class ProsulumMabCommon{
-
-	public static function show_action_box( $content ){
-		//buffer output
-		ob_start();
-		?>
-		
-		<div class="magic-action-box">
-			<div class="mab-type-optin mab-pad mb-default">
-				<div class="mab-aside">
-				</div>
-				<div class="mab-content">
-					<h3 class="mab-title">If you enjoyed this article, get email updates (it's free).</h3>
-					<form method="POST">
-						<p class="mab-field">
-							<label for="mab-name">Name</label>
-							<input type="text" id="mab-name" placeholder="Enter your name" name="the-name" />
-						</p>
-						<p class="mab-field">
-							<label for="apab-email">Email Address</label>
-							<input type="email" id="mab-email" placeholder="Enter your email" name="the-email" />
-						</p>
-						<input class="mab-submit" type="submit" value="Submit" />
-					</form>
-				</div>
-			</div>
-		</div>
-		
-		<?php
-		//get contents of output buffer
-		$action = ob_get_contents();		
-		$out = $content . "\n" . $action;
-		ob_end_clean();
-		
-		return $out;
-		
-	}
 	
 	/**
 	 * @param string $filename reference a file relative to the MAB_VIEWS_DIR
@@ -92,11 +56,44 @@ class ProsulumMabCommon{
 	}
 	
 	/**
+	 * Get Action Box Types
+	 * @param string $type - unique name/type of action box
+	 * @return array|bool - return array of data for action box depending specified through $type or all action boxes if no parameter is passed. Will return FALSE if specified $type is not found
+	 */
+	public static function getActionBox( $type = null ){
+		$boxes = array();
+		
+		/** TODO: make a buildActionBoxArray() function **/
+		
+		//Optin
+		$boxes['optin'] = array( 'type' => 'optin', 'name' => __('Optin Form', 'mab' ), 'description' => __('An opt in form is used to build your email list.','mab'), 'template' => 'optin' );
+		
+		//Sales Box
+		$boxes['sales-box'] = array( 'type' => 'sales-box', 'name' => __('Sales Box', 'mab' ), 'description' => __('A simple sales box. Use it to lead visitors to your sales page.','mab'), 'template' => 'sales-box' );
+		
+		//Social Media
+		$boxes['share-box'] = array( 'type' => 'share-box', 'name' => __('Share Box (NEW)', 'mab' ), 'description' => __('Action box made for sharing your content','mab'), 'template' => 'share-box' );
+		
+		
+		if( !is_null( $type ) ){
+			if( isset( $boxes[$type] ) ){
+				//return specified action box
+				return $boxes[$type];
+			} else {
+				//specified action box type does not exist
+				return false;
+			}
+		} else {
+			//return all action boxes
+			return $boxes;
+		}
+	}
+	
+	/**
 	 * Get Action Box Styles
 	 */
 	public static function getStyles(){
 		$styles = array(
-			'user' => array( 'id' => 'user', 'name' => 'User Settings', 'description' => 'Create your own style.' ),
 			'default' => array( 'id' => 'default', 'name' => 'Default', 'description' => 'Starter style for your action box.' ),
 			'dark' => array( 'id' => 'dark', 'name' => 'Dark', 'description' => '' ),
 			'royalty' => array( 'id' => 'royalty', 'name' => 'Royalty', 'description' => ''),
