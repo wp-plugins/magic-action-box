@@ -3,13 +3,13 @@
  * Plugin Name: Magic Action Box
  * Plugin URI: http://magicactionbox.com
  * Description: Supercharge your blog posts!
- * Version: 2.8.3
+ * Version: 2.8.5
  * Author: Prosulum, LLC
  * Author URI: http://prosulum.com
  * License: GPLv2
  */
 
-define( 'MAB_VERSION', '2.8.3');
+define( 'MAB_VERSION', '2.8.5');
 //e.g. /var/www/example.com/wordpress/wp-content/plugins/after-post-action-box
 define( "MAB_DIR", plugin_dir_path( __FILE__ ) );
 //e.g. http://example.com/wordpress/wp-content/plugins/after-post-action-box
@@ -419,6 +419,11 @@ class ProsulumMabBase{
 				echo '<div class="updated"><p>';
 				printf( __('Magic Action Box updated to version %1$s. To ensure that the action boxes display correctly, please clear your cache in the <a href="%2$s">Main Settings</a> page. <a href="%3$s">Hide Notice</a>.','mab'), $this->get_current_version(), add_query_arg( array('page'=>'mab-main'), admin_url('admin.php') ), add_query_arg( array('mab-hide-update-notice' => 'true' ) ) );
 				echo '</p></div>';
+				
+				echo '<div class="updated"><p>';
+				printf( __('Magic Action Box now has integrated support for the <a href="http://www.wysija.com/?aff=8" target="_blank" title="Wysija Newsletter plugin">Wysija Newsletter</a> plugin. You can now select it as a Mailing List provider in the Opt In form metabox section (used in Opt In and Share Box action box types). <a href="%3$s">Hide Notice</a>.','mab'), $this->get_current_version(), add_query_arg( array('page'=>'mab-main'), admin_url('admin.php') ), add_query_arg( array('mab-hide-update-notice' => 'true' ) ) );
+				echo '</p></div>';
+				
 			}
 			
 			/** Promo Notice - show only on plugin pages **/

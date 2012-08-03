@@ -23,6 +23,7 @@ class ProsulumMab{
 	}
 	
 	function add_filters(){
+		add_filter( 'mab_optinform_output', array( &$this, 'outputOptInFormHTML' ), 10, 3 );
 		//add_filter('the_content', array( &$this, 'showActionBox' ) );
 	}
 	
@@ -365,17 +366,25 @@ class ProsulumMab{
 		$meta = $MabBase->get_mab_meta( $actionBoxObj->ID );
 		$meta['ID'] = $actionBoxObj->ID;
 		
+		//get unique action box id because some optin form providers need this i.e. wysija
+		$data['mab-html-id'] = $this->getUniqueId( $actionBoxObj->ID );
+		$meta['mab-html-id'] = $data['mab-html-id'];
+		
 		//get Opt In Form
 		$optInForm = $this->getOptInForm( $meta );
+		
+		//if form is empty, then there should be no need to show the action box
+		if( empty( $optInForm ) ){
+			return '';
+		}
 		
 		//$data['meta'] = $meta;
 		//convert old optin settings keys to keys used by other action boxes
 		$data['meta'] = $this->convertOptinKeys( $meta );
 		
 		$data['form'] = $optInForm;
-		$data['action-box-type'] = $MabBase->get_mab_meta( $actionBoxObj->ID, 'type' );
 		
-		$data['mab-html-id'] = $this->getUniqueId( $actionBoxObj->ID );
+		$data['action-box-type'] = $MabBase->get_mab_meta( $actionBoxObj->ID, 'type' );
 		
 		$mainTemplate = $this->getActionBoxTemplateLocation('optin');
 		$actionBox = ProsulumMabCommon::getView( $mainTemplate, $data );
@@ -430,18 +439,29 @@ class ProsulumMab{
 	}
 	
 	/**
-	 * @return string HTML on success, EMPTY string otherwise
+	 * @applies WP filter mab_optinform_output
+	 * how to add your own filters example: add_filter( 'mab_optinform_output', 'function_name', 10, 3 );
+	 *
+	 * @param array $meta action box post type meta data
+	 * @return html
 	 */
 	function getOptInForm( $meta ){
+		return apply_filters('mab_optinform_output', '', $meta['optin-provider'], $meta );
+	}
+	
+	/**
+	 * Filter function to mab_optinform_output filter
+	 */
+	function outputOptInFormHTML( $optIn, $provider, $meta ){
 		global $MabBase;
 		
 		$viewDir = 'optinforms/';
-		$settings = $this->getSettings();
 		$optIn = '';
 		
 		//get provider
 		switch( $meta['optin-provider'] ){
 			case 'aweber':
+				$settings = $this->getSettings();
 				//break if aweber is not allowed
 				if( $settings['optin']['allowed']['aweber'] == 0 )
 					break;
@@ -452,6 +472,7 @@ class ProsulumMab{
 				break;
 				
 			case 'mailchimp':
+				$settings = $this->getSettings();
 				//break if mailchimp is not allowed
 				if( $settings['optin']['allowed']['mailchimp'] == 0 )
 					break;
@@ -462,6 +483,7 @@ class ProsulumMab{
 				break;
 				
 			case 'constant-contact':
+				$settings = $this->getSettings();
 				//break if constant contact is not allowed
 				if( $settings['optin']['allowed']['constant-contact'] == 0 )
 					break;
@@ -471,6 +493,7 @@ class ProsulumMab{
 				break;
 				
 			case 'manual':
+				$settings = $this->getSettings();
 				//break if manual is not allowed
 				if( $settings['optin']['allowed']['manual'] == 0 )
 					break;
@@ -480,10 +503,27 @@ class ProsulumMab{
 				
 				break;
 				
+			case 'wysija':
+				//make sure Wysija plugin is activated
+				if( !class_exists( 'WYSIJA' ) ) break;
+				
+				$wysijaView =& WYSIJA::get("widget_nl","view","front");
+				
+				/** Print wysija scripts **/
+				$wysijaView->addScripts();
+				
+				/** TODO: generate fields using wysija's field generator **/
+				
+				$meta['subscriber-nonce'] = $wysijaView->secure(array('action' => 'save', 'controller' => 'subscribers'),false,false);
+				
+				$filename = $viewDir . 'wysija.php';
+				$optIn = ProsulumMabCommon::getView( $filename, $meta );
+				
+				break;
+				
 			default:
 				break;
 		}
-		
 		return $optIn;
 	}
 	

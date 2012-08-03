@@ -72,8 +72,7 @@ class ProsulumMabCommon{
 		$boxes['sales-box'] = array( 'type' => 'sales-box', 'name' => __('Sales Box', 'mab' ), 'description' => __('A simple sales box. Use it to lead visitors to your sales page.','mab'), 'template' => 'sales-box' );
 		
 		//Social Media
-		$boxes['share-box'] = array( 'type' => 'share-box', 'name' => __('Share Box (NEW)', 'mab' ), 'description' => __('Action box made for sharing your content','mab'), 'template' => 'share-box' );
-		
+		$boxes['share-box'] = array( 'type' => 'share-box', 'name' => __('Share Box', 'mab' ), 'description' => __('Action box made for sharing your content','mab'), 'template' => 'share-box' );
 		
 		if( !is_null( $type ) ){
 			if( isset( $boxes[$type] ) ){

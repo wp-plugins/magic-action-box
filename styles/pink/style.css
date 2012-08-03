@@ -125,3 +125,11 @@
 .mabstyle-pink.magic-action-box mab-main-action-wrap  form input[type="submit"]:hover, .mabstyle-pink.magic-action-box form input[type="submit"]:focus{
 	background: #FFE37D;
 }
+
+.mab-wysija-msg{ margin: 6px 0; }
+.mab-wysija-msg .allmsgs blink{ padding-left: 24px; background: transparent url('images/loading.gif') no-repeat left center; display: block;}
+.mab-wysija-msg .allmsgs{ padding: 10px; }
+.mab-wysija-msg .allmsgs ul{ margin: 0 0 0 16px !important;}
+.mab-wysija-msg .allmsgs .updated{ margin: 10px 0; padding: 8px 8px 8px 30px; background: #BCE7FD url('images/small-notification.jpg') no-repeat 2% 50%; color: #000; text-shadow: none; border: 1px solid #5AC4F4; display: block; }
+.mab-wysija-msg .allmsgs .xdetailed-errors,
+.mab-wysija-msg .allmsgs .error{ margin: 10px 0; padding: 8px 8px 8px 30px; background: #FFD9C8 url('images/small-error.jpg') no-repeat 2% 50%; color: #000; text-shadow: none; border: 1px solid #F0BAA2; display: block; }

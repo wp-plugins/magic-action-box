@@ -1,6 +1,7 @@
 <?php
 	global $MabAdmin;
 	$meta = !empty( $data['meta'] ) ? $data['meta'] : array();
+	$optinMeta = !empty( $meta['optin'] ) && is_array( $meta['optin'] ) ? $meta['optin'] : array();
 	$assets_url = $data['assets-url'];
 	$optin_providers = $data['optin-providers'];
 ?>
@@ -8,18 +9,20 @@
 
 <div class="mab-option-box">
 	<h4><label for="mab-optin-provider"><?php _e('Select Mailing List Provider','mab' ); ?></label></h4>
-	<p><?php _e('Magic Action Box has integrated support for Aweber and MailChimp only as of the moment. But, you may still use other mailing list providers by selecting <em>Others (Copy & Paste)</em> option. <strong>**Note:</strong> you can even use Aweber or MailChimp with the <em>Others (Copy & Paste)</em> option.','mab' ); ?></p>
+	<p><?php _e('Magic Action Box has integrated support for Aweber, MailChimp and Wysija Newsletter only as of the moment. But, you may still use other mailing list providers by selecting <em>Others (Copy & Paste)</em> option. <strong>**Note:</strong> you can even use Aweber or MailChimp with the <em>Others (Copy & Paste)</em> option.','mab' ); ?></p>
 	<select id="mab-optin-provider" class="large-text" name="mab[optin-provider]" >
 		<?php
 			$selected_provider = isset( $meta['optin-provider'] ) ? $meta['optin-provider'] : '';
+			$allowed_providers = array();
 		?>
-		<?php foreach( $optin_providers as $key => $provider ) : ?>
-			<option value="<?php echo $key; ?>" <?php selected( $selected_provider, $key ); ?> ><?php echo $provider; ?></option>
+		<?php foreach( $optin_providers as $provider ) : ?>
+			<?php $allowed_providers[ $provider['id'] ] = 1; ?>
+			<option value="<?php echo $provider['id']; ?>" <?php selected( $selected_provider, $provider['id'] ); ?> ><?php echo $provider['name']; ?></option>
 		<?php endforeach; ?>
 	</select>
 	
 	<!-- ## AWEBER -->
-	<?php if( isset( $optin_providers['aweber'] ) ) : ?>
+	<?php if( isset( $allowed_providers['aweber'] ) ) : ?>
 	<div id="mab-aweber-settings" class="mab-dependent-container mab-optin-list-dependent-container">
 		<p class="mab-notice">You selected to use an integrated opt-in form. This form displays two input fields to take the visitor's name and e-mail address. If you wish to use other input field arrangements, <em>(i.e. use only one field for e-mail address)</em>, then select <em>Other (Copy & Paste)</em> in the <label for="mab-optin-provider"><strong>Mailing List Provider</strong></label> select box.</p>
 		<h4><label for="mab-optin-aweber-list"><?php _e('List','mab'); ?></label></h4>
@@ -71,7 +74,7 @@
 	<?php endif; ?>
 	
 	<!-- #MAILCHIMP -->
-	<?php if( isset( $optin_providers['mailchimp'] ) ) : ?>
+	<?php if( isset( $allowed_providers['mailchimp'] ) ) : ?>
 	<div id="mab-mailchimp-settings" class="mab-dependent-container mab-optin-list-dependent-container">
 		<p class="mab-notice">You selected to use an integrated opt-in form. This form displays two input fields to take the visitor's name and e-mail address. If you wish to use other input field arrangements, <em>(i.e. use only one field for e-mail address)</em>, then select <em>Other (Copy & Paste)</em> in the <label for="mab-optin-provider"><strong>Mailing List Provider</strong></label> select box.</p>
 		<h4><label for="mab-optin-mailchimp-list"><?php _e('List','mab'); ?></label></h4>
@@ -114,7 +117,7 @@
 	<?php endif; ?>
 	
 	<!-- #MANUAL -->
-	<?php if( isset( $optin_providers['manual'] ) ) : ?>
+	<?php if( isset( $allowed_providers['manual'] ) ) : ?>
 	<div id="mab-manual-settings" class="mab-dependent-container mab-optin-list-dependent-container mab-manual-dependent-container">
 		<p class="mab-notice">This option allows you to use just about any autoresponder service or email list provider with Magic Action Box as long as your service allows you to generate an HTML - not Javascript - code for you to copy and paste on your website. To learn more about this feature, <a href="http://www.magicactionbox.com/how-use-magic-action-box-with-any-email-marketing-service/?pk_campaign=LITE&pk_kwd=editScreen-videoTut" target="_blank">watch this video tutorial</a>.</p>
 		<h4><label for="mab-optin-manual-code"><?php _e('Opt In Form Code','mab'); ?></label></h4>
@@ -144,6 +147,65 @@
 	</div>
 	<?php endif; ?>
 	
+	<!-- #WYSIJA -->
+	<?php 
+	if( isset( $allowed_providers['wysija'] ) ): 
+		/* check if wysija plugin is installed **/
+		if( !class_exists( 'WYSIJA' ) ):
+		//Wysija plugin is not installed
+	?>
+		<div id="mab-wysija-settings" class="mab-dependent-container mab-optin-list-dependent-container">
+			<p class="mab-notice">You need to install <a href="http://www.wysija.com/?aff=8" title="Wysija Newsletters" target="_blank">Wysija Newsletters plugin</a> in order to use this option as a Mailing List Provider (Don't worry, there is a lite version).</p>
+		</div>
+		<?php
+		else:
+		//wysijs plugin is installed
+		$modelList = &WYSIJA::get('list','model');
+		$wysijaLists = $modelList->get(array('name','list_id'),array('is_enabled'=>1));
+		$wysija = !empty( $optinMeta['wysija'] ) ? $optinMeta['wysija'] : array();
+		?>
+		<div id="mab-wysija-settings" class="mab-dependent-container mab-optin-list-dependent-container">
+			<div class="mab-option-box">
+				<h4><?php _e('Select List:','mab' ); ?></h4>
+				<p><?php _e('Select which newsletter list a user will be subscribed to.','mab' ); ?></p>
+				<?php 
+				$selectedLists = isset( $wysija['lists'] ) && is_array( $wysija['lists'] ) ? $wysija['lists'] : array(); 
+				$lists = $wysijaLists; 
+				?>
+				<?php foreach( $lists as $list ) : ?>
+					<p style="margin: 0 0 5px 0; float: left;"><label for="mab-wys-list-<?php echo $list['list_id']; ?>"><input type="checkbox" id="mab-wys-list-<?php echo $list['list_id']; ?>" name="mab[optin][wysija][lists][]" value="<?php echo $list['list_id']; ?>" <?php checked( true, in_array( $list['list_id'],$selectedLists) ); ?> /> <?php echo $list['name']; ?></label></p>
+				<?php endforeach; ?>
+				<div class="clear"></div>
+			</div>
+			
+			<div class="mab-option-box">
+				<h4><?php _e('Fields to ask for:','mab' ); ?></h4>
+				<?php 
+				$fields = isset( $wysija['fields'] ) && is_array( $wysija['fields'] ) ? $wysija['fields'] : array(); 
+				?>
+				<p style="margin: 0 0 5px 0; float: left;"><label for="mab-wys-field-fname"><input type="checkbox" id="mab-wys-field-fname" name="mab[optin][wysija][fields][]" value="firstname" <?php checked( true, in_array( 'firstname', $fields ) ); ?> /> <?php _e('First name', 'mab'); ?></label></p>
+				
+				<p style="margin: 0 0 5px 0; float: left;"><label for="mab-wys-field-lname"><input type="checkbox" id="mab-wys-field-lname" name="mab[optin][wysija][fields][]" value="lastname" <?php checked( true, in_array( 'lastname', $fields ) ); ?> /> <?php _e('Last name', 'mab'); ?></label></p>
+				
+				<div class="clear"></div>
+			</div>
+			
+			<div class="mab-option-box">
+				<h4><label for="mab-wysija-button-label"><?php _e('Submit Button Label:','mab' ); ?></label></h4>
+				<?php 
+				$buttonLabel = isset( $wysija['button-label'] ) ? $wysija['button-label'] : 'Subscribe!'; 
+				?>
+				<input type="text" id="mab-wysija-button-label" name="mab[optin][wysija][button-label]" value="<?php echo $buttonLabel; ?>" />
+				<br />
+				<br />
+				<h4><label for="mab-wysija-success-message"><?php _e('Success Message:','mab'); ?></label></h4>
+				<?php
+				$message = isset( $wysija['success-message'] ) ? $wysija['success-message'] : 'You\'ve successfully subscribed. Check your inbox now to confirm your subscription.'; ?>
+				<textarea id="mab-wysija-success-message" class="large-text" name="mab[optin][wysija][success-message]"><?php echo $message; ?></textarea>
+			</div>
+		</div>
+		<?php endif; ?>
+	<?php endif; ?>
 
 </div>
 

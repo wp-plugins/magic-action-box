@@ -1,10 +1,10 @@
-=== Magic Action Box Pro===
+=== Magic Action Box ===
 Contributors: prosulum, pogidude
 Developer: Prosulum
 Tags: opt in, call to action, aweber, email, email marketing, form, mailing list, marketing, newsletter, webform, mailchimp, constant contact
 Requires at least: 3.1
 Tested up to: 3.4.1
-Stable tag: 2.8.3
+Stable tag: 2.8.5
 
 Magic Action Box is an easy to use but powerful lead generation plugin.
 
@@ -72,15 +72,20 @@ Try checking the *Reorder post content filter priorities* checkbox found in WP A
 5. Action Box Settings Screen
 
 == Changelog ==
+= 2.8.5 =
+* Added integrated support for Wysija Newsletters plugin
+
+= 2.8.4 =
+* Added new setting field for salesbox action box type for specifying additional attributes for the main button
+
 = 2.8.3 =
-* fixed issue where action box does not show up on the page set as the front page (Happens when Settings > Reading -> Front Page Display is set to a static page and the "Front Page" value is the current Page being displayed
+* Fixed bug where multiple custom stylesheets were not all loading
 
 = 2.8.2 =
-* added core improvements.
-* reorganized main settings page to have the same layout as pro
+* Added feature to set a default action boxe for ALL posts/pages
 
 = 2.8.1 =
-* Forgot to add unversioned files
+* Disabled tracking on AddThis social sharing as it was adding ugly tracking hashtags to the share link.
 
 = 2.8 =
 * Made action box styles global
@@ -156,8 +161,20 @@ Try checking the *Reorder post content filter priorities* checkbox found in WP A
 * Original Version.
 
 == Upgrade Notice ==
+= 2.8.5 =
+Integration with Wysija Newsletter Plugin
+
+= 2.8.4 =
+Just upgrade :)
+
+= 2.8.3 =
+Fixed bug where multiple custom stylesheets were not all loading
+
+= 2.8.2 =
+Added global action boxes
+
 = 2.8.1 =
-Forgot to add unversioned files
+Removed tracking from AddThis social sharing
 
 = 2.8 =
 Lots of improvements

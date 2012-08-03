@@ -768,21 +768,29 @@ class ProsulumMabAdmin{
 	 * OPTIN PROVIDERS
 	 * ================================================ */
 	
+	/**
+	 * Returns list of allowed optin providers in an array
+	 * @return array 
+	 */
 	function getAllowedOptinProviders(){
-	
+		/** TODO: add a registerOptinProviders() function **/
+		
 		$settings = ProsulumMabCommon::getSettings();
 		$allowed = array();
 		
 		foreach( $this->_optin_Keys as $key => $provider ){
 			//add optin providers where value is not 0 or empty or null
 			if( !empty( $settings['optin']['allowed'][$key] ) ){
-				$allowed[ $key ] = $provider;
+				$allowed[] = array('id' => $key, 'name' => $provider );
 			}
 		}
 		
-		//add "Manual" mailing list provider
-		$allowed['manual'] = $this->_optin_Keys['manual'];
+		//add "wysija" newsletter
+		$allowed[] = array('id' => 'wysija', 'name' => 'Wysija Newsletter' );
 		
+		//add "Manual" mailing list provider
+		//$allowed[] = array('id' => 'manual', 'name' => $this->_optin_Keys['manual'] );
+
 		return $allowed;
 		
 	}
