@@ -1,9 +1,9 @@
-.mab-wrap{ padding: 15px; }
+.mabstyle-dark .mab-wrap{ padding: 15px; }
 	
 /*********************************
  * Default Styles
  *********************************/
-.magic-action-box{
+.mabstyle-dark.magic-action-box{
 	background: #222;
 	background: -moz-linear-gradient(top,  #4a4a4a 0%, #222222 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#4a4a4a), color-stop(100%,#222222));
@@ -23,22 +23,22 @@
 	text-shadow: -1px -1px 0 #000;
 }
 
-.mab-aside{
+.mabstyle-dark .mab-aside{
 	position: relative;
 	z-index: 8;
 }
 
-.mab-aside-right .mab-aside{
+.mabstyle-dark .mab-aside-right .mab-aside{
 	float: right;
 	margin-left: 15px;
 }
 
-.mab-aside-left .mab-aside{
+.mabstyle-dark .mab-aside-left .mab-aside{
 	float: left;
 	margin-right: 15px;
 }
 
-.mab-aside-top .mab-aside{
+.mabstyle-dark .mab-aside-top .mab-aside{
 	display: block;
 	margin-bottom: 10px;
 	text-align: center;
@@ -47,12 +47,12 @@
 
 
 /* Content */
-.mab-content{
+.mabstyle-dark .mab-content{
 	position: relative;
 	z-index: 10;
 }
 
-.magic-action-box .mab-heading{
+.mabstyle-dark.magic-action-box .mab-heading{
 	clear: none;
 	color: #FFFFFF !important;
 	font-size: 160% !important;
@@ -63,7 +63,7 @@
 	text-transform: none;
 }
 
-.magic-action-box .mab-subheading{
+.mabstyle-dark.magic-action-box .mab-subheading{
 	clear: none;
 	color: #FFFFFF !important;
 	font-size: 120% !important;
@@ -72,32 +72,32 @@
 	margin: 0 0 10px !important;
 }
 
-.magic-action-box .mab-main-copy{
+.mabstyle-dark.magic-action-box .mab-main-copy{
 	color: #fff  !important;
 }
 
-.magic-action-box .mab-secondary-copy{
+.mabstyle-dark.magic-action-box .mab-secondary-copy{
 	color: #ccc !important;
 }
 
 /* Form */
-.magic-action-box form{
+.mabstyle-dark.magic-action-box form{
 	margin: 10px 0;
 	overflow: hidden;
 }
 
-.magic-action-box form .mab-field{
+.mabstyle-dark.magic-action-box form .mab-field{
 	float: left;
 	margin: 0 10px 10px 0;
 	width: 46%;
 }
 
-.magic-action-box form .mab-field label{
+.mabstyle-dark.magic-action-box form .mab-field label{
 	display: block;
 	font-size: 90%;
 }
 
-.magic-action-box form .mab-field input, .magic-action-box form .mab-field textarea{
+.mabstyle-dark.magic-action-box form .mab-field input, .mabstyle-dark.magic-action-box form .mab-field textarea{
 	background: #fff !important;
 	border: 1px solid #000 !important;
 	border-radius: 2px;
@@ -109,12 +109,12 @@
 	width: 95% !important;
 }
 
-.magic-action-box form .mab-field input:focus, .magic-action-box form .mab-field textarea:focus{
+.mabstyle-dark.magic-action-box form .mab-field input:focus, .mabstyle-dark.magic-action-box form .mab-field textarea:focus{
 	border-color: #650D00 !important;
 	color: #111 !important;
 }
 
-.magic-action-box form input[type="submit"]{
+.mabstyle-dark.magic-action-box form input[type="submit"]{
 	background: #AF1D00;
 	border: 1px solid #450C00;
 	border-radius: 3px;
@@ -126,9 +126,17 @@
 	text-transform: uppercase;
 }
 
-.magic-action-box form input[type="submit"]:hover, .magic-action-box form input[type="submit"]:focus{
+.mabstyle-dark.magic-action-box form input[type="submit"]:hover, .mabstyle-dark.magic-action-box form input[type="submit"]:focus{
 	background: #C23100;
 	border-color: #591B05;
 	text-shadow: -1px -1px 0 #471200;
 	
 }
+
+.mab-wysija-msg{ margin: 6px 0; }
+.mab-wysija-msg .allmsgs blink{ padding-left: 24px; background: transparent url('images/loading.gif') no-repeat left center; display: block;}
+.mab-wysija-msg .allmsgs{ padding: 10px; }
+.mab-wysija-msg .allmsgs ul{ margin: 0 0 0 16px !important;}
+.mab-wysija-msg .allmsgs .updated{ margin: 10px 0; padding: 8px 8px 8px 32px; background: #BCE7FD url('images/small-notification.jpg') no-repeat 2% 50%; color: #000; text-shadow: none; border: 1px solid #5AC4F4; display: block; }
+.mab-wysija-msg .allmsgs .xdetailed-errors,
+.mab-wysija-msg .allmsgs .error{ margin: 10px 0; padding: 8px 8px 8px 32px; background: #FFD9C8 url('images/small-error.jpg') no-repeat 2% 50%; color: #000; text-shadow: none; border: 1px solid #F0BAA2; display: block; }
