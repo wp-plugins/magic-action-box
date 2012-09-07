@@ -134,10 +134,15 @@ jQuery(document).ready(function(){
 		var $this = jQuery( this );
 		var $selectedStyle = $this.val();
 		
-		if( $selectedStyle == 'none' || $selectedStyle == 'user' ){
+		if( $selectedStyle == 'none' ){
 			jQuery('#mab-style-preview-heading').hide();
+			jQuery('#mab-user-style').hide();
+		} else if( $selectedStyle == 'user'){
+			jQuery('#mab-style-preview-heading').hide();
+			jQuery('#mab-user-style').show();
 		} else {
 			jQuery('#mab-style-preview-heading').show();
+			jQuery('#mab-user-style').hide();
 		}
 		
 		//hide all thumbs
@@ -145,6 +150,8 @@ jQuery(document).ready(function(){
 		//show corresponding thumb
 		jQuery( '#mab-style-' + $selectedStyle + '-preview' ).show();
 	}).change();
+	
+	
 	
 	/**
 	 * Other Stuff

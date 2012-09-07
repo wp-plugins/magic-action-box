@@ -70,14 +70,12 @@ class ProsulumMabAdmin{
 	}
 	
 	function initializeActionBoxes(){
-		$this->addActionBoxType('optin', __('Opt In Form','mab'), __('An opt in form is used to build your email list.','mab') );
+		$actionBoxes = ProsulumMabCommon::getActionBox();
+		
+		foreach( $actionBoxes as $key => $box ){
+			$this->addActionBoxType( $box['type'], $box['name'], $box['description'] );
+		}
 
-		$this->addActionBoxType('sales-box', __('Sales Box','mab'), __('A simple sales box. Use it to lead visitors to your sales page.','mab') );
-		
-		$this->addActionBoxType('share-box', __('Share Box (New)', 'mab'), __('Go viral with this action box made for sharing your content. Combines social sharing features with an Opt In form.','mab') );
-		
-		//TODO: add a way to add new box types using actions/filters? Must be able to check
-		//that the displayed Action Boxes in the post screen is valid though.
 	}
 	
 	function addActionBoxType( $type, $name, $description ){
@@ -100,11 +98,20 @@ class ProsulumMabAdmin{
 		## MAIN SETTINGS
 		$hooks[] = add_submenu_page( 'mab-main', __('Main Settings', 'mab' ), __('Main Settings', 'mab' ), 'manage_options', 'mab-main', array( &$this, 'displaySettingsPage' ) );
 		
-		## DESIGN
-		$styleTitle = __( 'Add Style', 'mab' );
-		//TODO: Rename $styleTitle when editing a style
+		## ACTION BOX SETTINGS
+		//$hooks[] = add_submenu_page( 'mab-main', __('Action Box Settings', 'mab' ), __('Action Box Settings', 'mab' ), 'manage_options', 'mab-actionbox-settings', array( &$this, 'displayActionBoxSettingsPage' ) );
 		
-		$hooks[] = add_submenu_page( 'mab-main', __('Design Settings', 'mab' ), __('Design Settings', 'mab' ), 'manage_options', 'mab-design', array( &$this, 'displayDesignsPage' ) );
+		## DESIGN
+		
+		$hooks[] = add_submenu_page( 'mab-main', __('Styles &amp; Buttons', 'mab' ), __('Styles &amp; Buttons', 'mab' ), 'manage_options', 'mab-design', array( &$this, 'displayDesignsPage' ) );
+		
+		## ADD/EDIT DESIGN/STYLE
+		$styleTitle = __( 'Add Style', 'mab' );
+		if( isset( $_GET['page'] ) && 'mab-style-settings' == $_GET['page'] && isset ( $_GET['mab-style-key'] )  && $this->isValidStyleKey( $_GET['mab-style-key'] ) ){
+			$styleTitle = __('Edit Style', 'mab' );
+		}
+		//TODO: Rename $styleTitle when editing a style
+		$hooks[] = add_submenu_page( 'mab-main', $styleTitle, $styleTitle, 'manage_options', 'mab-style-settings', array( &$this, 'displayStyleSettingsPage' ) );
 		
 		## ADD/EDIT BUTTONS
 		$buttonTitle = __( 'Add Button', 'mab' );
@@ -114,8 +121,12 @@ class ProsulumMabAdmin{
 		
 		$hooks[] = add_submenu_page( 'mab-main', $buttonTitle , $buttonTitle , 'manage_options', 'mab-button-settings', array( &$this, 'displayButtonSettingsPage' ) );
 		
+		$hooks[] = add_submenu_page( 'mab-main', __('Support', MAB_DOMAIN ), __('Support &amp; Links', MAB_DOMAIN), 'manage_options', 'mab-support', array( &$this, 'displaySupportPage' ) );
+		
+		$mab_hooks = apply_filters( 'mab_add_submenu_filter', $hooks );
+		
 		## ATTACH ASSETS
-		foreach( $hooks as $hook ){
+		foreach( $mab_hooks as $hook ){
 			add_action("admin_print_styles-{$hook}", array( &$this, 'enqueueStylesForAdminPages' ) );
 			add_action("admin_print_scripts-{$hook}", array( &$this, 'enqueueScriptsForAdminPages' ) );
 		}
@@ -133,6 +144,14 @@ class ProsulumMabAdmin{
 	function addColumnHeaderForpageType( $columns ){
 		$new = array( 'action-box-type' => __( 'Action Box Type', 'mab' ) );
 		$columns = array_slice($columns, 0, 2, true) + $new + array_slice($columns, 2, count($columns), true);
+		
+		$new_columns['cb'] = $columns['cb'];
+		$new_columns['title'] = __('Action Box Title','mab');
+		$new_columns['actionbox-id'] = __('ID #','mab');
+		$new_columns['action-box-type'] = __('Action Box Type', 'mab' );
+		$new_columns['date'] = __('Last Modified','mab');
+		return $new_columns;
+		
 		return $columns;
 	}
 	
@@ -141,6 +160,8 @@ class ProsulumMabAdmin{
 		
 		if( $column == 'action-box-type' ){
 			echo esc_html( $MabBase->get_actionbox_type( $postId ) );
+		} elseif( $column == 'actionbox-id' ){
+			echo $postId;
 		}
 	}
 	
@@ -163,7 +184,20 @@ class ProsulumMabAdmin{
 		
 		$data = $this->getSettings();
 		
+		//create actio box content type array
+		$actionBoxes = array();
+		$actionBoxes['none'] = 'None';
+		$actionBoxes['default'] = 'Use Default';
+		
+		//get all categories and store in array
+		$categoriesObj = get_categories( array( 'hide_empty' => 0 ) );
+		foreach( $categoriesObj as $cat ){
+			$categories[ $cat->cat_ID ] = $cat->cat_name;
+		}
+		
 		//add other variables as keys to the data array
+		$data['actionboxList'] = $actionBoxes;
+		$data['categories'] = $categories;
 		$data['_optin_AweberAuthenticationUrl'] = $this->_optin_AweberAuthenticationUrl;
 		$data['_optin_AweberApplicationId'] = $this->_optin_AweberApplicationId;
 		
@@ -179,6 +213,10 @@ class ProsulumMabAdmin{
 		
 		//use a switch block here
 		//include( MAB_VIEWS_DIR . 'settings/main.php' );
+	}
+	
+	function displayActionBoxSettingsPage(){
+		global $MabBase;
 	}
 	
 	function displayButtonSettingsPage(){
@@ -208,8 +246,36 @@ class ProsulumMabAdmin{
 		echo $output;
 	}
 	
+	function displayStyleSettingsPage(){
+		global $MabBase, $MabDesign, $mabStyleKey;
+		
+		$data = array();
+		$key = isset( $_GET['mab-style-key'] ) ? absint( $_GET['mab-style-key'] ) : null;
+		$mabStyleKey = $key;
+		
+		if( $key !== null && $this->isValidStyleKey( $key ) ){
+			//edit a style
+			$style= $MabDesign->getConfiguredStyle( $key );
+			$action = 'edit';
+		} else {
+			//add new style
+			$style = $MabDesign->getDefaultSettings();
+			$action = 'add';
+		}
+		
+		//TODO: add reset?
+		
+		$data['key'] = $key;
+		$data['settings'] = $style;
+		$data['action'] = $action;
+		
+		$filename = $this->getSettingsViewTemplate( 'style-settings' );
+		$output = ProsulumMabCommon::getView( $filename, $data );
+		echo $output;
+	}
+	
 	function displayDesignsPage(){
-		global $MabBase, $MabButton;
+		global $MabBase, $MabButton, $MabDesign;
 		
 		$filename = $this->getSettingsViewTemplate( 'design' );
 		
@@ -217,10 +283,19 @@ class ProsulumMabAdmin{
 		
 		//prepare configured buttons
 		$data['buttons'] = $MabButton->getSettings();
+		//prepare configured styles
+		$data['styles'] = $MabDesign->getStyleSettings();
 		
 		$output = ProsulumMabCommon::getView( $filename, $data );
 		echo $output;
 		
+	}
+	
+	function displaySupportPage(){
+		$filename = $this->getSettingsViewTemplate('support');
+		
+		$out = ProsulumMabCommon::getView( $filename );
+		echo $out;
 	}
 	
 	function getSettingsViewTemplate( $template = '' ){
@@ -237,6 +312,12 @@ class ProsulumMabAdmin{
 				break;
 			case 'design':
 				$filename = $setting_dir . 'design.php';
+				break;
+			case 'style-settings':
+				$filename = $setting_dir . 'style-settings.php';
+				break;
+			case 'support':
+				$filename = $setting_dir . 'support.php';
 				break;
 			default: break; //empty $filename
 		}
@@ -267,7 +348,7 @@ class ProsulumMabAdmin{
 			return;
 		
 		//save action for Action Box post types
-		if( ( false === $wp_is_post_autosave || $wp_is_post_revision ) && $MabBase->is_mab_post_type( $post->post_type ) ){
+		if( ( false === $wp_is_post_autosave || $wp_is_post_revision ) && is_object( $post ) && $MabBase->is_mab_post_type( $post->post_type ) ){
 		
 			$this->processActionBoxTypeSpecificMeta( $postId, $post );
 
@@ -277,7 +358,7 @@ class ProsulumMabAdmin{
 		}
 		
 		/* save action for other content types */
-		if( ( false === $wp_is_post_autosave || $wp_is_post_revision ) && $MabBase->is_allowed_content_type( $post->post_type ) ){
+		if( ( false === $wp_is_post_autosave || $wp_is_post_revision ) && is_object( $post ) && $MabBase->is_allowed_content_type( $post->post_type ) ){
 			$this->processActionBoxMetaForOtherContentTypes( $postId, $post );
 		}
 		
@@ -340,6 +421,28 @@ class ProsulumMabAdmin{
 	}
 	
 	/**
+	 * STyles Utility
+	 */
+	function isValidStyleKey( $key ){
+		global $MabDesign;
+		$settings = $MabDesign->getStyleSettings();
+		return isset( $settings[$key] );
+	}
+	function deleteConfiguredStyle( $key = null ){
+		global $MabDesign;
+		return $MabDesign->deleteConfiguredStyle( $key );
+	}
+	function getConfiguredStyle( $key = null ){
+		global $MabDesign;
+		return $MabDesign->getConfiguredStyle( $key );
+	}
+	function saveConfiguredStyle( $settings, $key ){
+		global $MabDesign;
+		$key = $MabDesign->updateStyleSettings( $settings, $key );
+		return $key;
+	}
+	
+	/**
 	 * Processing 
 	 * ==========================================*/
 
@@ -386,6 +489,25 @@ class ProsulumMabAdmin{
 		} elseif( isset( $_GET['mab-create-preconfigured'] ) && $_GET['mab-create-preconfigured'] == 'true' && check_admin_referer( 'mab-create-preconfigured' ) ){
 			$this->createPreconfiguredButtons();
 			wp_redirect( admin_url('admin.php?page=mab-design&mab-preconfigured-buttons=true' ) );
+			exit();
+		}
+		
+		//process styles
+		if( isset( $_POST['save-style-settings'] ) && wp_verify_nonce( $_POST['save-mab-style-settings-nonce'], 'save-mab-style-settings-nonce' ) ){
+			// save/update style
+			$styleKey = $this->processStyleSettings();
+			wp_redirect( add_query_arg( array( 'page' => 'mab-style-settings', 'updated' => 'true', 'mab-style-key' => $styleKey ), admin_url( 'admin.php' ) ) );
+			exit();
+		} elseif( isset( $_GET['mab-style-key'] ) && isset( $_GET['mab-delete-style'] ) && $_GET['mab-delete-style'] == 'true' && check_admin_referer( 'mab-delete-style' ) ){
+			$this->deleteConfiguredStyle( $_GET['mab-style-key'] );
+			wp_redirect( admin_url( 'admin.php?page=mab-design&deleted=true') );
+			exit();
+		} elseif( isset( $_GET['mab-duplicate-style'] ) && $_GET['mab-duplicate-style'] == 'true' && $this->isValidStyleKey( $_GET['mab-style-key'] ) && check_admin_referer( 'mab-duplicate-style' ) ){
+			$style = $this->getConfiguredStyle( $_GET['mab-style-key'] );
+			$style['title'] .= (' - ' . __('Copy', 'mab' ) );
+			$style['timesaved'] = current_time( 'timestamp' );
+			$this->saveConfiguredStyle( $style, null );
+			wp_redirect( admin_url( 'admin.php?page=mab-design&duplicated=true' ) );
 			exit();
 		}
 	}
@@ -452,6 +574,8 @@ class ProsulumMabAdmin{
 		//process manual opt in form. Created for consistency.
 		$settings['optin']['allowed']['manual'] = 1;
 
+
+		/* TODO: Process Global ActionBox Setting */
 		
 
 		//save settings
@@ -471,6 +595,25 @@ class ProsulumMabAdmin{
 			//running the function also stores the list into a transient
 			$settings['optin']['mailchimp-lists'] = $this->getMailChimpLists( true ); //force update
 		}
+	}
+	
+	function processStyleSettings(){
+		global $MabDesign;
+		
+		$data = stripslashes_deep( $_POST );
+		$settings = $data['mab-design'];
+		$key = isset( $data['mab-style-key'] ) ? $data['mab-style-key'] : '';
+		
+		if( empty( $settings ) ){
+			$settings = $MabDesign->getDefaultSettings();
+		}
+		
+		$key = $this->saveConfiguredStyle( $settings, $key );
+		
+		//create stylesheet
+		$this->createStyleSheet( $key );
+		
+		return $key;
 	}
 	
 	function processButtonSettings(){
@@ -517,7 +660,7 @@ class ProsulumMabAdmin{
 		**/
 		
 		//main settings
-		if( is_array( $data['mab'] ) ){
+		if( isset( $data['mab'] ) && is_array( $data['mab'] ) ){
 			$mab = $data['mab'];
 			
 			//UPDATE: this is already set on interception screen
@@ -543,10 +686,11 @@ class ProsulumMabAdmin{
 				
 				}
 			} elseif ( $type == 'sales-box' ){
+				$mab['main-button-attributes'] = esc_attr( $mab['main-button-attributes'] );
 			}
 			
 			$MabBase->update_mab_meta( $postId, $mab );
-		}
+		}//ENDIF
 		
 	}
 	
@@ -567,15 +711,10 @@ class ProsulumMabAdmin{
 		}
 		
 		//create stylesheets
-		$style = $data['mab']['style'];
-		if( $style == 'user' ){
-			//create stylesheet with all declarations
-			$this->createStylesheet( $postId );
-		} else {
-			//create stylesheet but only CUSTOM CSS section. 
-			//This applies to Preconfigured Styles and None
-			$this->createStylesheet( $postId, 'custom' );
-		}
+		$custom = isset( $design['custom_css'] ) ? $design['custom_css'] : '';
+		
+		$this->createActionBoxStyleSheet( $postId );
+
 	}
 	
 	function processActionBoxMetaForOtherContentTypes( $post_id, $post ){
@@ -605,9 +744,9 @@ class ProsulumMabAdmin{
 	function setActionBoxType( $postId, $type ){
 		global $MabBase;
 		$actionBoxPost = get_post( $postId );
-		
-		if( empty( $postId) || empty( $actionBoxPost ) || !$MabBase->is_mab_post_type( $actionBoxPost->post_type ) )
+		if( empty( $postId) || empty( $actionBoxPost ) || !$MabBase->is_mab_post_type( $actionBoxPost->post_type ) ){
 			return;
+		}
 		
 		$availableActionBoxes = $this->getAvailableActionBoxTypes();
 		if( isset( $availableActionBoxes[$type] ) ){
@@ -641,21 +780,29 @@ class ProsulumMabAdmin{
 	 * OPTIN PROVIDERS
 	 * ================================================ */
 	
+	/**
+	 * Returns list of allowed optin providers in an array
+	 * @return array 
+	 */
 	function getAllowedOptinProviders(){
-	
+		/** TODO: add a registerOptinProviders() function **/
+		
 		$settings = ProsulumMabCommon::getSettings();
 		$allowed = array();
 		
 		foreach( $this->_optin_Keys as $key => $provider ){
 			//add optin providers where value is not 0 or empty or null
 			if( !empty( $settings['optin']['allowed'][$key] ) ){
-				$allowed[ $key ] = $provider;
+				$allowed[] = array('id' => $key, 'name' => $provider );
 			}
 		}
 		
-		//add "Manual" mailing list provider
-		$allowed['manual'] = $this->_optin_Keys['manual'];
+		//add "wysija" newsletter
+		$allowed[] = array('id' => 'wysija', 'name' => 'Wysija Newsletter' );
 		
+		//add "Manual" mailing list provider
+		//$allowed[] = array('id' => 'manual', 'name' => $this->_optin_Keys['manual'] );
+
 		return $allowed;
 		
 	}
@@ -1192,14 +1339,21 @@ class ProsulumMabAdmin{
 	}
 	
 	function enqueueStylesForAdminPages(){
-		global $MabBase, $pagenow;
+		global $MabBase, $pagenow, $post;
+		
+		$is_mab_post_type = true;
+		if( !is_object( $post ) ){
+			$is_mab_post_type = false;
+		} else {
+			$is_mab_post_type = $MabBase->is_mab_post_type( $post->post_type );
+		}
 		
 		//don't load if post content type doesn't require it.
 		if( $MabBase->is_allowed_content_type() ){
 
 			wp_enqueue_style( 'mab-admin-style' );
 			
-		} elseif( $MabBase->is_mab_post_type() || $pagenow == 'admin.php' ){
+		} elseif( $is_mab_post_type || $pagenow == 'admin.php' ){
 			/* create custom buttons stylesheet if its not there */
 			if( !file_exists( mab_get_custom_buttons_stylesheet_path() ) ){
 				global $MabButton;
@@ -1215,12 +1369,19 @@ class ProsulumMabAdmin{
 	}
 	
 	function enqueueScriptsForAdminPages(){
-		global $MabBase, $pagenow;
-		
+		global $MabBase, $pagenow, $post;
+
+		$is_mab_post_type = true;
+		if( !is_object( $post ) ){
+			$is_mab_post_type = false;
+		} else {
+			$is_mab_post_type = $MabBase->is_mab_post_type( $post->post_type );
+		}
+
 		//don't load if post content type doesn't require it.
 		if( $MabBase->is_allowed_content_type() ){
 			
-		} elseif( $MabBase->is_mab_post_type() || $pagenow == 'admin.php' ){
+		} elseif( $is_mab_post_type || $pagenow == 'admin.php' ){
 			wp_enqueue_script( 'farbtastic' );
 			wp_enqueue_script( 'mab-admin-script' );
 			wp_enqueue_script( 'mab-design-script' );
@@ -1230,6 +1391,11 @@ class ProsulumMabAdmin{
 	function createStyleSheet( $key, $section = 'all' ){
 		global $MabBase;
 		$MabBase->create_stylesheet( $key, $section );
+	}
+	
+	function createActionBoxStylesheet( $postId, $section = 'all' ){
+		global $MabBase;
+		$MabBase->create_actionbox_stylesheet( $postId, $section );
 	}
 	
 	function possiblyStartOutputBuffering(){

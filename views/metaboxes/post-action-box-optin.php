@@ -8,7 +8,8 @@
 	<p><?php _e( sprintf('Select an Action Box to display. You can specity the default Action Box to use in the <a href="%1s">Main Settings page</a>.', admin_url('admin.php?page=mab-main') ),'mab' ); ?></p>
 	<select id="mab-post-action-box" class="large-text" name="postmeta[post-action-box]" >
 	
-		<option value="" <?php selected( $meta['post-action-box'], '' ); ?> >Disable</option>
+		<option value="none" <?php selected( $meta['post-action-box'], 'none' ); ?> >Disable</option>
+		<option value="default" <?php selected( $meta['post-action-box'], 'default' ); ?> >Use Default</option>
 		<?php //Get action boxes available
 			global $MabBase;
 			$action_boxes_obj = get_posts( array( 'numberposts' => -1, 'orderby' => 'title date', 'post_type' => $MabBase->get_post_type() ) );
@@ -41,4 +42,5 @@
 			</label>
 		</li>
 	</ul>
+	You may also use the shortcode <span style="font-weight: bold; font-family: Consolas,Monaco,monospace;">[magicactionbox id="ACTIONBOX ID"]</span> to manually position your magic action box. You may also use the function <span style="font-weight: bold; font-family: Consolas,Monaco,monospace">mab_get_actionbox()</span> in your theme files to do the same thing.
 </div>

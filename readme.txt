@@ -1,10 +1,10 @@
-=== Magic Action Box ===
+=== Magic Action Box Pro===
 Contributors: prosulum, pogidude
 Developer: Prosulum
 Tags: opt in, call to action, aweber, email, email marketing, form, mailing list, marketing, newsletter, webform, mailchimp, constant contact
 Requires at least: 3.1
-Tested up to: 3.3.1
-Stable tag: 2.7.2
+Tested up to: 3.4.1
+Stable tag: 2.8.6
 
 Magic Action Box is an easy to use but powerful lead generation plugin.
 
@@ -16,36 +16,30 @@ Some features:
 
 * Easily add an action box before or after a blog post or page
 * Create Email Opt In Forms
-* Make your own action box styles
+* Create a Sales Box
+* Create your own action box styles
 * Or, pick a style from one of the pre-configured designs
-
-[Upgrade to Pro Version](http://www.magicactionbox.com/)
-
-Some features available in Pro version:
-
-* Access to all action box types
-* Professional Customer Support
-* More pre-configured styles
-* Conversion Tips and Advice
-* Create and upload your own buttons
-* [And more...](http://www.magicactionbox.com/features/?aff=7)
+* Create CSS3 buttons or upload your own
+* Shortcode and template tag now available
 
 == Installation ==
 
 1. Download the zip-archive and extract it into your computer.
-2. Upload the magic-action-box folder to the /wp-content/plugins/ directory in your web site.
+2. Upload the magic-action-box-lite folder to the /wp-content/plugins/ directory in your web site.
 3. Activate the plugin through the 'Plugins' menu in your WordPress administration page.
-
 
 == Frequently Asked Questions ==
 
 = My autoresponder is not on the list. Can I use it with the plugin? =
-
 Yes you can. As long as your autoresponder lets you create html forms that you can copy and paste, then you are all good. Watch this [video tutorial](http://www.magicactionbox.com/how-use-magic-action-box-with-any-email-marketing-service/) to learn more.
+
+= Shortcode and Template Tag =
+
+You may use the *[magicactionbox id="ACTION BOX ID"]* shortcode in your blog posts or the `mab_get_actionbox( ACTION_BOX_ID )` template tag in your theme template.
 
 = Can I place an action box on my website's sidebar? =
 
-Maybe on later updates. But, that is not the main reason this plugin was created. The primary purpose of magic action box is for you to follow two very effective marketing strategies. You can read all about this tip [here](http://www.magicactionbox.com/magic-action-box-training-1-the-key-to-making-more-sales-and-version-2-0-sneak-peak/).
+Maybe on later updates. But, that is not the main reason this plugin was created. The primary purpose of magic action box is for you to follow two very effective marketing strategies. You can read all about this tip [here](http://www.magicactionbox.com/magic-action-box-training-1-the-key-to-making-more-sales-and-version-2-0-sneak-peak/)
 
 = My action box doesn't seem to have any styles to it. What's wrong? =
 
@@ -69,8 +63,47 @@ Try checking the *Reorder post content filter priorities* checkbox found in WP A
 5. Action Box Settings Screen
 
 == Changelog ==
+= 2.8.6 =
+* Fixed admin notices not having a "hide notice" link.
+* Added new admin page - Support.
+* Minor fix: fixed issue where only one user created style is loaded when using multiple action boxes with different user created styles on the same page.
+
+= 2.8.5 =
+* Added integrated support for Wysija Newsletters plugin
+
+= 2.8.4 =
+* Added new setting field for salesbox action box type for specifying additional attributes for the main button
+
+= 2.8.3 =
+* Fixed bug where multiple custom stylesheets were not all loading
+
+= 2.8.2 =
+* Added feature to set a default action boxe for ALL posts/pages
+
+= 2.8.1 =
+* Disabled tracking on AddThis social sharing as it was adding ugly tracking hashtags to the share link.
+
+= 2.8 =
+* Made action box styles global
+* Added Share Box action box type
+* Renamed Design Settings menu to Styles & Buttons
+* Fixed PHP notices
+* Fixed action box styling issues on preconfigured styles
+* Added id parameter to shortcode
+* Added mab_get_actionbox() template tag function
+
 = 2.7.2 =
 * Fixed style not working for Sales Box type
+
+= 2.7.1 =
+* Fixed PHP notices
+
+= 2.7 =
+* Added new style "Purity"
+* Added new style "Purity Alternate"
+* Added new style "Lead"
+* Added new style "The Grey"
+* Added autoupdate functionality"
 
 = 2.6.2 =
 * Improved UI copy on Opt-In box settings screen.
@@ -124,10 +157,38 @@ Try checking the *Reorder post content filter priorities* checkbox found in WP A
 * Original Version.
 
 == Upgrade Notice ==
+= 2.8.5.1 =
+Minor fixes
+
+= 2.8.4 =
+Just upgrade :)
+
+= 2.8.3 =
+Fixed bug where multiple custom stylesheets were not all loading
+
+= 2.8.2 =
+Added global action boxes
+
+= 2.8.1 =
+Removed tracking from AddThis social sharing
+
+= 2.8 =
+Lots of improvements
+
 = 2.7.2 =
 Fixed style not working for Sales Box type
 
-= 2.6.1 = Fix minor issue with visited links being overriden by plugin's stylesheet
+= 2.7.1 =
+Fix PHP notices
+
+= 2.7 =
+This version now has autoupdate functionality
 
 = 2.6 =
 This version fixes the issue where stylesheet is not loading when User Settings in the style setting is selected.
+
+= 1.0 =
+Upgrade notices describe the reason a user should upgrade.  No more than 300 characters.
+
+= 0.5 =
+This version fixes a security related bug.  Upgrade immediately.
