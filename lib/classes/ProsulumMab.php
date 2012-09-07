@@ -618,7 +618,7 @@ class ProsulumMab{
 				
 				if( file_exists( $mabStylesheet ) ){
 					//actionbox specific stylesheet
-					wp_enqueue_style( 'mab-user-style', mab_get_settings_stylesheet_url($userStyleKey), array( 'mab-base-style' ), filemtime( $mabStylesheet ) );
+					wp_enqueue_style( 'mab-user-style-'.$userStyleKey, mab_get_settings_stylesheet_url($userStyleKey), array( 'mab-base-style' ), filemtime( $mabStylesheet ) );
 				}
 				break; 
 				// ===================

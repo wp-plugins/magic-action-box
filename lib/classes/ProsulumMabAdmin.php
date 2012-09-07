@@ -121,6 +121,8 @@ class ProsulumMabAdmin{
 		
 		$hooks[] = add_submenu_page( 'mab-main', $buttonTitle , $buttonTitle , 'manage_options', 'mab-button-settings', array( &$this, 'displayButtonSettingsPage' ) );
 		
+		$hooks[] = add_submenu_page( 'mab-main', __('Support', MAB_DOMAIN ), __('Support &amp; Links', MAB_DOMAIN), 'manage_options', 'mab-support', array( &$this, 'displaySupportPage' ) );
+		
 		$mab_hooks = apply_filters( 'mab_add_submenu_filter', $hooks );
 		
 		## ATTACH ASSETS
@@ -289,6 +291,13 @@ class ProsulumMabAdmin{
 		
 	}
 	
+	function displaySupportPage(){
+		$filename = $this->getSettingsViewTemplate('support');
+		
+		$out = ProsulumMabCommon::getView( $filename );
+		echo $out;
+	}
+	
 	function getSettingsViewTemplate( $template = '' ){
 		
 		$filename = '';
@@ -306,6 +315,9 @@ class ProsulumMabAdmin{
 				break;
 			case 'style-settings':
 				$filename = $setting_dir . 'style-settings.php';
+				break;
+			case 'support':
+				$filename = $setting_dir . 'support.php';
 				break;
 			default: break; //empty $filename
 		}
