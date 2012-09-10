@@ -16,34 +16,44 @@ Some features:
 
 * Easily add an action box before or after a blog post or page
 * Create Email Opt In Forms
-* Create a Sales Box
-* Create your own action box styles
+* Make your own action box styles
 * Or, pick a style from one of the pre-configured designs
-* Create CSS3 buttons or upload your own
-* Shortcode and template tag now available
+
+[Upgrade to Pro Version](http://www.magicactionbox.com/?pk_campaign=LITE&pk_kwd=pluginPage1)
+
+Some features available in Pro version:
+
+* Access to all action box types
+* Professional Customer Support
+* More pre-configured styles
+* Conversion Tips and Advice
+* Create and upload your own buttons
+* [And more...](http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=pluginPage2)
 
 == Installation ==
 
 1. Download the zip-archive and extract it into your computer.
-2. Upload the magic-action-box-lite folder to the /wp-content/plugins/ directory in your web site.
+2. Upload the magic-action-box folder to the /wp-content/plugins/ directory in your web site.
 3. Activate the plugin through the 'Plugins' menu in your WordPress administration page.
+
 
 == Frequently Asked Questions ==
 
 = My autoresponder is not on the list. Can I use it with the plugin? =
-Yes you can. As long as your autoresponder lets you create html forms that you can copy and paste, then you are all good. Watch this [video tutorial](http://www.magicactionbox.com/how-use-magic-action-box-with-any-email-marketing-service/) to learn more.
 
-= Shortcode and Template Tag =
-
-You may use the *[magicactionbox id="ACTION BOX ID"]* shortcode in your blog posts or the `mab_get_actionbox( ACTION_BOX_ID )` template tag in your theme template.
+Yes you can. As long as your autoresponder lets you create html forms that you can copy and paste, then you are all good. Watch this [video tutorial](http://www.magicactionbox.com/how-use-magic-action-box-with-any-email-marketing-service/?pk_campaign=LITE&pk_kwd=faq) to learn more.
 
 = Can I place an action box on my website's sidebar? =
 
-Maybe on later updates. But, that is not the main reason this plugin was created. The primary purpose of magic action box is for you to follow two very effective marketing strategies. You can read all about this tip [here](http://www.magicactionbox.com/magic-action-box-training-1-the-key-to-making-more-sales-and-version-2-0-sneak-peak/)
+Maybe on later updates. But, that is not the main reason this plugin was created. The primary purpose of magic action box is for you to follow two very effective marketing strategies. You can read all about this tip [here](http://www.magicactionbox.com/magic-action-box-training-1-the-key-to-making-more-sales-and-version-2-0-sneak-peak/?pk_campaign=LITE&pk_kwd=faq).
 
 = My action box doesn't seem to have any styles to it. What's wrong? =
 
 Make sure that your uploads directory wp-content/uploads/ is writeable (it usually is).
+
+= My action box styles are gone. What did your update do? =
+
+If you just upgrade from any version below 2.8, then this is expected due to the big improvements in the code. We're sorry for the scare but don't worry, just follow the steps [in this guide](http://www.magicactionbox.com/fixing-action-box-styles-v2-8-upgrade/?pk_campaign=LITE&pk_kwd=faq) and you should get back your converting users in no time.
 
 = I just recently updated the plugin and the action box looks weird. =
 
