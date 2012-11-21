@@ -57,15 +57,27 @@ $actionBoxesSelect = $data['actionboxList'];
 					<tr>
 						<th scope="row"><?php _e('Reorder post content filter priorities','mab' ); ?></th>
 						<td>
-							<ul>
-								<li>
-									<label for="mab-reorder-thecontent-filters">
-										<input type="checkbox" id="mab-reorder-thecontent-filters" value="1" name="mab[others][reorder-content-filters]" <?php checked( 1, $others['reorder-content-filters'] ); ?> />
-										Force action box to display first
-									</label>
-								</li>
-							</ul>
-							<small><?php _e('Check this box if other plugins (i.e. social sharing) are showing up above the action box and you want to show the action box first. BUT, please note that doing so may conflict with other plugins. When that happens, you may deactivate this option.', 'mab' ); ?></small>
+							<p>
+							<label for="mab-reorder-thecontent-filters">
+								<input type="checkbox" id="mab-reorder-thecontent-filters" value="1" name="mab[others][reorder-content-filters]" <?php checked( 1, $others['reorder-content-filters'] ); ?> />
+								Force action box to display first
+							</label>
+							</p>
+							<span class="description"><?php _e('Check this box if other plugins (i.e. social sharing) are showing up above the action box and you want to show the action box first. BUT, please note that doing so may conflict with other plugins. When that happens, you may deactivate this option.', 'mab' ); ?></span>
+							<?php //var_dump( $others['reorder-content-filters'] ); ?>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><?php _e('Minify HTML Output', MAB_DOMAIN ); ?></th>
+						<td>
+							<?php $minify = empty( $others['minify-output'] ) ? 0 : 1; ?>
+							<p>
+							<label for="mab-minify-output">
+								<input type="checkbox" id="mab-minify-output" value="1" name="mab[others][minify-output]" <?php checked( 1, $minify ); ?> />
+								Check to minify HTML output of all action boxes
+							</label>
+							</p>
+							<span class="description"><?php _e('<strong>Why would I want to minify the HTML output?</strong><br />Main reason would be if the action box has funky spaces and line breaks all over it. In technical terms, extra tags i.e. &lt;p&gt; and &lt;br /&gt; are being automatically added by your theme or other plugins. Oh yeah, minifying the HTML output reduces the file size of the page too, which is also a good thing.', MAB_DOMAIN); ?></span>
 							<?php //var_dump( $others['reorder-content-filters'] ); ?>
 						</td>
 					</tr>

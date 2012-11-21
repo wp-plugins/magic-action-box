@@ -18,6 +18,12 @@ class ProsulumMabMetaBoxes{
 		remove_meta_box( 'commentstatusdiv' , $MabBase->get_post_type() , 'normal' ); //removes comments status
 		remove_meta_box( 'commentsdiv' , $MabBase->get_post_type() , 'normal' ); //removes comments
 		
+		//remove Publish metabox as we will be replacing this with out own
+		remove_meta_box('submitdiv', null, 'side');
+		add_meta_box('mab-publish', __('Save Action Box', MAB_DOMAIN), array($this,'saveBox'), $MabBase->get_post_type(), 'side', 'high' );
+		
+		add_meta_box('mab-duplicate', __('Duplicate Action Box', MAB_DOMAIN), array( $this, 'duplicateBox' ), $MabBase->get_post_type(), 'side', 'high' );
+		
 		//general design settings
 		//add_meta_box( 'mab-general-design-settings', __('Design Setting: General', 'mab' ), array( &$this, 'generalDesignSettings' ), $post_type, 'advanced', 'high' );
 		
@@ -35,7 +41,7 @@ class ProsulumMabMetaBoxes{
 		add_meta_box( 'mab-custom-css-settings', __('Design Settings: Custom CSS', 'mab' ), array( &$this, 'customCssBox' ), $post_type, 'advanced', 'high' );
 		
 		//this is to allow developers to add their own metaboxes
-		do_action( 'mab_loadActionBoxMetabox', $type );
+		do_action( 'mab_add_meta_boxes', $type );
 
 	}
 	
@@ -62,6 +68,22 @@ class ProsulumMabMetaBoxes{
 	/**
 	 * The Meta Boxes
 	 * ========================== */
+	
+	/* Save Action Box */
+	function saveBox( $post ){
+		$filename = 'metaboxes/save-box.php';
+		$data = $post;
+		$box = ProsulumMabCommon::getView( $filename, $data );
+		echo $box;
+	}
+	
+	/* Duplicate Action Box */
+	function duplicateBox( $post ){
+		$data = array('post_id' => $post->ID );
+		$filename = 'metaboxes/duplicate.php';
+		$box = MAB_Utils::getView( $filename, $data );
+		echo $box;
+	}
 	 
 	/** GLOBAL DESIGN - applies to all action boxes? **/
 	
@@ -174,7 +196,7 @@ class ProsulumMabMetaBoxes{
 		
 		$data['meta'] = $MabBase->get_mab_meta( $post->ID, 'post' );
 		$data['assets-url'] = MAB_ASSETS_URL;
-		$filename = 'metaboxes/post-action-box-optin.php';
+		$filename = 'metaboxes/post-select-actionbox.php';
 		$box = ProsulumMabCommon::getView( $filename, $data );
 		echo $box;
 	}

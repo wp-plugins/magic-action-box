@@ -108,6 +108,43 @@ input[disabled],select[disabled]{ color: #aaa; }
 /**
  * MetaBox
  */
+.mab-publish-action{
+	overflow: hidden;
+}
+
+.mab-delete-action{ 
+	float: left; line-height: 25px; text-align: left; vertical-align: middle;
+}
+
+.mab-delete-action a{ 
+	border-bottom: 1px solid #ff0000; color: #ff0000; padding: 1px 2px; text-decoration: none;
+}
+
+.mab-delete-action a:hover{
+	background: #ff0000; color: #fff;
+}
+
+.mab-submit-action{
+	float: right;
+}
+
+.mab-submit-action .button-primary{
+	min-width: 80px;
+}
+
+.mab-duplicate-wrap{
+	overflow: hidden;
+	padding: 7px 0;
+}
+
+.mab-duplicate-wrap p{
+	margin-top: 0;
+}
+
+.mab-duplicate-wrap a.button-primary{
+	float: left;
+}
+		
 .mab-option-box{
 	border: 1px solid #dfdfdf;
 	margin-bottom: 7px;

@@ -12,30 +12,44 @@ $formIdReal = 'mab-wysija-' . $data['mab-html-id'];
 <form id="<?php echo $formIdReal; ?>" method="post" action="#wysija" class="widget_wysija form-valid-sub">
 	
 	<?php /** Create the input fields **/ ?>
-	<?php $fields = isset( $wysija['fields'] ) && is_array( $wysija['fields'] ) ? $wysija['fields'] : array(); ?>
+	<?php $fields = isset( $wysija['fields'] ) && is_array( $wysija['fields'] ) ? $wysija['fields'] : array(); 
+	
+	//placeholder text
+	if( in_array( 'firstname', $fields ) && in_array('lastname', $fields ) ){
+		//first and last name fields are enabled
+		$holderFName = 'Enter your first name';
+		$holderLName = 'Enter your last name';
+	} else {
+		//one of the fields are enabled
+		$holderFName = 'Enter your name';
+		$holderLName = 'Enter your last name';
+	}
+	?>
 	
 	<?php if( in_array( 'firstname', $fields ) ): ?>
-	<p class="mab-field wysija-p-firstname">
+	<div class="mab-field wysija-p-firstname mab-field-firstname">
 		<label for="<?php echo $formIdReal; ?>-firstname">First Name</label>
-		<input id="<?php echo $formIdReal; ?>-firstname" class="wysija-firstname validate[required]" type="text" name="wysija[user][firstname]" />
-	</p>
+		<input id="<?php echo $formIdReal; ?>-firstname" class="wysija-firstname validate[required]" type="text" name="wysija[user][firstname]" placeholder="<?php echo $holderFName; ?>" />
+	</div>
 	<?php endif; ?>
 	
 	<?php if( in_array( 'lastname', $fields ) ): ?>
-	<p class="mab-field wysija-p-lastname">
+	<div class="mab-field wysija-p-lastname mab-field-lastname">
 		<label for="<?php echo $formIdReal; ?>-lastname">Last Name</label>
-		<input id="<?php echo $formIdReal; ?>-lastname" class="wysija-lastname validate[required]" type="text" name="wysija[user][lastname]" />
-	</p>
+		<input id="<?php echo $formIdReal; ?>-lastname" class="wysija-lastname validate[required]" type="text" name="wysija[user][lastname]" placeholder="<?php echo $holderLName; ?>" />
+	</div>
 	<?php endif; ?>
 	
-	<p class="mab-field wysija-p-email">
+	<div class="mab-field wysija-p-email mab-field-email">
 		<label for="<?php echo $formIdReal; ?>-wysija-to">Email</label>
-		<input id="<?php echo $formIdReal; ?>-wysija-to" class="wysija-email validate[required,custom[email]]" type="text" name="wysija[user][email]" />
+		<input id="<?php echo $formIdReal; ?>-wysija-to" class="wysija-email validate[required,custom[email]]" type="text" name="wysija[user][email]" placeholder="Enter your email" />
 		<?php /** TODO: ask ben@wysija.com what validate[required,custom[email]] class is supposed to do **/ ?>
-	</p>
+	</div>
 	
 	<?php $submit = isset( $wysija['button-label'] ) ? $wysija['button-label'] : ''; ?>
-	<input type="submit" class="wysija-submit wysija-submit-field" name="submit" value="<?php echo esc_attr( $submit ); ?>" />
+	<div class="mab-field wysija-p-email mab-field-submit">
+		<input type="submit" class="wysija-submit wysija-submit-field" name="submit" value="<?php echo esc_attr( $submit ); ?>" />
+	</div>
 	
 	<?php /** Email Lists field **/
 	$listExplode = isset( $wysija['lists'] ) && is_array( $wysija['lists'] ) ? esc_attr( implode(', ', $wysija['lists'] ) ) : '';

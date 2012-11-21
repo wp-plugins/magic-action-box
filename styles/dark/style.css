@@ -54,30 +54,30 @@
 
 .mabstyle-dark.magic-action-box .mab-heading{
 	clear: none;
-	color: #FFFFFF !important;
-	font-size: 160% !important;
-	font-weight: bold !important;
+	color: #FFFFFF;
+	font-size: 160%;
+	font-weight: bold;
 	letter-spacing: 0;
-	line-height: 1.4 !important;
-	margin: 0 0 7px !important;
+	line-height: 1.4;
+	margin: 0 0 7px;
 	text-transform: none;
 }
 
 .mabstyle-dark.magic-action-box .mab-subheading{
 	clear: none;
-	color: #FFFFFF !important;
-	font-size: 120% !important;
-	font-weight: bold !important;
-	line-height: 1.4 !important;
-	margin: 0 0 10px !important;
+	color: #FFFFFF;
+	font-size: 120%;
+	font-weight: bold;
+	line-height: 1.4;
+	margin: 0 0 10px;
 }
 
 .mabstyle-dark.magic-action-box .mab-main-copy{
-	color: #fff  !important;
+	color: #fff;
 }
 
 .mabstyle-dark.magic-action-box .mab-secondary-copy{
-	color: #ccc !important;
+	color: #ccc;
 }
 
 /* Form */
@@ -87,9 +87,6 @@
 }
 
 .mabstyle-dark.magic-action-box form .mab-field{
-	float: left;
-	margin: 0 10px 10px 0;
-	width: 46%;
 }
 
 .mabstyle-dark.magic-action-box form .mab-field label{
@@ -97,16 +94,13 @@
 	font-size: 90%;
 }
 
-.mabstyle-dark.magic-action-box form .mab-field input, .mabstyle-dark.magic-action-box form .mab-field textarea{
+.mabstyle-dark.magic-action-box form .mab-field input[type="text"], .mabstyle-dark.magic-action-box form .mab-field input[type="email"], .mabstyle-dark.magic-action-box form .mab-field input[type="password"], .mabstyle-dark.magic-action-box form .mab-field textarea{
 	background: #fff !important;
 	border: 1px solid #000 !important;
 	border-radius: 2px;
 	box-shadow: none;
 	color: #555 !important;
-	float: left;
 	margin: 0;
-	padding: 3px !important;
-	width: 95% !important;
 }
 
 .mabstyle-dark.magic-action-box form .mab-field input:focus, .mabstyle-dark.magic-action-box form .mab-field textarea:focus{
@@ -121,7 +115,6 @@
 	clear: both;
 	color: #fff;
 	font-weight: bold;
-	padding: 3px 13px;
 	text-shadow: -1px -1px 0 #2C0606;
 	text-transform: uppercase;
 }
@@ -132,11 +125,3 @@
 	text-shadow: -1px -1px 0 #471200;
 	
 }
-
-.mab-wysija-msg{ margin: 6px 0; }
-.mab-wysija-msg .allmsgs blink{ padding-left: 24px; background: transparent url('images/loading.gif') no-repeat left center; display: block;}
-.mab-wysija-msg .allmsgs{ padding: 10px; }
-.mab-wysija-msg .allmsgs ul{ margin: 0 0 0 16px !important;}
-.mab-wysija-msg .allmsgs .updated{ margin: 10px 0; padding: 8px 8px 8px 32px; background: #BCE7FD url('images/small-notification.jpg') no-repeat 2% 50%; color: #000; text-shadow: none; border: 1px solid #5AC4F4; display: block; }
-.mab-wysija-msg .allmsgs .xdetailed-errors,
-.mab-wysija-msg .allmsgs .error{ margin: 10px 0; padding: 8px 8px 8px 32px; background: #FFD9C8 url('images/small-error.jpg') no-repeat 2% 50%; color: #000; text-shadow: none; border: 1px solid #F0BAA2; display: block; }

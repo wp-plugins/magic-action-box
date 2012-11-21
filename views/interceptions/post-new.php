@@ -49,22 +49,21 @@ global $MabAdmin;
 			<p>Get additional action box types by getting <a href="http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=addScreen" target="_blank">Magic Action Box Pro</a>.</p>
 			<h4>Some of the features available in the full version:</h4>
 			<ul>
+				<li>Sidebar Widgets (NEW)</li>
 				<li>Use Sales Box action box type</li>
-				<li>Use Share Box action box type (NEW)</li>
+				<li>Use Share Box action box type</li>
 				<li>Future action box types not available in the lite version.</li>
-				<li>Use shortcodes and template tags - makes putting action box in sidebar possible.</li>
+				<li>Use shortcodes and template tags</li>
 				<li>Professional Customer Support</li>
 				<li>More pre-configured styles</li>
 				<li>Conversion Tips and Advice</li>
-				<li>Create and upload your own buttons</li>
+				<li>Create and upload your own buttons (for Sales Boxes)</li>
 				<li><a href="http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=addScreen" target="_blank">And more...</a></li>
 			</ul>
 		</div>
 	</ul>
 	
-	<div class="mab-ad updated">
-
-		<h4>Coming Soon! Contact Form action box type.</h4>
-
-	</div>
+	<!--div class="mab-ad updated">
+		<p><strong>Coming Soon! Contact Form action box type.</strong></p>
+	</div-->
 </div>

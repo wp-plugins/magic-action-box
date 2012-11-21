@@ -29,6 +29,8 @@ class ProsulumMabAdmin{
 	}
 	
 	function add_actions(){
+		add_action('admin_head', array(&$this, 'processDuplicateDisplay'), 100);
+		
 		add_action( 'admin_menu', array( &$this, 'addAdminInterface' ) );
 		add_action( 'admin_menu', array(&$this, 'rearrangeAdminInterfaceItems'), 1010);
 		add_action( 'admin_init', array(&$this, 'processSubmissions' ) );
@@ -37,9 +39,6 @@ class ProsulumMabAdmin{
 		
 		add_action( 'wp_ajax_mab_optin_get_lists', array( &$this, 'ajaxOptinGetLists' ) );
 		add_action( 'wp_ajax_mab_optin_process_manual_code', array( &$this, 'ajaxProcessOptinCode' ) );
-		
-		add_action( 'admin_init', array( &$this, 'registerStyles' ) );
-		add_action( 'admin_init', array( &$this, 'registerScripts' ) );
 		
 		//add Magic Action Box metabox to post content types
 		add_action( 'add_meta_boxes', array( &$this, 'addMetaBoxToOtherContentTypes') );
@@ -70,9 +69,10 @@ class ProsulumMabAdmin{
 	}
 	
 	function initializeActionBoxes(){
-		$actionBoxes = ProsulumMabCommon::getActionBox();
+		//don't pass anything to get all types
+		$actionBoxTypes = ProsulumMabCommon::getActionBoxTypes();
 		
-		foreach( $actionBoxes as $key => $box ){
+		foreach( $actionBoxTypes as $key => $box ){
 			$this->addActionBoxType( $box['type'], $box['name'], $box['description'] );
 		}
 
@@ -295,6 +295,7 @@ class ProsulumMabAdmin{
 		$filename = $this->getSettingsViewTemplate('support');
 		
 		$out = ProsulumMabCommon::getView( $filename );
+
 		echo $out;
 	}
 	
@@ -458,6 +459,18 @@ class ProsulumMabAdmin{
 		if( isset( $_GET['action_box_set'] ) && $_GET['action_box_set'] == 1 && wp_verify_nonce( $_GET['_wpnonce'], 'action_box_set' ) ){
 			$this->setActionBoxType( $_GET['post'], $_GET['action_box_type'] );
 			wp_redirect( get_edit_post_link( $_GET['post'], 'raw') );
+			exit();
+		}
+		
+		//process duplicating an action box
+		if( isset( $_GET['mab-action'] ) && $_GET['mab-action'] == 'duplicate' && !empty( $_GET['post'] ) && check_admin_referer( 'mab-duplicate_action_box_nonce' ) ){
+			$result = $this->duplicateActionBox( $_GET['post'] );
+			$dup_additional = '';
+			if( $result ){
+				$dup_additional = '&mab-duplicate-id='.$result;
+				//add_action('admin_notices', array( $this, 'notifyOfDuplicate' ) );
+			}
+			wp_redirect( admin_url( 'post.php?post=' . $_GET['post'] . '&action=edit') );
 			exit();
 		}
 		
@@ -678,7 +691,7 @@ class ProsulumMabAdmin{
 					//append additional list data to mailchimp info 
 					//NOTE 12/09/11: this section no longer needed?
 					$listData = $this->getMailChimpListSingle( $mab['optin']['mailchimp']['list'] );
-					$mab['optin']['mailchimp']['form-action-url'] = $listData['subscribe_url_long'];
+					$mab['optin']['mailchimp']['form-action-url'] = str_replace('subscribe', 'subscribe/post', $listData['subscribe_url_long']);
 					
 				} elseif( $emailProvider == 'aweber' ){
 				
@@ -731,6 +744,53 @@ class ProsulumMabAdmin{
 			$postmeta = $data['postmeta'];
 			
 			$MabBase->update_mab_meta( $post_id, $postmeta, 'post' );
+		}
+	}
+	
+	function duplicateActionBox( $source_id ){
+		global $MabBase;
+		
+		$source = get_post( $source_id );
+		if( is_null( $source ) || empty( $source ) || !is_object( $source ) ){
+			return false;
+		}
+		
+		//make sure that this is an action box post type and that actionbox type has been set
+		$source_type = $this->getActionBoxType( $source->ID );
+		if( $source->post_type != $MabBase->get_post_type() || empty( $source_type ) )
+			return false;
+		
+		//duplicate!
+		$duplicate = $source;
+		$duplicate->ID = '';
+		$duplicate->post_title .= __(' Copy', MAB_DOMAIN);
+		$duplicate_id = wp_insert_post( $duplicate );
+		
+		update_post_meta( $duplicate_id, $MabBase->get_meta_key( 'type' ), $MabBase->get_mab_meta( $source_id, 'type' ) );
+		update_post_meta( $duplicate_id, $MabBase->get_meta_key( '' ), $MabBase->get_mab_meta( $source_id ) );
+		
+		//TODO: add code for notices?
+		update_post_meta( $source_id, $MabBase->get_meta_key('duplicate'), $duplicate_id );
+		
+		return $duplicate_id;
+	}
+	
+	function notifyOfDuplicate(){
+		global $post, $MabBase;
+		$duplicate_id = $MabBase->get_mab_meta( $post->ID, 'duplicate' );
+		$filename = 'misc/duplicate-notice.php';
+		$message = MAB_Utils::getView( $filename, array('duplicate-id' => $duplicate_id ) );
+		echo $message;
+		delete_post_meta( $post->ID, $MabBase->get_meta_key('duplicate') );
+	}
+	
+	function processDuplicateDisplay(){
+		global $pagenow, $post, $MabBase;
+		if($pagenow == 'post.php' && $post->post_type == $MabBase->get_post_type()) {
+			$duplicated = get_post_meta($post->ID, $MabBase->get_meta_key('duplicate'), true);
+			if($duplicated) {
+				add_action('admin_notices', array(&$this, 'notifyOfDuplicate'));
+			}
 		}
 	}
 	
@@ -865,7 +925,8 @@ class ProsulumMabAdmin{
 		} catch (AWeberException $e) {
 			$account = null;
 		}
-
+		
+		$lists = array();
 		$list_web_forms = array();
 		if($account) {
 			foreach ($account->getWebForms() as $this_webform) {
@@ -892,7 +953,6 @@ class ProsulumMabAdmin{
 			}
 
 			$lists = $account->lists;
-
 			foreach ($lists as $this_list) {
 				if (array_key_exists($this_list->id, $list_web_forms)) {
 					$list_web_forms[$this_list->id]['list'] = $this_list;
@@ -901,6 +961,8 @@ class ProsulumMabAdmin{
 		}
 
 		$return = array();
+		
+		/* still need to figure out why we need the block of code below.
 		foreach($list_web_forms as $id => $data) {
 			//$item = array('id' => $id, 'name' => $data['list']->name, 'forms' => array()); //original from premise
 			$item = array('id' => $data['list']->name, 'name' => $data['list']->name, 'forms' => array());
@@ -911,6 +973,11 @@ class ProsulumMabAdmin{
 				$item['forms'][] = array('id' => $split_test->id, 'url' => $split_test->url, 'name' => sprintf(__('Split Test: %s', 'mab' ), $web_form->name));
 			}
 			$return[] = $item;
+		}
+		//*/
+		
+		foreach( $lists as $this_list ){
+			$return[] = array( 'id' => $this_list->name, 'name' => $this_list->name );
 		}
 		
 		set_transient( $this->_optin_AweberListsTransient, $return, 24*60*60 ); //set for one day.
@@ -1124,7 +1191,8 @@ class ProsulumMabAdmin{
 	//Process Opt In Code
 	function ajaxProcessOptinCode(){
 		$regex_form = '/(<form\b[^>]*>)(.*?)(<\/form>)/ims';
-		$regex_input = '/(.*?)(<input\b[^>]*>)/ims';
+		//allowed fields <input>, <select>, <button>
+		$regex_input = '/(.*?)(<input\b[^>]*>|<select(?!<\/select>).*?<\/select>|<button(?!<\/button>).*?<\/button>)/ims';
 		
 		$formComponents = array();
 		$data = stripslashes_deep( $_POST );
@@ -1136,28 +1204,41 @@ class ProsulumMabAdmin{
 		preg_match($regex_form, $optinCode, $formComponents);
 		
 		//opening <form>
-		$newForm = $this->optinProcessTagAttributes( $formComponents[1] ) . "\n";
+		$formArr = $this->optinProcessTagAttributes( $formComponents[1] );
+		
+		$newForm = $formArr['tag']."\n";
 		//$newForm = $formComponents[1] . "\n";
 		
 		//body of the form. process inputs and labels
 		preg_match_all ($regex_input, $formComponents[2], $inputs);
+		//error_log(print_r($inputs[2],true) );
 		//process for each <input>
 		foreach( $inputs[2] as $key => $input ){
 			//clean out attributes of <input> tag
 			$inputTag = $this->optinProcessTagAttributes( $input );
+			
+			$theTag = $inputTag['tag'];
+			$tagType = $inputTag['type'];
+			$inputType = $inputTag['input-type'];
+			
 			//get the ID of <input> tag
-			$inputTagId = $this->optinGetTagId( $inputTag );
+			$inputTagId = $this->optinGetTagId( $theTag );
 			$label = $this->optinPrepareLabel( $inputs[1][$key], $inputTagId );
 			
-			if( $this->optinIsNotFieldTag( $inputTag ) ){
-				//must be submit or hidden field
-				$newForm .= "{$label} {$inputTag}\n";
+			if( $this->optinIsNotFieldTag( $theTag ) && ($inputType == 'submit' || $inputType == 'image' || $inputType == 'button' ) ){
+				//must be submit
+				$newForm .= '<div class="mab-field">'."\n";
+				$newForm .= trim("{$theTag}")."\n";
+				$newForm .= '</div>'."\n";
+			} elseif( $this->optinIsNotFieldTag( $theTag ) ){
+				//must some other tag i.e. hidden fields
+				$newForm .= trim("{$label} {$theTag}")."\n";
 			} else {
 				//field wrapper
-				$newForm .= '<p class="mab-field">'."\n";
+				$newForm .= '<div class="mab-field">'."\n";
 				//label and input
-				$newForm .= "{$label} {$inputTag}\n";
-				$newForm .= '</p>'."\n";
+				$newForm .= trim("{$label} {$theTag}")."\n";
+				$newForm .= '</div>'."\n";
 			}
 		}
 		
@@ -1173,27 +1254,54 @@ class ProsulumMabAdmin{
 		exit();
 	}
 	
+	/**
+	 * @return array
+	 *         arrayf type  - the type of tag. input|button|select
+	 *         arrayf tag   - the whole tag
+	 */
 	function optinProcessTagAttributes( $tag ){
-		$regex_tagtype = '/<([a-zA-Z]*?)\s/i';
-		$regex_attribute = '/([^\s]*?)=(")?(?(2)(.*?)"|(.*?)[\s|>])/ims';
-		$regex_src_alt = '/(alt=".*?")|src=".*?"/i';
 		
 		$submitClass = 'mab-optin-submit';
-		$unwanted_attributes = array('style','class','onsubmit','target');
+		$unwanted_attributes = array('style','class','onsubmit','target','tabindex','onclick');
 		$unpairedTags = array('input');
 		$input_type = '';
 		$input_value = '';
 		$temp_attribute_value = '';
+		$is_self_closing = true; //true for <input> tags
 		
-		preg_match($regex_tagtype, $tag, $htmltagtype);
-		preg_match_all($regex_attribute, $tag, $attributes);
+		//grab the field type
+		$regex_tagtype = '/<([a-zA-Z]*?)[\s>]/i';
+		preg_match($regex_tagtype, $tag, $htmltagtype); 
+		$tag_type = $htmltagtype[1];
+
+		if( $tag_type == 'button' ){
+			//convert $tag_type to input
+			$tag_type = 'input';
+			
+			//discard button and use <input type="submit" /> instead
+			$tag_opening = '<input type="submit" value="Submit" />';
+			$tag_body = '';
+		} else {
+		
+			//grab the opening tag with attributes and the body of the tag plus closing tag
+			$regex_tag = '/(<'.$tag_type.'\b[^>]*>)(.*)/ims';
+			preg_match( $regex_tag, $tag, $the_tag );
+			$tag_opening = $the_tag[1];
+			$tag_body = trim($the_tag[2]);
+		}
+		
+		//grab the attributes
+		$regex_attribute = '/([^\s]*?)=(["\'])?(?(2)(.*?)["\']|(.*?)[\s|>])/ims';
+		preg_match_all($regex_attribute, $tag_opening, $attributes);
+		
+		//begin the tag
+		$newtag = '<'.$tag_type;
 		
 		//take out unwanted attributes
-		$newtag = '<'.$htmltagtype[1];
 		foreach( $attributes[1] as $key => $attribute ){
 			if( !in_array( $attribute, $unwanted_attributes ) ){
 			
-				$attribute_value = ( $attributes[2][$key] == '"' ) ? $attributes[3][$key] : $attributes[4][$key];
+				$attribute_value = ( $attributes[2][$key] == '"' || $attributes[2][$key] == "'" ) ? $attributes[3][$key] : $attributes[4][$key];
 				
 				//convert input type="image" and type="button" to type="submit"
 				if( $attribute=='type' && ( $attribute_value == 'image' || $attribute_value == 'button' ) ){
@@ -1261,18 +1369,30 @@ class ProsulumMabAdmin{
 			$newtag .= ' value="' . $temp_attribute_value . '"';
 		}
 		
-		if( in_array( strtolower( $htmltagtype[1] ), $unpairedTags ) ){
+		if( in_array( strtolower( $tag_type ), $unpairedTags ) ){
+			$is_self_closing = true;
 			$close = ' />';
 		} else {
-			$close = ' >';
+			$is_self_closing = false;
+			//close the opening tag
+			$close = '>';
+			//add the rest of the tag
+			$close .= $tag_body;
 		}
 		
 		$newtag .= $close;
 		
 		//take out src and alt tags
+		$regex_src_alt = '/(alt=".*?")|src=".*?"/i';
 		$newtag = preg_replace( $regex_src_alt, '', $newtag );
-					
-		return $newtag;
+		
+		$out = array(
+			'tag' => $newtag,
+			'type' => $tag_type,
+			'input-type' => $input_type
+		);
+		//if( $tag_type == 'form' ) error_log( print_r( $out, true ) );
+		return $out;
 	}
 	
 	function optinSubmitButtonValue( $tag, $submitValue ){
@@ -1326,18 +1446,7 @@ class ProsulumMabAdmin{
 	
 	/**
 	 * CSS, JAVASCRIPT, THICKBOX
-	 * ================================ */
-	function registerStyles(){
-		$css_dir = MAB_ASSETS_URL . 'css/';
-		wp_register_style( 'mab-admin-style', $css_dir . 'magic-action-box-admin.css', array(), MAB_VERSION );
-	}
-	
-	function registerScripts(){
-		$js_dir = MAB_ASSETS_URL . 'js/';
-		wp_register_script( 'mab-admin-script', $js_dir . 'magic-action-box-admin.js', array('jquery'), MAB_VERSION );
-		wp_register_script( 'mab-design-script', $js_dir . 'magic-action-box-design.js', array('farbtastic', 'thickbox' ), MAB_VERSION );
-	}
-	
+	 * ================================ */	
 	function enqueueStylesForAdminPages(){
 		global $MabBase, $pagenow, $post;
 		
@@ -1382,6 +1491,9 @@ class ProsulumMabAdmin{
 		if( $MabBase->is_allowed_content_type() ){
 			
 		} elseif( $is_mab_post_type || $pagenow == 'admin.php' ){
+			add_thickbox();
+			wp_enqueue_script('media-upload');
+			
 			wp_enqueue_script( 'farbtastic' );
 			wp_enqueue_script( 'mab-admin-script' );
 			wp_enqueue_script( 'mab-design-script' );
@@ -1400,15 +1512,15 @@ class ProsulumMabAdmin{
 	
 	function possiblyStartOutputBuffering(){
 		global $pagenow, $MabBase;
-		if($pagenow == 'post-new.php' && $_GET['post_type'] == $MabBase->get_post_type() ) {
+		if($pagenow == 'post-new.php' && isset( $_GET['post_type'] )  && $_GET['post_type'] == $MabBase->get_post_type() ) {
 			ob_start();
 		}
 	}
 	
 	function possiblyEndOutputBuffering(){
 		global $pagenow, $MabBase;
-		$data = array();
-		if($pagenow == 'post-new.php' && $_GET['post_type'] == $MabBase->get_post_type()) {
+		
+		if($pagenow == 'post-new.php' && isset( $_GET['post_type'] ) && $_GET['post_type'] == $MabBase->get_post_type()) {
 			$result = ob_get_clean();
 			$filename = 'interceptions/post-new.php';	
 			//$data = $result;

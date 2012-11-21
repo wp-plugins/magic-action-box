@@ -45,27 +45,27 @@
 
 /* Content */
 .mabstyle-pink .mab-content{
-	font-size: 13px !important;
+	font-size: 13px ;
 	position: relative;
 	z-index: 10;
 }
 
 .mabstyle-pink.magic-action-box .mab-heading{
 	clear: none;
-	font-size: 170% !important;
-	font-weight: bold !important;
-	letter-spacing: 0 !important;
-	line-height: 1.4 !important;
-	margin: 0 0 7px !important;
-	text-transform: none !important;
+	font-size: 170% ;
+	font-weight: bold ;
+	letter-spacing: 0 ;
+	line-height: 1.4 ;
+	margin: 0 0 7px ;
+	text-transform: none ;
 }
 
 .mabstyle-pink.magic-action-box .mab-subheading{
 	clear: none;
-	font-size: 120% !important;
-	font-weight: bold !important;
-	line-height: 1.4 !important;
-	margin: 0 0 10px !important;
+	font-size: 120% ;
+	font-weight: bold ;
+	line-height: 1.4 ;
+	margin: 0 0 10px ;
 }
 
 .mabstyle-pink.magic-action-box .mab-main-copy{
@@ -82,17 +82,15 @@
 }
 
 .mabstyle-pink.magic-action-box form .mab-field{
-	display: inline-block;
-	margin: 0 10px 10px 0 !important;
-	width: 46%;
 }
 
 .mabstyle-pink.magic-action-box form .mab-field label{
 	display: block;
 	font-size: 90% !important;
+	margin-bottom: 1px;
 }
 
-.mabstyle-pink.magic-action-box form .mab-field input, .mabstyle-pink.magic-action-box form .mab-field textarea{
+.mabstyle-pink.magic-action-box form .mab-field input[type="text"], .mabstyle-pink.magic-action-box form .mab-field input[type="email"], .mabstyle-pink.magic-action-box form .mab-field input[type="password"] .mabstyle-pink.magic-action-box form .mab-field textarea{
 	border: 2px solid #CC0F49 !important;
 	-moz-border-radius: 15px;
 	-webkit-border-radius: 15px;
@@ -101,8 +99,6 @@
 	color: #AA0538 !important;
 	font-size: 100%;
 	margin: 0 !important;
-	padding: 3px 10px !important;
-	width: 90% !important;
 }
 
 .mabstyle-pink.magic-action-box form .mab-field input:focus, .mabstyle-pink.magic-action-box form .mab-field textarea:focus{
@@ -118,7 +114,6 @@
 	border-radius: 15px;
 	color: #B20D40;
 	font-size: 100%;
-	padding: 3px 13px;
 	text-transform: none
 }
 
@@ -126,10 +121,7 @@
 	background: #FFE37D;
 }
 
-.mab-wysija-msg{ margin: 6px 0; }
-.mab-wysija-msg .allmsgs blink{ padding-left: 24px; background: transparent url('images/loading.gif') no-repeat left center; display: block;}
-.mab-wysija-msg .allmsgs{ padding: 10px; }
-.mab-wysija-msg .allmsgs ul{ margin: 0 0 0 16px !important;}
-.mab-wysija-msg .allmsgs .updated{ margin: 10px 0; padding: 8px 8px 8px 30px; background: #BCE7FD url('images/small-notification.jpg') no-repeat 2% 50%; color: #000; text-shadow: none; border: 1px solid #5AC4F4; display: block; }
-.mab-wysija-msg .allmsgs .xdetailed-errors,
-.mab-wysija-msg .allmsgs .error{ margin: 10px 0; padding: 8px 8px 8px 30px; background: #FFD9C8 url('images/small-error.jpg') no-repeat 2% 50%; color: #000; text-shadow: none; border: 1px solid #F0BAA2; display: block; }
+/* Widgets */
+.mab-widget .mab-inside-wrap .mabstyle-pink.magic-action-box .mab-main-action-wrap form{ overflow: visible; }
+
+.mab-widget .mab-inside-wrap .mabstyle-pink.magic-action-box form .mab-field input[type="text"], .mab-widget .mab-inside-wrap .mabstyle-pink.magic-action-box form .mab-field input[type="email"], .mab-widget .mab-inside-wrap .mabstyle-pink.magic-action-box form .mab-field input[type="password"], .mab-widget .mab-inside-wrap .mabstyle-pink.magic-action-box form .mab-field textarea{}

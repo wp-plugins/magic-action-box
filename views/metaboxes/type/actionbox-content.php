@@ -18,11 +18,23 @@
 <div class="mab-option-box">
 	<h4><label for="mab-main-copy"><?php _e('Main Copy','mab' ); ?></label></h4>
 	<p><?php _e('Copy that is displayed before the main action item (i.e. button, opt-in form).','mab' ); ?></p>
-	<textarea id="mab-main-copy" class="large-text" id="mab-main-copy" name="mab[main-copy]" rows="6" cols="60"><?php echo $meta['main-copy']; ?></textarea>
+	<!--textarea id="mab-main-copy" class="large-text" id="mab-main-copy" name="mab[main-copy]" rows="6" cols="60"><?php echo $meta['main-copy']; ?></textarea-->
+	<?php 
+	$settings = array(
+		'wpautop' => true,
+		'textarea_name' => 'mab[main-copy]'
+	);
+	wp_editor( $meta['main-copy'], 'mab-main-copy', $settings ); ?>
 </div>
 
 <div class="mab-option-box">
 	<h4><label for="mab-secondary-copy"><?php _e('Secondary Copy','mab' ); ?></label></h4>
 	<p><?php _e('Copy that is displayed after the main action item.','mab' ); ?></p>
-	<textarea id="mab-secondary-copy" class="large-text" id="mab-secondary-copy" name="mab[secondary-copy]" rows="6" cols="60"><?php echo $meta['secondary-copy']; ?></textarea>
+	<!--textarea id="mab-secondary-copy" class="large-text" id="mab-secondary-copy" name="mab[secondary-copy]" rows="6" cols="60"><?php echo $meta['secondary-copy']; ?></textarea-->
+	<?php 
+	$settings = array(
+		'wpautop' => true,
+		'textarea_name' => 'mab[secondary-copy]'
+	);
+	wp_editor( $meta['secondary-copy'], 'mab-secondary-copy', $settings ); ?>
 </div>

@@ -10,15 +10,17 @@ $submitValue = !empty( $meta['optin']['aweber']['submit-value'] ) ? $meta['optin
 ?>
 <!-- form method="POST" action="http://www.aweber.com/scripts/addlead.pl" -->
 <form method="POST" action="<?php echo $actionUrl; ?>">
-	<p class="mab-field">
+	<div class="mab-field mab-field-name">
 		<label for="mab-name">Name</label>
 		<input type="text" id="mab-name" placeholder="Enter your name" name="name" />
-	</p>
-	<p class="mab-field">
+	</div>
+	<div class="mab-field mab-field-email">
 		<label for="mab-email">Email Address</label>
 		<input type="email" id="mab-email" placeholder="Enter your email" name="email" />
-	</p>
-	<input class="mab-submit" type="submit" value="<?php echo $submitValue; ?>" />
+	</div>
+	<div class="mab-field mab-field-submit">
+		<input class="mab-submit" type="submit" value="<?php echo $submitValue; ?>" />
+	</div>
 	
 	<div class="clear"></div>
 	

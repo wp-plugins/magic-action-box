@@ -2,9 +2,9 @@
 
 class ProsulumMab{
 	
-	var $_html_UniqueId = '_mab_html_unique_id';
 	private $_defaultActionBoxId = '';
 	private $_defaultActionBoxPlacement = 'bottom';
+	private $_defaultActionBoxObj = null;
 	
 	function ProsulumMab(){
 		return $this->__construct();
@@ -17,14 +17,25 @@ class ProsulumMab{
 	}
 	
 	function add_actions(){
-		add_action( 'template_redirect', array( &$this, 'registerStyles' ) );
-		add_action( 'template_redirect', array( &$this, 'setupContentTypeActionBox' ) );
-
+		if( !is_admin() ){
+			//load only on frontend
+			add_action( 'template_redirect', array( &$this, 'setupContentTypeActionBox' ) );
+			add_action( 'wp_enqueue_scripts', array( &$this, 'alwaysLoadAssets' ) );
+		}
 	}
 	
 	function add_filters(){
-		add_filter( 'mab_optinform_output', array( &$this, 'outputOptInFormHTML' ), 10, 3 );
+		//add_filter( 'mab_optinform_output', array( &$this, 'outputOptInFormHTML' ), 10, 3 );
 		//add_filter('the_content', array( &$this, 'showActionBox' ) );
+		
+		global $MabBase;
+		$settings = $MabBase->get_settings();
+		
+		add_filter( 'mab_get_template', array( 'ProsulumMab', 'defaultGetTemplateFilter' ), 10, 3 );
+		
+		if( !empty( $settings['others']['minify-output'] ) && (int)$settings['others']['minify-output'] === 1 ){
+			add_filter( 'mab_template_output', array( 'MAB_Utils', 'minifyHtml' ) );
+		}
 	}
 	
 	function setUpDefaults(){
@@ -38,8 +49,14 @@ class ProsulumMab{
 			$defaults = $this->getActionBoxDefaultsFromContext( $context );
 			$this->_defaultActionBoxId = $defaults['id'];
 			$this->_defaultActionBoxPlacement = $defaults['placement'];
+			$actionBoxObj = new MAB_ActionBox( $defaults['id'] );
+			$this->_defaultActionBoxObj = $actionBoxObj;
 		}
 
+	}
+	
+	function getQueriedActionBoxObj(){
+		return $this->_defaultActionBoxObj;
 	}
 	
 	function getDefaultActionBoxId(){
@@ -73,7 +90,7 @@ class ProsulumMab{
 				remove_filter( 'the_content', 'wpautop' );
 				remove_filter( 'the_content', 'wptexturize' );
 				add_filter('the_content', 'wpautop', 8 );
-				add_filter('the_content', 'wpautop', 8 );
+				add_filter('the_content', 'wptexturize', 8 );
 				$mab_priority = 9;
 			}
 			
@@ -113,8 +130,8 @@ class ProsulumMab{
 		if( $defaultActionBoxId === '' || $placement == 'manual' ){
 			return $content;
 		}
-		
-		$actionBox = $this->getActionBox( $defaultActionBoxId );
+
+		$actionBox = $this->getActionBox();
 		//$actionBox = $this->getActionBox( $postmeta['post-action-box'] );
 		
 		//$content = wptexturize( wpautop( $content ) );
@@ -317,359 +334,43 @@ class ProsulumMab{
 	}
 	
 	/**
+	 * @param $honey should be null. this is for other plugins that still call this function [which they should no longer be doing]
 	 * @return string - Action Box HTML on success, Empty string otherwise.
 	 */
-	function getActionBox( $actionBoxId = '' ){
+	function getActionBox( $honey = null ){
 		
-		//check if the specified action box exists
-		$actionBoxPost = get_post( $actionBoxId );
-		if( !empty( $actionBoxPost ) && !empty( $actionBoxId ) ){
-			global $MabBase;
-			
-			//$meta = $MabBase->get_mab_meta( $actionBoxId );
-			
-			//Determine actionbox type. Then load the appropriate Action Box meta
-			$type = get_post_meta( $actionBoxId, $MabBase->get_meta_key('type'), true );
-			switch( $type ){
-				case 'optin':
-					$actionBox = $this->getActionBoxOptin( $actionBoxPost );
-					break;
-
-				default:
-					return ''; //empty string
-					break;
-			}
-			//error_log( serialize( $actionBox ) );
-			return $actionBox;
-			
-		} else {
+		if( !is_null( $honey ) ){
+			//just return empty string.
 			return '';
 		}
 		
-		return ''; //just a safety net
+		$mabObj = $this->getQueriedActionBoxObj();
 		
-	}
-	
-	/**
-	 * ACTION BOXES
-	 * =======================* /
-	
-	/**
-	 * OPTIN FORM
-	 *
-	 * @param object $actionBoxObj - actually a $post object
-	 * @return string HTML
-	 */
-	function getActionBoxOptin( $actionBoxObj ){
-		global $MabBase;
-		
-		$meta = $MabBase->get_mab_meta( $actionBoxObj->ID );
-		$meta['ID'] = $actionBoxObj->ID;
-		
-		//get unique action box id because some optin form providers need this i.e. wysija
-		$data['mab-html-id'] = $this->getUniqueId( $actionBoxObj->ID );
-		$meta['mab-html-id'] = $data['mab-html-id'];
-		
-		//get Opt In Form
-		$optInForm = $this->getOptInForm( $meta );
-		
-		//if form is empty, then there should be no need to show the action box
-		if( empty( $optInForm ) ){
-			return '';
-		}
-		
-		//$data['meta'] = $meta;
-		//convert old optin settings keys to keys used by other action boxes
-		$data['meta'] = $this->convertOptinKeys( $meta );
-		
-		$data['form'] = $optInForm;
-		
-		$data['action-box-type'] = $MabBase->get_mab_meta( $actionBoxObj->ID, 'type' );
-		
-		$mainTemplate = $this->getActionBoxTemplateLocation('optin');
-		$actionBox = ProsulumMabCommon::getView( $mainTemplate, $data );
-		return $actionBox;
-	}
-	
-	function convertOptinKeys( $settings ){
-		global $MabBase;
-		$settingsChanged = false;
-		$new = array();
-		$meta = $settings;
-
-		if( !empty( $meta['optin-image-url'] ) && empty( $meta['aside-image-url'] ) ){
-			$settingsChanged = true;
-			$meta['aside-image-url'] = $meta['optin-image-url'];
-		}
-		if( !empty( $meta['optin-image-width'] ) && empty( $meta['aside-image-width'] ) ){
-			$settingsChanged = true;
-			$meta['aside-image-width'] = $meta['optin-image-width'];
-		}
-		if( !empty( $meta['optin-image-height'] ) && empty( $meta['aside-image-height'] ) ){
-			$settingsChanged = true;
-			$meta['aside-image-height'] = $meta['optin-image-height'];
-		}
-		if( !empty( $meta['optin-image-placement'] ) && empty( $meta['aside-image-placement'] ) ){
-			$settingsChanged = true;
-			$meta['aside-image-placement'] = $meta['optin-image-placement'];
-		}
-		if( !empty( $meta['optin-heading'] ) && empty( $meta['main-heading'] ) ){
-			$settingsChanged = true;
-			$meta['main-heading'] = $meta['optin-heading'];
-		}
-		if( !empty( $meta['optin-subheading'] ) && empty( $meta['subheading'] ) ){
-			$settingsChanged = true;
-			$meta['subheading'] = $meta['optin-subheading'];
-		}
-		if( !empty( $meta['optin-main-copy'] ) && empty( $meta['main-copy'] ) ){
-			$settingsChanged = true;
-			$meta['main-copy'] = $meta['optin-main-copy'];
-		}
-		
-		if( $settingsChanged ){
-			//save the new settings and return new settings
-			$new = $meta;
-			unset( $new['ID'] );
-			$MabBase->update_mab_meta( $meta['ID'], $new );
-			$new['ID'] = $meta['ID'];
-			return $new;
-		}
-		
-		return $meta;
-	}
-	
-	/**
-	 * @applies WP filter mab_optinform_output
-	 * how to add your own filters example: add_filter( 'mab_optinform_output', 'function_name', 10, 3 );
-	 *
-	 * @param array $meta action box post type meta data
-	 * @return html
-	 */
-	function getOptInForm( $meta ){
-		return apply_filters('mab_optinform_output', '', $meta['optin-provider'], $meta );
-	}
-	
-	/**
-	 * Filter function to mab_optinform_output filter
-	 */
-	function outputOptInFormHTML( $optIn, $provider, $meta ){
-		global $MabBase;
-		
-		$viewDir = 'optinforms/';
-		$optIn = '';
-		
-		//get provider
-		switch( $meta['optin-provider'] ){
-			case 'aweber':
-				$settings = $this->getSettings();
-				//break if aweber is not allowed
-				if( $settings['optin']['allowed']['aweber'] == 0 )
-					break;
-				
-				$filename = $viewDir . 'aweber.php';
-				$optIn = ProsulumMabCommon::getView( $filename, $meta );
-				
-				break;
-				
-			case 'mailchimp':
-				$settings = $this->getSettings();
-				//break if mailchimp is not allowed
-				if( $settings['optin']['allowed']['mailchimp'] == 0 )
-					break;
-				
-				//$meta['mc-account'] = $settings['optin']['mailchimp-account-info'];
-				$filename = $viewDir . 'mailchimp.php';
-				$optIn = ProsulumMabCommon::getView( $filename, $meta );
-				break;
-				
-			case 'constant-contact':
-				$settings = $this->getSettings();
-				//break if constant contact is not allowed
-				if( $settings['optin']['allowed']['constant-contact'] == 0 )
-					break;
-				
-				$filename = $viewDir . 'constant-contact.php';
-				$optIn = ProsulumMabCommon::getView( $filename, $meta );
-				break;
-				
-			case 'manual':
-				$settings = $this->getSettings();
-				//break if manual is not allowed
-				if( $settings['optin']['allowed']['manual'] == 0 )
-					break;
-				
-				$filename = $viewDir . 'manual.php';
-				$optIn = ProsulumMabCommon::getView( $filename, $meta );
-				
-				break;
-				
-			case 'wysija':
-				//make sure Wysija plugin is activated
-				if( !class_exists( 'WYSIJA' ) ) break;
-				
-				$wysijaView =& WYSIJA::get("widget_nl","view","front");
-				
-				/** Print wysija scripts **/
-				$wysijaView->addScripts();
-				
-				/** TODO: generate fields using wysija's field generator **/
-				
-				$meta['subscriber-nonce'] = $wysijaView->secure(array('action' => 'save', 'controller' => 'subscribers'),false,false);
-				
-				$filename = $viewDir . 'wysija.php';
-				$optIn = ProsulumMabCommon::getView( $filename, $meta );
-				
-				break;
-				
-			default:
-				break;
-		}
-		return $optIn;
-	}
-	
-	/**
-	 * Get Action Box Template
-	 */
-	function getActionBoxTemplateLocation( $type = '' ){
-		$filename = '';
-		$viewDir = 'action-box/';
-		$ext = '.php';
-		
-		$boxes = ProsulumMabCommon::getActionBox();
-		
-		if( isset( $boxes[$type] ) && isset( $boxes[$type]['template'] ) ){
-			$filename = $viewDir . 'actionbox-' . $boxes[$type]['template'] . $ext;
-		}
-		
-		return $filename;
-	}
-
-	/**
-	 * Get Unique ID for each action box
-	 */
-	function getUniqueId( $actionBoxId ){
-		//this to have unique ID attribute of the main containing div in case there is more 
-		//than 1 of the same action box. Cache key is composed of $_htmlUniqueId prefix and 
-		//ID of the action box.
-		$htmlUniqueId = wp_cache_get( $this->_html_UniqueId . $actionBoxId );
-		if( false === $htmlUniqueId ){
-			//this is the first
-			$htmlUniqueId = 1;
-			wp_cache_set( $this->_html_UniqueId . $actionBoxId, $htmlUniqueId );
-		} else {
-			//another box is already displayed
-			$htmlUniqueId++;
-			wp_cache_replace( $this->_html_UniqueId . $actionBoxId, $htmlUniqueId );
-		}
-		
-		return $actionBoxId.$htmlUniqueId;
+		return $mabObj->getActionBox( null, false); //don't load assets
 	}
 	
 	/**
 	 * ASSETS, CSS, JAVASCRIPT
 	 * ============================= */
-	function registerStyles(){
-		wp_register_style( 'mab-base-style', MAB_ASSETS_URL . 'css/magic-action-box-styles.css', array(), "1.0" );
-	}
 	
+	/**
+	 * styles and scripts that need to be loaded/enqueued always
+	 */
+	function alwaysLoadAssets(){
+		/** Scripts **/
+		/* Load wpautopfix.js to fix empty <p> tags generated by wordpress */
+		//wp_enqueue_script( 'mab-wpautop-fix' );
+		wp_enqueue_script('mab-actionbox-helper');
+		
+		/** Styles **/
+	}
+
+	/**
+	 * load assets for main action box on page
+	 */
 	function printStylesScripts(){
-		global $post, $MabBase; //this is the current content type object where action boxes are used.
-		
-		$actionBoxId = $this->getDefaultActionBoxId();
-		
-		//$actionBoxId = $this->getIdOfActionBoxUsed( $post->ID );
-		
-		$this->printActionBoxAssets( $actionBoxId );
-		
-	}
-	
-	function printActionBoxAssets( $actionBoxId = null ){
-		global $post, $MabBase; //this is the current content type object where action boxes are used.
-		
-		if( null === $actionBoxId ){
-			$actionBoxId = $this->getIdOfActionBoxUsed( $post->ID );
-		}
-		
-		//stop if there is no action box
-		if( empty( $actionBoxId ) && $actionBoxId !== 0 ){
-			return;
-		}
-
-		if( empty( $actionBoxId ) )
-			return;
-		
-		//check which style should be used. i.e. 'default', 'user'...
-		$style = $this->getActionBoxStyle( $actionBoxId );
-		
-		$actionBoxMeta = $MabBase->get_mab_meta( $actionBoxId );
-		
-		switch( $style ){
-			case 'user':
-				//get user style key
-				$userStyleKey = $actionBoxMeta['userstyle'];
-				
-				//use style set by user
-				$mabStylesheet = mab_get_settings_stylesheet_path( $userStyleKey );
-				
-				//create stylesheet file if its not created yet
-				if( !file_exists( $mabStylesheet ) || trim( mab_get_settings_stylesheet_contents( $userStyleKey ) ) == '' ){
-					mab_create_stylesheet( $userStyleKey );
-				}
-				
-				if( file_exists( $mabStylesheet ) ){
-					//actionbox specific stylesheet
-					wp_enqueue_style( 'mab-user-style-'.$userStyleKey, mab_get_settings_stylesheet_url($userStyleKey), array( 'mab-base-style' ), filemtime( $mabStylesheet ) );
-				}
-				break; 
-				// ===================
-			
-			case 'none':
-				break;
-				
-			default:
-				/** LOAD PRECONFIGURED STYLESHEET **/
-				//$other_style_location = MAB_ASSETS_URL . 'css/style-';
-				
-				//use one of the preconfigured styles
-				//$preconfigured_style = $other_style_location . $style . '.css';
-				$preconfigured_style = MAB_STYLES_URL . "{$style}/style.css";
-				
-				//if( file_exists( $preconfigured_style  ) ){ this is a url.. tsk.
-					wp_enqueue_style( "mab-preconfigured-style-{$style}", $preconfigured_style , array('mab-base-style'), "1.0" );
-				//} else {
-					//wp_enqueue_style( "mab-style-default", MAB_ASSETS_URL . 'css/style-default.css', array(), "1.0" );
-				//}
-				
-				//wp_redirect( "{$preconfigured_style}" );
-				
-
-				break;
-				// ==========================
-		}//switch
-		
-		/** LOAD CUSTOM CSS **/
-		//get stylesheet which should contain only CSS in Custom CSS box under Design Setting: Custom CSS
-		$custom_css_stylesheet = mab_get_actionbox_stylesheet_path( $actionBoxId );
-		
-		//create stylesheet file if its not created yet
-		if( !file_exists( $custom_css_stylesheet ) || trim( mab_get_actionbox_stylesheet_contents( $actionBoxId ) ) == '' ){
-			mab_create_actionbox_stylesheet( $actionBoxId );
-		}
-		
-		if( file_exists( $custom_css_stylesheet ) ){
-			//actionbox specific stylesheet
-			wp_enqueue_style( "mab-actionbox-style-{$actionBoxId}", mab_get_actionbox_stylesheet_url($actionBoxId), array( ), filemtime( $custom_css_stylesheet ) );
-		}
-		
-		/** LOAD BUTTONS CSS **/
-		/* create custom buttons stylesheet if its not there */
-		if( !file_exists( mab_get_custom_buttons_stylesheet_path() ) ){
-			global $MabButton;
-			$MabButton->writeConfiguredButtonsStylesheet( $MabButton->getConfiguredButtons(), '' );
-		}
-		//load buttons stylesheet
-		wp_enqueue_style( 'mab-custom-buttons-css', mab_get_custom_buttons_stylesheet_url() );
-		
+		$mainActionBox = $this->getQueriedActionBoxObj();
+		$mainActionBox->loadAssets();
 	}
 	
 	function getSettings(){
@@ -677,4 +378,33 @@ class ProsulumMab{
 		return $MabBase->get_settings();
 	}
 	
+	/**
+	 * printActionBoxAssets
+	 * @deprecated 2.9
+	 */
+	function printActionBoxAssets( $actionBoxId ){
+		//nothing here. deprecated get it?
+	}
+
+
+	/**
+	 * ACTION BOXES
+	 * =======================* /
+
+	/**
+	 * @filters get_action_box
+	 */
+	static function defaultGetTemplateFilter( $actionBox, $type, $actionBoxObj){
+		//error_log( print_r($type, true) );
+		
+		switch( $type ){
+			case 'optin':
+				$actionBox = MAB_Template::getActionBoxOptin( $actionBoxObj );
+				break;
+			default:
+				return ''; //empty string
+				break;
+		}
+		return $actionBox;
+	}
 }

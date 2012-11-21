@@ -11,14 +11,16 @@ $actionUrl = !empty( $meta['optin']['mailchimp']['form-action-url'] ) ? $meta['o
 $submitValue = !empty( $meta['optin']['mailchimp']['submit-value'] ) ? $meta['optin']['mailchimp']['submit-value'] : 'Submit';
 ?>
 <form method="POST" action="<?php echo $actionUrl; ?>">
-	<p class="mab-field">
+	<div class="mab-field mab-field-name">
 		<label for="mab-name">Name</label>
 		<input type="text" id="mab-name" placeholder="Enter your name" name="FNAME" />
-	</p>
-	<p class="mab-field">
+	</div>
+	<div class="mab-field mab-field-email">
 		<label for="mab-email">Email Address</label>
 		<input type="email" id="mab-email" placeholder="Enter your email" name="EMAIL" />
-	</p>
-	<input class="mab-submit" type="submit" value="<?php echo $submitValue; ?>" />
+	</div>
+	<div class="mab-field mab-field-submit">
+		<input class="mab-submit" type="submit" value="<?php echo $submitValue; ?>" />
+	</div>
 	<div class="clear"></div>
 </form>

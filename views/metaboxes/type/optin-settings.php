@@ -207,7 +207,20 @@
 		<?php endif; ?>
 	<?php endif; ?>
 
+	
+
 </div>
+
+<div class="mab-option-box">
+	<h4>Form Fields Layout</h4>
+	<?php $fieldsLayout = isset( $meta['optin']['fields-layout'] ) ? $meta['optin']['fields-layout'] : 'default';?>
+	<ul>
+		<li><label><input type="radio" value="default" name="mab[optin][fields-layout]" <?php checked( $fieldsLayout, 'default' ); ?>/> Default</label></li>
+		<li><label><input type="radio" value="stacked" name="mab[optin][fields-layout]" <?php checked( $fieldsLayout, 'stacked' ); ?>/> Stacked</label></li>
+	</ul>
+	<p><strong>Note:</strong> Actual support for field layout will depend if the style selected supports it.</p>
+	<p><strong>Note 2:</strong> This setting will most probably have no effect if this action box is used on the Action Box Widget.</p>
+</div><!-- .mab-option-box -->
 
 <?php /*
 <div class="mab-option-box">

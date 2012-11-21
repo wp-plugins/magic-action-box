@@ -3,13 +3,13 @@
  * Plugin Name: Magic Action Box
  * Plugin URI: http://magicactionbox.com
  * Description: Supercharge your blog posts!
- * Version: 2.8.6
+ * Version: 2.9
  * Author: Prosulum, LLC
  * Author URI: http://prosulum.com
  * License: GPLv2
  */
 
-define( 'MAB_VERSION', '2.8.6');
+define( 'MAB_VERSION', '2.9');
 //e.g. /var/www/example.com/wordpress/wp-content/plugins/after-post-action-box
 define( "MAB_DIR", plugin_dir_path( __FILE__ ) );
 //e.g. http://example.com/wordpress/wp-content/plugins/after-post-action-box
@@ -23,6 +23,7 @@ define( 'MAB_BASENAME', plugin_basename( __FILE__ ) );
 define( 'MAB_LIB_DIR', trailingslashit( MAB_DIR ) . 'lib/' );
 define( 'MAB_CLASSES_DIR', trailingslashit( MAB_LIB_DIR ) . 'classes/' );
 define( 'MAB_VIEWS_DIR', trailingslashit( MAB_DIR ) . 'views/' );
+define( 'MAB_VIEWS_URL', trailingslashit( MAB_URL ) . 'views/' );
 define( 'MAB_ASSETS_URL', trailingslashit( MAB_URL ) . 'assets/' );
 define( 'MAB_POST_TYPE', 'action-box' );
 define( 'MAB_DOMAIN', 'mab' );
@@ -48,7 +49,7 @@ class ProsulumMabBase{
 	}
 	
 	function __construct(){
-
+		$this->loadFiles();
 		
 		//register post type
 		add_action( 'setup_theme', array( $this, 'register_post_type' ) );
@@ -56,6 +57,12 @@ class ProsulumMabBase{
 		
 		//initialize
 		add_action( 'init', array( $this, 'init' ) );
+		
+		//register assets
+		add_action( 'init', array( $this, 'register_assets' ) );
+		
+		//register widget
+		add_action( 'widgets_init', array( $this, 'register_widgets' ) );
 		
 		//Notices
 		add_action('admin_notices',array( $this, 'updated_plugin_notice') );
@@ -123,8 +130,7 @@ class ProsulumMabBase{
 		return $msg;
 	}
 	
-	function init(){
-		global $MabBase;
+	function loadFiles(){
 		
 		//TODO: call class Design_Settings?
 		require_once( MAB_LIB_DIR . 'design-utilities.php' );
@@ -133,25 +139,29 @@ class ProsulumMabBase{
 		require_once( MAB_CLASSES_DIR . 'ProsulumMabDesign.php' );
 		require_once( MAB_CLASSES_DIR . 'ProsulumMabButton.php' );
 		
+		require_once( MAB_CLASSES_DIR . 'MAB_ActionBox.php' );
+		require_once( MAB_CLASSES_DIR . 'MAB_Template.php' );
 		require_once( MAB_CLASSES_DIR . 'ProsulumMab.php' );
-		require_once( MAB_CLASSES_DIR . 'ProsulumMabCommon.php' );
+		require_once( MAB_CLASSES_DIR . 'MAB_Utils.php' );
+		require_once( MAB_LIB_DIR . 'shortcodes.php' );
+		
+		//deprecated stuff
+		require_once( MAB_CLASSES_DIR . 'deprecated-classes.php' );
+	}
+	
+	function init(){
+		global $MabBase;
 		
 		if( is_admin() ){
 			require_once( MAB_CLASSES_DIR . 'ProsulumMabAdmin.php' );
 			require_once( MAB_CLASSES_DIR . 'ProsulumMabMetaboxes.php' );
 			global $MabAdmin;
 			$MabAdmin = new ProsulumMabAdmin();
-			
-			add_thickbox();
-			wp_enqueue_script('media-upload');
 
 		}
 		
-		if( !is_admin() ){
-			global $Mab;
-			$Mab = new ProsulumMab();
-		}
-		
+		global $Mab;
+		$Mab = new ProsulumMab();		
 	}
 	
 	function register_meta_box_cb( $post ){
@@ -182,6 +192,12 @@ class ProsulumMabBase{
 		
 		flush_rewrite_rules( false );
 		
+	}
+	
+	function register_widgets(){
+		require_once( MAB_CLASSES_DIR . 'MAB_Widget.php' );
+		
+		register_widget( 'MAB_Widget' );
 	}
 	
 	function get_post_type(){
@@ -434,16 +450,22 @@ class ProsulumMabBase{
 			}
 			if( $is_mab_page && !get_user_meta( $user_id, $this->_option_PromoNotice . $this->get_current_version() ) ){
 				echo '<div class="updated"><p>';
-				printf( __('Get access to more action box types: <strong>Sales Box &amp Share Box</strong> by <a href="%1$s">upgrading to Pro</a>. <a href="%2$s">Hide Notice</a>.','mab'), 'http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=promoNotice', add_query_arg( array('mab-hide-promo-notice' => 'true' ) ) );
+				printf( __('<a href="%1$s" target="_blank">Go Pro to do more!</a><br />
+				Easily add opt in forms and other action boxes to your sidebar with our new widget. Get access to more action box types: <strong>Sales Box &amp; Share Box</strong> by <a href="%2$s" target="_blank">upgrading to Pro</a>.<br />
+				See our <a href="http://www.magicactionbox.com/announcement-version-2-9-is-now-out-with-big-changes/?pk_campaign=LITE&pk_kwd=v9news" target="_blank">release announcement</a> for a summary of improvements to Pro. <a href="%3$s">Hide Notice</a>.','mab'), 'http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=goProNotice', 'http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=promoNotice', add_query_arg( array('mab-hide-promo-notice' => 'true' ) ) );
 				echo '</p></div>';
 			}
 			
-			if( $is_mab_page && !get_user_meta( $user_id, $this->_option_PromoNotice . $this->get_current_version() . '_styling_issue' ) ){
-				echo '<div class="updated"><p>';
-				printf( __('User styles created prior to Magic Action Box 2.8 will now seem to <em>disappear</em>. Don\'t worry as this is due to the big improvements in the code and you can get them back by following the steps in <a href="%1$s">this article</a>. <a href="%2$s">Hide Notice</a>.','mab'), 'http://www.magicactionbox.com/fixing-action-box-styles-v2-8-upgrade/?pk_campaign=LITE&pk_kwd=upgradeNotice', add_query_arg( array('mab-hide-promo-notice-styling-issue' => 'true' ) ) );
-				echo '</p></div>';
+			//check Magic Action Popup
+			if( class_exists( 'MagicActionPopupBase' ) ){
+				$map_version = MAP_VERSION;
+
+				if( (double) $map_version <= 1.7 && !get_option( 'map-incompatible-version-' . $this->get_current_version() ) ){
+					echo '<div class="error"><p>';
+					printf( __('Old version of Magic Action Popup detected. This version is not compatible with the latest version of Magic Action Box. Please update Magic Action Popup plugin now. <a href="%1$s">Hide notice</a>', MAB_DOMAIN), add_query_arg( array('mab-hide-map-notice' => 'true' ) ) );
+					echo '</p></div>';
+				}
 			}
-			
 		}
 	}
 	
@@ -470,6 +492,27 @@ class ProsulumMabBase{
 			add_user_meta( $user_id, $this->_option_PromoNotice . $this->get_current_version() . '_styling_issue', $val, true );
 		}
 		
+		if( isset( $_GET['mab-hide-map-notice'] ) && 'true' == $_GET['mab-hide-map-notice'] ){
+			$val = 1;
+			update_option( 'map-incompatible-version-' . $this->get_current_version(), $val );
+		}
+	}
+	
+	function register_assets(){
+		/** Scripts **/		
+		wp_register_script( 'mab-wpautop-fix', MAB_ASSETS_URL . 'js/wpautopfix.js', array( 'jquery' ) );
+		wp_register_script( 'mab-actionbox-helper', MAB_ASSETS_URL . 'js/actionbox-helper.js', array('jquery') );
+		
+		/** ADMIN Scripts **/
+		wp_register_script( 'mab-admin-script', MAB_ASSETS_URL . 'js/magic-action-box-admin.js', array('jquery'), MAB_VERSION );
+		wp_register_script( 'mab-design-script', MAB_ASSETS_URL . 'js/magic-action-box-design.js', array('farbtastic', 'thickbox' ), MAB_VERSION );
+		
+		
+		/** Styles **/
+		wp_register_style( 'mab-base-style', MAB_ASSETS_URL . 'css/magic-action-box-styles.css', array() );
+		
+		/** ADMIN styles **/
+		wp_register_style( 'mab-admin-style', MAB_ASSETS_URL . 'css/magic-action-box-admin.css', array(), MAB_VERSION );
 	}
 
 }

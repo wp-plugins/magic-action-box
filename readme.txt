@@ -1,10 +1,10 @@
-=== Magic Action Box Pro===
+=== Magic Action Box ===
 Contributors: prosulum, pogidude
 Developer: Prosulum
 Tags: opt in, call to action, aweber, email, email marketing, form, mailing list, marketing, newsletter, webform, mailchimp, constant contact
 Requires at least: 3.1
-Tested up to: 3.4.1
-Stable tag: 2.8.6
+Tested up to: 3.4.2
+Stable tag: 2.9
 
 Magic Action Box is an easy to use but powerful lead generation plugin.
 
@@ -15,6 +15,7 @@ Magic Action Box is an easy to use but powerful lead generation plugin that lets
 Some features:
 
 * Easily add an action box before or after a blog post or page
+* Easily add opt in forms - with stunning designs - to your sidebar.
 * Create Email Opt In Forms
 * Make your own action box styles
 * Or, pick a style from one of the pre-configured designs
@@ -24,11 +25,14 @@ Some features:
 Some features available in Pro version:
 
 * Access to all action box types
-* Professional Customer Support
 * More pre-configured styles
-* Conversion Tips and Advice
-* Create and upload your own buttons
+* Shortcodes
+* Sidebar Widget
+* Professional Customer Support
+* Create and upload your own buttons (currently used for Sales Boxes only)
 * [And more...](http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=pluginPage2)
+
+[View changelog](http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=pluginPage2)
 
 == Installation ==
 
@@ -45,11 +49,15 @@ Yes you can. As long as your autoresponder lets you create html forms that you c
 
 = Can I place an action box on my website's sidebar? =
 
-Maybe on later updates. But, that is not the main reason this plugin was created. The primary purpose of magic action box is for you to follow two very effective marketing strategies. You can read all about this tip [here](http://www.magicactionbox.com/magic-action-box-training-1-the-key-to-making-more-sales-and-version-2-0-sneak-peak/?pk_campaign=LITE&pk_kwd=faq).
+Yes. In the WordPress Dashboard, go to the Widgets page and lookg for the Magic Action Box Widget (available only in Pro).
 
 = My action box doesn't seem to have any styles to it. What's wrong? =
 
-Make sure that your uploads directory wp-content/uploads/ is writeable (it usually is).
+Make sure that your uploads directory wp-content/uploads/ is writeable (it usually is). Then save your action box or custom style again to allow the plugin to generate the required css code.
+
+= My action box has a lot of empty spaces and line breaks in it. = 
+
+Go to Magic Action Box Settings -> Main Settings and check the Minify HTML Output checkbox.
 
 = My action box styles are gone. What did your update do? =
 
@@ -73,10 +81,32 @@ Try checking the *Reorder post content filter priorities* checkbox found in WP A
 5. Action Box Settings Screen
 
 == Changelog ==
+= 2.9 =
+* Added new action box styles
+* Reorganized plugin assets so they're all registered at magic-action-box.php
+* Added specialized classes MAB_ActionBox, MAB_Template, MAB_Widget classes to make things more OOP.
+* Reorganized methods and classes to fit the new architecture and use the new classes.
+* Updated view templates to use MAB_ActionBox class.
+* Updated mab_get_actionbox() function to work with new MAB_ActionBox class.
+* Added mab_template_output, mab_get_template-{$type} and mab_get_template action hooks for outputting action box html in MAB_Template::getTemplate()
+* Added MAB_Utils and deprecated ProsulumMabCommon class and placed in deprecated-classes.php file.
+* Default value for selected action box in posts/pages now set to "Default". Previously it was set to "Disabled".
+* Added option to enable/disable minifying of html output.
+* Added Magic Action Box Widget.
+* Improved HTML parser to allow <select> and <button> tags, and recognize attribute values surrounded by single quotes.
+* Updated action url of generated mailchimp form
+* Added margin: 0 auto to .mab-wrap default style. added actionbox-helper.js
+* Added Duplicate Action Box function
+* Replaced textarea for action box main content and secondary content with WYSIWYG editor via wp_editor()
+* Changed a lot of CSS for the preconfigured designs
+* Added wrapping <div> around the submit button
+
 = 2.8.6 =
 * Fixed admin notices not having a "hide notice" link.
 * Added new admin page - Support.
-* Minor fix: fixed issue where only one user created style is loaded when using multiple action boxes with different user created styles on the same page.
+
+= 2.8.5.1 =
+* Minor fixes
 
 = 2.8.5 =
 * Added integrated support for Wysija Newsletters plugin
@@ -167,6 +197,9 @@ Try checking the *Reorder post content filter priorities* checkbox found in WP A
 * Original Version.
 
 == Upgrade Notice ==
+= 2.9 =
+Major update. See Changelog
+
 = 2.8.5.1 =
 Minor fixes
 
