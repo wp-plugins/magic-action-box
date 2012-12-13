@@ -10,7 +10,7 @@
 	}
 ?>
 
-body .<?php echo $class; ?>, body div.magic-action-box .<?php echo $class; ?>{
+body .<?php echo $class; ?>, body div.magic-action-box .<?php echo $class; ?>, body div.magic-action-box .mab-content .<?php echo $class; ?>{
 	display: inline-block;
 	text-decoration: none !important;
 
@@ -76,7 +76,7 @@ body .<?php echo $class; ?>, body div.magic-action-box .<?php echo $class; ?>{
 	<span class="property">text-transform</span>: <span class="c font-transform"><?php echo $button['font-transform']; ?></span> !important;
 }
 
-body .<?php echo $class; ?>:hover, body div.magic-action-box .<?php echo $class; ?>:hover{
+body .<?php echo $class; ?>:hover, body div.magic-action-box .<?php echo $class; ?>:hover, body div.magic-action-box .mab-content .<?php echo $class; ?>:hover{
 	text-decoration: none !important;
 	<span class="property">background</span>: <span class="c background-color-hover-start"><?php echo $button['background-color-hover-start']; ?></span>;
 	
@@ -109,6 +109,6 @@ body .<?php echo $class; ?>:hover, body div.magic-action-box .<?php echo $class;
 	<span class="property">color</span>: <span class="c font-color"><?php echo $button['font-color']; ?></span> !important;
 }
 
-body .<?php echo $class; ?>:focus, body div.magic-action-box .<?php echo $class; ?>:focus{
+body .<?php echo $class; ?>:focus, body div.magic-action-box .<?php echo $class; ?>:focus, body div.magic-action-box .mab-content .<?php echo $class; ?>:focus{
 	<span class="property">color</span>: <span class="c font-color"><?php echo $button['font-color']; ?></span> !important;
 }
