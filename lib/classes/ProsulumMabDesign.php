@@ -81,6 +81,9 @@ class ProsulumMabDesign{
 		'aside_corner_radius' => '',
 		
 		### OPTIN FORM
+		//general styles for fields
+		'field_margin_right' => '10',
+		
 		//labels
 		'input_label_font_color' => '#000000',
 		'input_label_font_size' => '14',
@@ -99,6 +102,10 @@ class ProsulumMabDesign{
 		'input_font_family' => 'Arial, Helvetica, sans-serif',
 		'input_font_size' => '14',
 		'input_font_style' => 'normal',
+		'input_padding_top' => '3',
+		'input_padding_bottom' => '3',
+		'input_padding_right' => '6',
+		'input_padding_left' => '6',
 		'input_width' => '150',
 		
 		//submit button

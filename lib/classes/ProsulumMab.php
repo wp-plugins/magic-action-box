@@ -18,8 +18,9 @@ class ProsulumMab{
 	
 	function add_actions(){
 		if( !is_admin() ){
+			$hook = apply_filters('mab_setup_main_action_box_hook','wp');
 			//load only on frontend
-			add_action( 'template_redirect', array( &$this, 'setupContentTypeActionBox' ) );
+			add_action( $hook, array( &$this, 'setupContentTypeActionBox' ) );
 			add_action( 'wp_enqueue_scripts', array( &$this, 'alwaysLoadAssets' ) );
 		}
 	}

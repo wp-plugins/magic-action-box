@@ -4,7 +4,7 @@ Developer: Prosulum
 Tags: opt in, call to action, aweber, email, email marketing, form, mailing list, marketing, newsletter, webform, mailchimp, constant contact
 Requires at least: 3.1
 Tested up to: 3.4.2
-Stable tag: 2.9
+Stable tag: 2.9.3
 
 Magic Action Box is an easy to use but powerful lead generation plugin.
 
@@ -81,6 +81,16 @@ Try checking the *Reorder post content filter priorities* checkbox found in WP A
 5. Action Box Settings Screen
 
 == Changelog ==
+= 2.9.3 =
+* Replaced the hook used to call the main action box from template_redirect to wp hook.
+
+= 2.9.2 =
+* Improved Custom Style editor generated stylesheets due to label color being overridden.
+
+= 2.9.1 =
+* Fixed Custom Style editor stylesheets
+* Updated default action box css
+
 = 2.9 =
 * Added new action box styles
 * Reorganized plugin assets so they're all registered at magic-action-box.php
@@ -197,6 +207,12 @@ Try checking the *Reorder post content filter priorities* checkbox found in WP A
 * Original Version.
 
 == Upgrade Notice ==
+= 2.9.3 =
+Minor update
+
+= 2.9.1 =
+Styling fixes
+
 = 2.9 =
 Major update. See Changelog
 

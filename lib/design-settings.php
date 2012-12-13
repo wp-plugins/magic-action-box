@@ -24,6 +24,7 @@ function mab_get_mapping(){
 	// ),
 	$mapping = array(
 		'.magic-action-box' => array( ## MAIN
+			'box-shadow' => 'main_background_shadow',
 			'margin' => array(
 
 				array('main_margin_top', 'px'),
@@ -101,17 +102,39 @@ function mab_get_mapping(){
 
 			'border-radius' => array( array('main_corner_radius','px') ),
 			'width' => array( array('main_width','px') ),
+		),
+		'.magic-action-box .mab-content' => array( ## CONTENT
 			'color' => array( 
 				array( 'main_font_color', 'string' ),
 				array( '!important', 'fixed_string')
 			),
 			'font-family' => 'main_font_family',
 
-			'font-size' => array( array('main_font_size', 'px') ),
+			'font-size' => array( 
+				array('main_font_size', 'px'),
+				array( '!important', 'fixed_string')
+			),
 
-			'line-height' => array( array('main_line_height', 'px') ),
+			'line-height' => array( 
+				array('main_line_height', 'px'),
+				array( '!important', 'fixed_string') 
+			),
 		),
-		'.magic-action-box .mab-content' => array( ## CONTENT
+		'.magic-action-box .mab-content *' => array(
+			'color' => array( 
+				array( 'main_font_color', 'string' ),
+				array( '!important', 'fixed_string')
+			),
+			'font-family' => 'main_font_family',
+
+			'font-size' => array(
+				array('main_font_size', 'px'),
+				array( '!important', 'fixed_string')
+			),
+
+			'line-height' => array( 
+				array('main_line_height', 'px'),
+				array( '!important', 'fixed_string')),
 		),
 		'.magic-action-box .mab-wrap .mab-heading' => array( ## MAIN HEADING <h3 class="mab-heading">
 			'margin-top' => array( 
@@ -200,10 +223,20 @@ function mab_get_mapping(){
 		'.magic-action-box .mab-main-action-wrap form' => array( ## OPTIN FORMS?
 		),
 		'.magic-action-box .mab-main-action-wrap .mab-field' => array( ## FIELD WRAPS
+			'margin-right' => array( 
+				array( 'field_margin_right', 'px' ),
+				array( '!important', 'fixed_string')
+			)
 		),
 		'.magic-action-box .mab-main-action-wrap .mab-field label' => array( ## LABEL
-			'color' => 'input_label_font_color',
-			'font-size' => array(array('input_label_font_size','px')),
+			'color' => array(
+				array('input_label_font_color','string'),
+				array( '!important', 'fixed_string')
+			),
+			'font-size' => array(
+				array('input_label_font_size','px'),
+				array( '!important', 'fixed_string')
+			),
 			'font-family' => 'input_label_font_family',
 			'font-style' => 'input_label_font_style',
 			'font-weight' => 'input_label_font_weight',
@@ -241,7 +274,59 @@ function mab_get_mapping(){
 				array( '!important', 'fixed_string')
 			),
 			'font-size' => array(
-				array('input_font_size','px')
+				array('input_font_size', 'px' ),
+				array( '!important', 'fixed_string')
+			),
+			'font-style' => array(
+				array('input_font_style','string'),
+
+
+				array( '!important', 'fixed_string')
+			),
+			'font-weight' => array(
+				array('input_font_weight','string'),
+				array( '!important', 'fixed_string')
+			),
+			'padding-top' => array( array( 'input_padding_top','px' ), array( '!important', 'fixed_string') ),
+			'padding-bottom' => array( array( 'input_padding_bottom','px' ), array( '!important', 'fixed_string') ),
+			'padding-right' => array( array( 'input_padding_right','px' ), array( '!important', 'fixed_string') ),
+			'padding-left' => array( array( 'input_padding_left','px' ), array( '!important', 'fixed_string') ),
+			'width' => array( 
+				array( 'input_width', 'px' ),
+				array( '!important', 'fixed_string')
+			)
+		),
+		'.magic-action-box .mab-main-action-wrap .mab-field textarea' => array( ##TEXTAREA
+			'background-color' => array(
+				array('input_background_color','string'),
+				array( '!important', 'fixed_string')
+			),
+			'background-color_select' => 'input_background_color_select',
+			'border' => array(
+				array('input_border','px'),
+
+				array('input_border_style', 'string'),
+
+				array('input_border_color', 'string'),
+				array( '!important', 'fixed_string')
+
+			),
+			'-moz-border-radius' => array( array('input_border_radius','px') ),
+
+			'-khtml-border-radius' => array( array('input_border_radius','px') ),
+
+			'-webkit-border-radius' => array( array('input_border_radius','px') ),
+			'color' => array(
+				array('input_font_color','string'),
+				array( '!important', 'fixed_string')
+			),
+			'font-family' => array(
+				array('input_font_family','string'),
+				array( '!important', 'fixed_string')
+			),
+			'font-size' => array(
+				array('input_font_size', 'px' ),
+				array( '!important', 'fixed_string')
 			),
 			'font-style' => array(
 				array('input_font_style','string'),
@@ -256,7 +341,65 @@ function mab_get_mapping(){
 				array( '!important', 'fixed_string')
 			)
 		),
-		'.magic-action-box .mab-main-action-wrap form input[type="submit"], .magic-action-box .mab-main-action-wrap form input.submit' => array( ## FORM SUBMIT
+		'.magic-action-box .mab-main-action-wrap form input[type="submit"]' => array( ## FORM SUBMIT
+			'background-color' => array(
+				array('button_background_color','string'),
+				array( '!important', 'fixed_string')
+			),
+
+			'background-color_select' => 'button_background_color_select',
+			'border' => array(
+
+				array('button_border','px'),
+
+				array('button_border_style','string'),
+
+				array('button_border_color','string'),
+
+				array('!important', 'fixed_string'),
+
+			),
+			'-moz-border-radius' => array( array('button_border_radius','px') ),
+
+			'-khtml-border-radius' => array( array('button_border_radius','px') ),
+
+			'-webkit-border-radius' => array( array('button_border_radius','px') ),
+
+			'border-radius' => array( 
+				array('button_border_radius','px'),
+				array( '!important', 'fixed_string')
+			),
+			'color' => array(
+				array('button_font_color','string'),
+				array( '!important', 'fixed_string')
+			),
+			'font-family' => array(
+				array('button_font_family','string'),
+				array( '!important', 'fixed_string')
+			),
+			'font-size' => array(
+				array('button_font_size','px'),
+				array( '!important', 'fixed_string')
+			),
+			'margin-top' => array( array( 'button_margin_top','px' ), array( '!important', 'fixed_string') ),
+			'margin-bottom' => array( array( 'button_margin_bottom','px' ), array( '!important', 'fixed_string') ),
+			'margin-left' => array( array( 'button_margin_left','px' ), array( '!important', 'fixed_string') ),
+			'margin-right' => array( array( 'button_margin_right','px' ), array( '!important', 'fixed_string') ),
+			'padding-top' => array( array( 'button_padding_top','px' ), array( '!important', 'fixed_string') ),
+			'padding-bottom' => array( array( 'button_padding_bottom','px' ), array( '!important', 'fixed_string') ),
+			'padding-right' => array( array( 'button_padding_right','px' ), array( '!important', 'fixed_string') ),
+			'padding-left' => array( array( 'button_padding_left','px' ), array( '!important', 'fixed_string') ),
+			'text-shadow' => array(
+				array('button_text_shadow','string'),
+				array( '!important', 'fixed_string')
+			),
+			'text-transform' => 'button_text_transform',
+			'width' => array( 
+				array( 'button_width', 'px' ),
+				array( '!important', 'fixed_string')
+			)
+		),
+		'.magic-action-box .mab-main-action-wrap form input.submit' => array(
 			'background-color' => array(
 				array('button_background_color','string'),
 				array( '!important', 'fixed_string')
@@ -316,7 +459,10 @@ function mab_get_mapping(){
 
 			'background-color_select' => 'button_background_hover_color_select',
 			'border-color' => 'button_hover_border_color',
-			'color' => 'button_font_hover_color',
+			'color' => array(
+				array('button_font_hover_color','string'),
+				array( '!important', 'fixed_string')
+			),
 			'text-shadow' => 'button_text_shadow'
 		),
 		'.magic-action-box .mab-main-action-wrap form input.submit:hover' => array(
@@ -324,7 +470,10 @@ function mab_get_mapping(){
 
 			'background-color_select' => 'button_background_hover_color_select',
 			'border-color' => 'button_hover_border_color',
-			'color' => 'button_font_hover_color',
+			'color' => array(
+				array('button_font_hover_color','string'),
+				array( '!important', 'fixed_string')
+			),
 			'text-shadow' => 'button_text_shadow'
 		),
 		'.magic-action-box .mab-aside' => array( ## ASIDE
@@ -346,6 +495,7 @@ function mab_get_mapping(){
 			'-webkit-box-shadow' => 'aside_background_shadow',
 			'margin-top' => array( array( 'aside_margin_top', 'px' ) ),
 			'margin-bottom' => array( array( 'aside_margin_bottom', 'px' ) ),
+
 			'margin-left' => array( array( 'aside_margin_left', 'px' ) ),
 			'margin-right' => array( array( 'aside_margin_right', 'px' ) ),
 			'padding' => array( array( 'aside_padding','px' ) ),
@@ -629,6 +779,7 @@ function mab_create_options($compare, $type) {
 	function mab_form_design_settings( $post = null ){
 		### LABELS
 		echo '<div class="mab-option-box">';
+		mab_setting_line(mab_add_size_setting('field_margin_right', 'Distance Between Fields (Right Margin)' ) );
 		mab_add_heading( 'Form Labels' );
 		mab_setting_line(mab_add_color_setting('input_label_font_color', 'Color'));
 		mab_setting_line(mab_add_size_setting('input_label_font_size', 'Font Size'));
@@ -647,9 +798,13 @@ function mab_create_options($compare, $type) {
 		mab_setting_line(mab_add_select_setting('input_font_family', 'Font', 'family'));
 		mab_setting_line(mab_add_size_setting('input_font_size', 'Font Size'));
 		mab_setting_line(mab_add_select_setting('input_font_style', 'Font Style', 'style'));
+		mab_setting_line(mab_add_size_setting('input_padding_top', 'Top Padding'));
+		mab_setting_line(mab_add_size_setting('input_padding_bottom', 'Bottom Padding'));
+		mab_setting_line(mab_add_size_setting('input_padding_right', 'Right Padding'));
+		mab_setting_line(mab_add_size_setting('input_padding_left', 'Left Padding'));
+		mab_setting_line(mab_add_size_setting('input_border_radius', 'Rounded Corner Radius'));
 		mab_setting_line(mab_add_size_setting('input_width', 'Input Field Width'));
 		mab_setting_line(mab_add_size_setting('input_border_radius', 'Rounded Corner Radius'));
-
 		echo '</div>';
 		
 		### SUBMIT BUTTON
@@ -677,5 +832,6 @@ function mab_create_options($compare, $type) {
 		mab_setting_line(mab_add_size_setting('button_padding_left', 'Left Padding'));
 		mab_setting_line(mab_add_size_setting('button_border_radius', 'Rounded Corner Radius'));
 		mab_setting_line(mab_add_select_setting('button_text_transform', 'Text Transform', 'transform'));
+		mab_setting_line(mab_add_size_setting('button_width', 'Submit Button Width'));
 		echo '</div>';
 	}
