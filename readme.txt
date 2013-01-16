@@ -3,8 +3,8 @@ Contributors: prosulum, pogidude
 Developer: Prosulum
 Tags: opt in, call to action, aweber, email, email marketing, form, mailing list, marketing, newsletter, webform, mailchimp, constant contact
 Requires at least: 3.1
-Tested up to: 3.4.2
-Stable tag: 2.9.3
+Tested up to: 3.5
+Stable tag: 2.9.4
 
 Magic Action Box is an easy to use but powerful lead generation plugin.
 
@@ -20,15 +20,17 @@ Some features:
 * Make your own action box styles
 * Or, pick a style from one of the pre-configured designs
 
-[Upgrade to Pro Version](http://www.magicactionbox.com/?pk_campaign=LITE&pk_kwd=pluginPage1)
+[See more features in Pro version](http://www.magicactionbox.com/?pk_campaign=LITE&pk_kwd=pluginPage1)
 
 Some features available in Pro version:
 
-* Access to all action box types
-* More pre-configured styles
+* Create Contact Form Boxes
+* Create Sales Boxes
+* Create Share Boxes
+* More pre-designed styles
 * Shortcodes
 * Sidebar Widget
-* Professional Customer Support
+* VIP Support
 * Create and upload your own buttons (currently used for Sales Boxes only)
 * [And more...](http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=pluginPage2)
 
@@ -81,6 +83,12 @@ Try checking the *Reorder post content filter priorities* checkbox found in WP A
 5. Action Box Settings Screen
 
 == Changelog ==
+
+= 2.9.4 =
+* Added new action box type - Contact Form 7 box
+* Added a number of action and filter hooks for extending the plugin :)
+* Added options for setting the input field labels of integrated mailing list providers
+
 = 2.9.3 =
 * Replaced the hook used to call the main action box from template_redirect to wp hook.
 

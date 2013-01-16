@@ -42,7 +42,10 @@ class ProsulumMabAdmin{
 		
 		//add Magic Action Box metabox to post content types
 		add_action( 'add_meta_boxes', array( &$this, 'addMetaBoxToOtherContentTypes') );
-		
+
+		//set callback function for handling setting up the action box type post
+		add_action('mab_set_action_box_type', array( $this, 'setActionBoxType'), 10, 2 );
+
 		/**
 		 * Hacky part followed from Premise. This is to make sure people
 		 * select an Action Box type before an Action Box type is actually created.
@@ -66,6 +69,8 @@ class ProsulumMabAdmin{
 			
 			update_option($this->_option_CurrentVersion, MAB_VERSION);
 		}
+
+		do_action('mab_admin_init');
 	}
 	
 	function initializeActionBoxes(){
@@ -350,11 +355,15 @@ class ProsulumMabAdmin{
 		
 		//save action for Action Box post types
 		if( ( false === $wp_is_post_autosave || $wp_is_post_revision ) && is_object( $post ) && $MabBase->is_mab_post_type( $post->post_type ) ){
-		
+			
+			$actionBoxType = $MabBase->get_actionbox_type( $postId );
+
 			$this->processActionBoxTypeSpecificMeta( $postId, $post );
 
 			//process action box design meta
 			$this->processActionBoxDesignMeta( $postId, $post );
+
+			do_action( 'mab_save_action_box', $actionBoxType, $postId, $post );
 			
 		}
 		
@@ -457,7 +466,13 @@ class ProsulumMabAdmin{
 		
 		//process selection of Action Box type
 		if( isset( $_GET['action_box_set'] ) && $_GET['action_box_set'] == 1 && wp_verify_nonce( $_GET['_wpnonce'], 'action_box_set' ) ){
-			$this->setActionBoxType( $_GET['post'], $_GET['action_box_type'] );
+			
+			/**
+			 * TODO: do some security checks on the values
+			 */
+			//$this->setActionBoxType( $_GET['post'], $_GET['action_box_type'] ); //removed v2.9.3
+			do_action( 'mab_set_action_box_type', $_GET['post'], $_GET['action_box_type'] );
+
 			wp_redirect( get_edit_post_link( $_GET['post'], 'raw') );
 			exit();
 		}

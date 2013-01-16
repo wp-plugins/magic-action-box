@@ -403,7 +403,6 @@ class ProsulumMab{
 				$actionBox = MAB_Template::getActionBoxOptin( $actionBoxObj );
 				break;
 			default:
-				return ''; //empty string
 				break;
 		}
 		return $actionBox;

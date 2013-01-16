@@ -86,7 +86,13 @@ class MAB_ActionBox{
 			return false;
 		}
 		
-		$this->_type = $MabBase->get_mab_meta( $id, 'type' );
+		//make sure action box type is registered
+		$type = $MabBase->get_mab_meta( $id, 'type' );
+		if( !$MabBase->get_registered_action_box_type( $type ) ){
+			//error_log($type . ' not registered');
+			return false;
+		}
+		$this->_type = $type;
 		
 		$this->_id = $id;
 		$this->_meta = $MabBase->get_mab_meta( $id );

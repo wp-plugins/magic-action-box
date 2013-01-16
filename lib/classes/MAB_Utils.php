@@ -11,7 +11,7 @@
  * @since 2.8.6
  */
 class MAB_Utils{
-
+	private static $_action_box_types = array();
 	
 	/**
 	 * @param string $filename reference a file relative to the MAB_VIEWS_DIR
@@ -73,20 +73,9 @@ class MAB_Utils{
 	 * @return array|bool - return array of data for action box depending specified through $type or all action boxes if no parameter is passed. Will return FALSE if specified $type is not found
 	 */
 	public static function getActionBoxTypes( $type = null ){
-		$boxes = array();
-		
-		/** TODO: make a buildActionBoxArray() function **/
-		
-		//Optin
-		$boxes['optin'] = array( 'type' => 'optin', 'name' => __('Optin Form', 'mab' ), 'description' => __('An opt in form is used to build your email list.','mab'), 'template' => 'optin' );
-		
-		//Sales Box
-		$boxes['sales-box'] = array( 'type' => 'sales-box', 'name' => __('Sales Box', 'mab' ), 'description' => __('A simple sales box. Use it to lead visitors to your sales page.','mab'), 'template' => 'sales-box' );
-		
-		//Social Media
-		$boxes['share-box'] = array( 'type' => 'share-box', 'name' => __('Share Box', 'mab' ), 'description' => __('Action box made for sharing your content','mab'), 'template' => 'share-box' );
-		
-		$boxTypes = apply_filters( 'mab_get_action_box_types', $boxes );
+		global $MabBase;
+
+		$boxTypes = $MabBase->get_registered_action_box_types();
 		
 		if( !is_null( $type ) ){
 			if( isset( $boxTypes[$type] ) ){

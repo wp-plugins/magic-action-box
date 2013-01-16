@@ -25,6 +25,10 @@ class MAB_Template{
 		$template = apply_filters('mab_get_template', '', $type, $actionBoxObj );
 		$output = apply_filters('mab_get_template-' . $type, $template, $actionBoxObj );
 		
+		if( empty( $output ) ){
+			$output = self::getActionBoxDefaultCallback( $actionBoxObj );
+		}
+
 		self::resetCurrentTemplateVars();
 		
 		return apply_filters('mab_template_output', $output, $actionBoxObj);
@@ -38,12 +42,23 @@ class MAB_Template{
 		
 		if( !$actionBoxObj->isConfigured() ) return;
 		
-		$actionBoxId = $actionBoxObj->getId();
-		$meta = $actionBoxObj->getMeta();
 		$style = $actionBoxObj->getstyleKey();
 		
 		if( $style === '' ) return;
 		
+		$actionBoxType = $actionBoxObj->getActionBoxType();
+
+		do_action( 'mab_pre_enqueue_assets', $actionBoxType, $this );
+		do_action( 'mab_enqueue_stylesheet', $style, $this ); 
+		do_action( 'mab_enqueue_assets', $actionBoxType, $this );
+		
+	}
+
+	static function loadStylesheets( $style, $templateObj ){
+
+		$actionBoxObj = $templateObj->_actionbox_obj;
+		$meta = $actionBoxObj->getMeta();
+
 		switch( $style ){
 			case 'user':
 				//get user style key
@@ -75,7 +90,7 @@ class MAB_Template{
 				
 				//use one of the preconfigured styles
 				//$preconfigured_style = $other_style_location . $style . '.css';
-				$preconfigured_style = $this->getTemplateStyleUrl() . "style.css";
+				$preconfigured_style = $templateObj->getTemplateStyleUrl() . "style.css";
 				
 				//if( file_exists( $preconfigured_style  ) ){ this is a url.. tsk.
 					wp_enqueue_style( "mab-preconfigured-style-{$style}", $preconfigured_style , array('mab-base-style'), MAB_VERSION );
@@ -89,7 +104,14 @@ class MAB_Template{
 				break;
 				// ==========================
 		}//endswitch
+
+	}
+
+	static function loadCustomCss( $style, $templateObj ){
 		
+		$actionBoxObj = $templateObj->_actionbox_obj;
+		$actionBoxId = $actionBoxObj->getId();
+
 		/** LOAD CUSTOM CSS **/
 		//get stylesheet which should contain only CSS in Custom CSS box under Design Setting: Custom CSS
 		$custom_css_stylesheet = mab_get_actionbox_stylesheet_path( $actionBoxId );
@@ -128,7 +150,8 @@ class MAB_Template{
 		$classes[] = 'magic-action-box';
 
 		//action box type
-		$classes[] = 'mab-type-' . $actionBoxObj->getActionBoxType();
+		$actionBoxType = $actionBoxObj->getActionBoxType();
+		$classes[] = 'mab-type-' . $actionBoxType;
 		
 		//action box id
 		$classes[] = 'mab-id-'.$actionBoxObj->getId();
@@ -163,7 +186,7 @@ class MAB_Template{
 		
 		$classes = array_map( 'esc_attr', $classes );
 	
-		return apply_filters( 'actionbox_class', $classes, $class );
+		return apply_filters( 'mab_actionbox_class', $classes, $class, $actionBoxType, $this );
 	}
 	
 	function getClass( $class = '' ){
@@ -196,34 +219,38 @@ class MAB_Template{
 	 * @return string absolute path to template file
 	 */
 	function getDefaultTemplateFile( $type = '' ){
+		global $MabBase;
+
 		$filename = '';
-		$viewDir = $this->getDefaultTemplateDir();
+		$viewDir = $this->getDefaultTemplateDir( $type );
 		$ext = '.php';
 		$actionBoxObj = $this->_actionbox_obj;
 		
-		$boxes = ProsulumMabCommon::getActionBoxTypes();
-		
-		if( isset( $boxes[$type] ) ){
+		if( $MabBase->get_registered_action_box_type( $type ) ){
 			$filename = $viewDir . 'actionbox-' . $type . $ext;
 		}
+
+		if( !file_exists( $filename ) ){
+			$filename = MAB_VIEWS_DIR . 'action-box/actionbox-default.php';
+		}
 		
-		return $filename;
+		return apply_filters('mab_get_default_template_file', $filename, $type );
 	}
 
-	function getPreDesignedTemplateDir(){
-		return MAB_STYLES_DIR;
+	function getPreDesignedTemplateDir( $type = '' ){
+		return apply_filters( 'mab_get_pre_designed_template_dir', MAB_STYLES_DIR, $type );
 	}
 	
-	function getPreDesignedTemplateUrl(){
-		return MAB_STYLES_URL;
+	function getPreDesignedTemplateUrl( $type = '' ){
+		return apply_filters( 'mab_get_pre_designed_template_url', MAB_STYLES_URL, $type );
 	}
 	
-	function getDefaultTemplateDir(){
-		return MAB_VIEWS_DIR . 'action-box/';
+	function getDefaultTemplateDir( $type = '' ){
+		return apply_filters( 'mab_get_default_template_dir', MAB_VIEWS_DIR . 'action-box/', $type );
 	}
 	
-	function getDefaultTemplateUrl(){
-		return MAB_VIEWS_URL . 'action-box/';
+	function getDefaultTemplateUrl( $type = '' ){
+		return apply_filters( 'mab_get_default_template_url', MAB_VIEWS_URL . 'action-box/', $type );
 	}
 	
 	/**
@@ -237,8 +264,8 @@ class MAB_Template{
 
 		if( $styleKey == 'user' || $styleKey == 'none' ){
 			//default template paths
-			$this->_template_dir = $this->getDefaultTemplateDir();
-			$this->_template_url = $this->getDefaultTemplateUrl();
+			$this->_template_dir = $this->getDefaultTemplateDir( $type );
+			$this->_template_url = $this->getDefaultTemplateUrl( $type );
 			$this->_template_file = $this->getDefaultTemplateFile( $type );
 		} else {
 			//predesigned template paths
@@ -255,8 +282,8 @@ class MAB_Template{
 				$this->_is_default = false;
 			} else {
 				//fallback to default templates
-				$this->_template_dir = $this->getDefaultTemplateDir();
-				$this->_template_url = $this->getDefaultTemplateUrl();
+				$this->_template_dir = $this->getDefaultTemplateDir( $type );
+				$this->_template_url = $this->getDefaultTemplateUrl( $type );
 				$this->_template_file = $this->getDefaultTemplateFile( $type );
 			}
 			
@@ -264,6 +291,8 @@ class MAB_Template{
 			$this->_template_style_dir = $tempDir;
 			$this->_template_style_url = $this->getPreDesignedTemplateUrl() . "{$styleKey}/";
 		}
+
+		do_action('mab_set_template_paths', $type, $styleKey, $this );
 	}
 	
 	static function setCurrentTemplateVars($actionBoxObj){
@@ -322,6 +351,11 @@ class MAB_Template{
 	
 	function init($actionBoxObj){
 		$this->_actionbox_obj = $actionBoxObj;
+
+		//set up hooks
+		add_action( 'mab_enqueue_stylesheet', array( 'MAB_Template', 'loadStylesheets' ), 5, 2 );
+		add_action( 'mab_enqueue_assets', array( 'MAB_Template', 'loadCustomCss' ), 20, 2 );
+
 		//set up template paths
 		$this->setTemplatePaths();
 	}
@@ -334,30 +368,27 @@ class MAB_Template{
 		$this->__construct($actionBoxObj);
 	}
 
-
-	/**
-	 * Get the default templates that came with the system
-	 */
-	static function loadDefaultTemplate(){
-		$actionBoxObj = $this->_actionbox_obj;
-		$type = $actionBox->getActionBoxType();
-		switch( $type ){
-			case 'optin':
-				$actionBox = self::getActionBoxOptin( $actionBoxObj );
-				break;
-			case 'sales-box':
-				$actionBox = self::getActionBoxSalesBox( $actionBoxObj );
-				break;
-			case 'share-box':
-				$actionBox = self::getActionBoxShareBox( $actionBoxObj );
-				break;
-			default:
-				return ''; //empty string
-				break;
-		}
-		return $actionBox;
-	}
 	
+	public static function getActionBoxDefaultCallback( $actionBoxObj ){
+		global $MabBase;
+		$data = array();
+
+		$meta = $actionBoxObj->getMeta();
+		$meta['ID'] = $actionBoxObj->getId();
+
+		$data['meta'] = $meta;
+		$data['mab-html-id'] = $actionBoxObj->getHtmlId();
+		$data['class'] = $actionBoxObj->getTemplateObj()->getClass();
+		$actionBoxType = $actionBoxObj->getActionBoxType();
+		$data['action-box-type'] = $actionBoxType;
+		$data['action-box-obj'] = $actionBoxObj;
+
+		$data['the_content'] = apply_filters('mab_default_action_box_content', '', $actionBoxObj );
+
+		$template = $actionBoxObj->getTemplateObj()->getTemplateFile();
+		return MAB_Utils::getView( $template, $data, '' );
+	}
+
 	/**
 	 * SHARE BOX
 	 * @param object $actionBoxObj - MAB_ActionBox object
