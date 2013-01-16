@@ -70,6 +70,18 @@ jQuery(document).ready(function(){
 		//show related dependent container
 		$div.show('fast');
 		
+		//Hide Field Labels options if "Manual" is selected as email provider
+		var $fieldLabels = jQuery('.mab-option-field-labels');
+		if( val == 'manual'){
+			$fieldLabels.hide();
+			$fieldLabels.addClass('hide');
+		} else {
+			if( $fieldLabels.hasClass('hide') ){
+				$fieldLabels.removeClass('hide');
+				$fieldLabels.show('fast');
+			}
+		}
+
 	}).change();
 	
 	//Force Update Optin Lists from Email Provider servers
