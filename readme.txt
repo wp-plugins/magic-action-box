@@ -3,8 +3,8 @@ Contributors: prosulum, pogidude
 Developer: Prosulum
 Tags: opt in, call to action, aweber, email, email marketing, form, mailing list, marketing, newsletter, webform, mailchimp, constant contact
 Requires at least: 3.1
-Tested up to: 3.4.2
-Stable tag: 2.9
+Tested up to: 3.5
+Stable tag: 2.9.5
 
 Magic Action Box is an easy to use but powerful lead generation plugin.
 
@@ -20,15 +20,17 @@ Some features:
 * Make your own action box styles
 * Or, pick a style from one of the pre-configured designs
 
-[Upgrade to Pro Version](http://www.magicactionbox.com/?pk_campaign=LITE&pk_kwd=pluginPage1)
+[See more features in Pro version](http://www.magicactionbox.com/?pk_campaign=LITE&pk_kwd=pluginPage1)
 
 Some features available in Pro version:
 
-* Access to all action box types
-* More pre-configured styles
+* Create Contact Form Boxes
+* Create Sales Boxes
+* Create Share Boxes
+* More pre-designed styles
 * Shortcodes
 * Sidebar Widget
-* Professional Customer Support
+* VIP Support
 * Create and upload your own buttons (currently used for Sales Boxes only)
 * [And more...](http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=pluginPage2)
 
@@ -81,6 +83,26 @@ Try checking the *Reorder post content filter priorities* checkbox found in WP A
 5. Action Box Settings Screen
 
 == Changelog ==
+= 2.9.5 =
+* Fixed css generator where it wasn't putting out the property for submit buttons on hover
+* Fixed paging issue when on page with custom query
+* added mab_allowed_post_types filter for making it possible to show action boxes on other post types
+
+= 2.9.4 =
+* Added new action box type - Contact Form 7 box
+* Added a number of action and filter hooks for extending the plugin :)
+* Added options for setting the input field labels of integrated mailing list providers
+
+= 2.9.3 =
+* Replaced the hook used to call the main action box from template_redirect to wp hook.
+
+= 2.9.2 =
+* Improved Custom Style editor generated stylesheets due to label color being overridden.
+
+= 2.9.1 =
+* Fixed Custom Style editor stylesheets
+* Updated default action box css
+
 = 2.9 =
 * Added new action box styles
 * Reorganized plugin assets so they're all registered at magic-action-box.php
@@ -197,6 +219,12 @@ Try checking the *Reorder post content filter priorities* checkbox found in WP A
 * Original Version.
 
 == Upgrade Notice ==
+= 2.9.3 =
+Minor update
+
+= 2.9.1 =
+Styling fixes
+
 = 2.9 =
 Major update. See Changelog
 
