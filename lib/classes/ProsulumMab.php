@@ -71,6 +71,19 @@ class ProsulumMab{
 	function setupContentTypeActionBox(){
 		global $MabBase, $wp_query;
 		
+		/** 
+		 * Get query var "page" as some page templates may use this on custom queries and calling
+		 * get_queried_object() method seems to override this i.e. optimize press on Blog Template
+		 **/
+		$paged = get_query_var('paged');
+
+		/**
+		 * If on static front page, need to check 'page'
+		 * @source https://codex.wordpress.org/Pagination#static_front_page
+		 */
+		if( empty($paged) )
+			$paged = get_query_var('page');
+
 		$post = $wp_query->get_queried_object();
 		
 		//stop if the content type is not supposed to show action box
@@ -102,6 +115,12 @@ class ProsulumMab{
 			add_action( 'wp_enqueue_scripts', array( &$this, 'printStylesScripts' ) );
 			add_filter( "the_content", array( &$this, 'showActionBox'), $mab_priority);
 		}
+
+		/**
+		 * Set the 'paged' parameter as it may have been overwritten by call to
+		 * get_queried_object() above
+		 */
+		set_query_var('paged',$paged);
 	}
 	
 	function showActionBox( $content ){

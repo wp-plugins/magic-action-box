@@ -455,10 +455,15 @@ function mab_get_mapping(){
 			'text-transform' => 'button_text_transform'
 		),
 		'.magic-action-box .mab-main-action-wrap form input[type="submit"]:hover' => array(
-			'background-color' => 'button_background_hover_color',
-
+			'background-color' => array(
+				array('button_background_hover_color','string'),
+				array('!important', 'fixed_string')
+			),
 			'background-color_select' => 'button_background_hover_color_select',
-			'border-color' => 'button_hover_border_color',
+			'border-color' => array(
+				array('button_border_hover_color', 'string'),
+				array('!important', 'fixed_string')
+			),
 			'color' => array(
 				array('button_font_hover_color','string'),
 				array( '!important', 'fixed_string')
@@ -466,10 +471,16 @@ function mab_get_mapping(){
 			'text-shadow' => 'button_text_shadow'
 		),
 		'.magic-action-box .mab-main-action-wrap form input.submit:hover' => array(
-			'background-color' => 'button_background_hover_color',
+			'background-color' => array(
+				array('button_background_hover_color','string'),
+				array('!important', 'fixed_string')
+			),
 
 			'background-color_select' => 'button_background_hover_color_select',
-			'border-color' => 'button_hover_border_color',
+			'border-color' => array(
+				array('button_border_hover_color', 'string'),
+				array('!important', 'fixed_string')
+			),
 			'color' => array(
 				array('button_font_hover_color','string'),
 				array( '!important', 'fixed_string')

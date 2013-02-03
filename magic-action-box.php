@@ -3,13 +3,13 @@
  * Plugin Name: Magic Action Box
  * Plugin URI: http://magicactionbox.com
  * Description: Supercharge your blog posts!
- * Version: 2.9.4
+ * Version: 2.9.5
  * Author: Prosulum, LLC
  * Author URI: http://prosulum.com
  * License: GPLv2
  */
 
-define( 'MAB_VERSION', '2.9.4');
+define( 'MAB_VERSION', '2.9.5');
 //e.g. /var/www/example.com/wordpress/wp-content/plugins/after-post-action-box
 define( "MAB_DIR", plugin_dir_path( __FILE__ ) );
 //e.g. http://example.com/wordpress/wp-content/plugins/after-post-action-box
@@ -328,10 +328,18 @@ class ProsulumMabBase{
 		return $this->_post_type;
 	}
 	
+	/**
+	 * Synonymous function to get_action_box_type() method
+	 */
 	function get_actionbox_type( $post_id ){
 		return $this->get_action_box_type( $post_id );
 	}
 
+	/**
+	 * Get the type of the action box post type
+	 * @param  int $post_id the post type ID
+	 * @return string type of action box
+	 */
 	function get_action_box_type( $post_id ){
 		return $this->get_mab_meta( $post_id, 'type' );
 	}
@@ -355,7 +363,7 @@ class ProsulumMabBase{
 	
 	function get_allowed_content_types(){
 		//TODO: have allowed content types as an option
-		$allowed = array( 'post', 'page', 'landing_page' );
+		$allowed = apply_filters('mab_allowed_post_types', array( 'post', 'page', 'landing_page' ) );
 		
 		return $allowed;
 	}
@@ -556,11 +564,16 @@ class ProsulumMabBase{
 		$is_mab_page = false;
 		$user_id = $current_user->ID;
 		
+		//$nag_notice = $this->_option_NagNotice . $this->get_current_version();
+		$nag_notice = $this->_option_NagNotice . '2.9.4'; //manually set since v2.9.5 is a very minor update
+
 		if ( current_user_can( 'manage_options' ) ){
+
 			/** Update Notice **/
 			//check that the user hasn't already clicked to ignore this message.
 			//if( !get_option( $this->_option_NagNotice . $this->get_current_version() ) ){
-			if( !get_user_meta( $user_id, $this->_option_NagNotice . $this->get_current_version() ) ){
+			if( !get_user_meta( $user_id, $nag_notice ) ){
+
 				echo '<div class="updated"><p>';
 
 				printf( __('Magic Action Box Pro version now integrates with Contact Form 7 plugin. Spice up your contact forms by <a href="%4$s">going Pro</a>. <a href="%3$s">Hide notice</a>','mab'), $this->get_current_version(), add_query_arg( array('post_type'=>'action-box'), admin_url('post-new.php') ), add_query_arg( array('mab-hide-update-notice' => 'true' ) ), 'http://www.magicactionbox.com/pricing/?pk_campaign=LITE&pk_kwd=cf7promo' );
@@ -601,11 +614,15 @@ class ProsulumMabBase{
 	function updated_plugin_notice_hide(){
 		global $current_user;
 		$user_id = $current_user->ID;
+
+		//$nag_notice = $this->_option_NagNotice . $this->get_current_version();
+		$nag_notice = $this->_option_NagNotice . '2.9.4'; //manually set since v2.9.5 is a very minor 
+
 		/** Hide nag notice **/
 		if( isset( $_GET['mab-hide-update-notice'] ) && 'true' == $_GET['mab-hide-update-notice'] ){
 			$val = 1;
 			//update_option( $this->_option_NagNotice . $this->get_current_version(), $val );
-			add_user_meta( $user_id, $this->_option_NagNotice . $this->get_current_version(), $val, true );
+			add_user_meta( $user_id, $nag_notice, $val, true );
 		}
 		
 		/** Hide Promo notice **/
