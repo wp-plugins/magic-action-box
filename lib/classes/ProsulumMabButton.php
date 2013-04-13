@@ -171,6 +171,31 @@ class ProsulumMabButton{
 		return $buttons;
 	}
 	
+	function duplicateButton( $key ){
+		$buttons = $this->getConfiguredButtons();
+
+		if( !isset( $buttons[$key] ) )
+			return false;
+
+		$original = $buttons[$key];
+
+		//duplicate
+		$duplicate = $original;
+
+		$duplicate['title'] = $original['title'] . ' (copy)';
+		$duplicate['timesaved'] = current_time( 'timestamp' );
+
+		//add duplicate to $buttons
+		$buttons[] = $duplicate;
+
+		//pop the key value of the last saved button
+		$duplicate_key = array_pop( array_keys( $buttons ) );
+
+		//save
+		update_option( $this->_option_ButtonSettings, $buttons );
+		return $duplicate_key;
+	}
+
 	function deleteConfiguredButton( $key ){
 		$buttons = $this->getConfiguredButtons();
 		unset( $buttons[$key] );

@@ -61,7 +61,8 @@ div.mab-ad img.mab-ad-img{
 	padding: 6px 10px;
 }
 
-input[disabled],select[disabled]{ color: #aaa; }
+input[disabled],select[disabled],textarea[disabled]{ color: #aaa; }
+.mab-disabled{ color: #aaa !important; }
 
 /**
  * Tabbed Settings Content

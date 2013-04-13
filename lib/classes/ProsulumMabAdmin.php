@@ -409,10 +409,15 @@ class ProsulumMabAdmin{
 		return isset( $settings[$key] );
 	}
 	
-	function saveConfiguredButton( $button, $key ){
+	function saveConfiguredButton( $buttonSettings, $key ){
 		global $MabButton;
-		$key = $MabButton->updateSettings( $button, $key );
+		$key = $MabButton->updateSettings( $buttonSettings, $key );
 		return $key;
+	}
+
+	function duplicateButton( $key ){
+		global $MabButton;
+		return $MabButton->duplicateButton( $key );
 	}
 	
 	function deleteConfiguredButton( $key ){
@@ -510,10 +515,27 @@ class ProsulumMabAdmin{
 			$buttonMessage = $this->processButtonSettings();
 			wp_redirect(admin_url('admin.php?page=' . $_GET['page'] . '&' . $buttonMessage));
 			exit();
-		} elseif( isset( $_GET['mab-button-id'] ) && $_GET['mab-delete-button'] == 'true' && check_admin_referer( 'mab-delete-button' ) ){
-			$this->deleteConfiguredButton( $_GET['mab-button-id'] );
-			wp_redirect( admin_url('admin.php?page=mab-design&deleted=true') );
-			exit();
+		} elseif( isset( $_GET['mab-button-id'] ) && isset( $_GET['mab-button-action'] ) ){
+
+			$button_action = $_GET['mab-button-action'];
+			$button_id = $_GET['mab-button-id'];
+
+			//check button key if valid
+			if( !$this->isValidButtonKey( $button_id ) ){
+				//button id/key is NOT valid
+				wp_redirect( admin_url('admin.php?page=mab-design&mab-invalid-button-id=true') );
+				exit();
+			}
+
+			if( 'duplicate' == $button_action && check_admin_referer('mab-duplicate-button') ) {
+				$duplicate_button_id = $this->duplicateButton( $button_id );
+				wp_redirect( admin_url('admin.php?page=mab-design&mab-button-duplicated=' . $duplicate_button_id));
+				exit();
+			} elseif( 'delete' == $button_action && check_admin_referer('mab-delete-button') ){
+				$this->deleteConfiguredButton( $_GET['mab-button-id'] );
+				wp_redirect( admin_url('admin.php?page=mab-design&deleted=true') );
+				exit();
+			}
 		} elseif( isset( $_GET['mab-create-preconfigured'] ) && $_GET['mab-create-preconfigured'] == 'true' && check_admin_referer( 'mab-create-preconfigured' ) ){
 			$this->createPreconfiguredButtons();
 			wp_redirect( admin_url('admin.php?page=mab-design&mab-preconfigured-buttons=true' ) );
@@ -717,6 +739,8 @@ class ProsulumMabAdmin{
 				$mab['main-button-attributes'] = esc_attr( $mab['main-button-attributes'] );
 			}
 			
+			$mab = apply_filters( 'mab_update_action_box_meta', $mab, $postId, $data );
+
 			$MabBase->update_mab_meta( $postId, $mab );
 		}//ENDIF
 		
@@ -732,7 +756,7 @@ class ProsulumMabAdmin{
 		$data = stripslashes_deep($_POST);
 		
 		//Design Settings
-		if( is_array( $data['mab-design'] ) ){
+		if( isset( $data['mab-design'] ) && is_array( $data['mab-design'] ) ){
 			$design = $data['mab-design'];
 			
 			$MabBase->update_mab_meta( $postId, $design, 'design' );

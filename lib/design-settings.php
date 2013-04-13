@@ -265,6 +265,11 @@ function mab_get_mapping(){
 			'-khtml-border-radius' => array( array('input_border_radius','px') ),
 
 			'-webkit-border-radius' => array( array('input_border_radius','px') ),
+
+			'border-radius' => array( 
+				array('input_border_radius','px'),
+				array( '!important', 'fixed_string')
+			),
 			'color' => array(
 				array('input_font_color','string'),
 				array( '!important', 'fixed_string')
@@ -316,6 +321,11 @@ function mab_get_mapping(){
 			'-khtml-border-radius' => array( array('input_border_radius','px') ),
 
 			'-webkit-border-radius' => array( array('input_border_radius','px') ),
+
+			'border-radius' => array( 
+				array('input_border_radius','px'),
+				array( '!important', 'fixed_string')
+			),
 			'color' => array(
 				array('input_font_color','string'),
 				array( '!important', 'fixed_string')

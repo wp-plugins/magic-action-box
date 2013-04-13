@@ -107,7 +107,7 @@ class MAB_ActionBox{
 	}
 	
 	function getStyleKey(){
-		if( !$this->isConfigured() ) return '';
+		if( !$this->isConfigured() || empty( $this->_meta['style'] ) ) return '';
 		
 		return $this->_meta['style'];
 	}

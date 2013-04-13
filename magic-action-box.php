@@ -3,13 +3,13 @@
  * Plugin Name: Magic Action Box
  * Plugin URI: http://magicactionbox.com
  * Description: Supercharge your blog posts!
- * Version: 2.9.5
+ * Version: 2.10
  * Author: Prosulum, LLC
  * Author URI: http://prosulum.com
  * License: GPLv2
  */
 
-define( 'MAB_VERSION', '2.9.5');
+define( 'MAB_VERSION', '2.10');
 //e.g. /var/www/example.com/wordpress/wp-content/plugins/after-post-action-box
 define( "MAB_DIR", plugin_dir_path( __FILE__ ) );
 //e.g. http://example.com/wordpress/wp-content/plugins/after-post-action-box
@@ -161,7 +161,7 @@ class ProsulumMabBase{
 
 	function loadAddOns(){
 		/** TODO: load addons automatically **/
-		require_once MAB_ADDONS_DIR . 'contactform7/init.php';
+		require_once MAB_ADDONS_DIR . 'load-addons.php';
 
 		do_action('mab_addons_loaded');
 	}
@@ -564,8 +564,8 @@ class ProsulumMabBase{
 		$is_mab_page = false;
 		$user_id = $current_user->ID;
 		
-		//$nag_notice = $this->_option_NagNotice . $this->get_current_version();
-		$nag_notice = $this->_option_NagNotice . '2.9.4'; //manually set since v2.9.5 is a very minor update
+		$nag_notice = $this->_option_NagNotice . $this->get_current_version();
+		//$nag_notice = $this->_option_NagNotice . '2.9.4'; //manually set since v2.9.5 is a very minor update
 
 		if ( current_user_can( 'manage_options' ) ){
 
@@ -576,7 +576,7 @@ class ProsulumMabBase{
 
 				echo '<div class="updated"><p>';
 
-				printf( __('Magic Action Box Pro version now integrates with Contact Form 7 plugin. Spice up your contact forms by <a href="%4$s">going Pro</a>. <a href="%3$s">Hide notice</a>','mab'), $this->get_current_version(), add_query_arg( array('post_type'=>'action-box'), admin_url('post-new.php') ), add_query_arg( array('mab-hide-update-notice' => 'true' ) ), 'http://www.magicactionbox.com/pricing/?pk_campaign=LITE&pk_kwd=cf7promo' );
+				printf( __('New in Magic Action Box Pro:<br /><strong>Random Boxes</strong> - show a different action box on every page load. <br /><strong>Video Side Item</strong> - show videos instead of just images. <br /><a href="%2$s">Upgrade to Pro version now</a> | <a href="%1$s">Hide notice</a>', MAB_DOMAIN), add_query_arg( array('mab-hide-update-notice' => 'true' ) ), 'http://www.magicactionbox.com/pricing/?pk_campaign=LITE&pk_kwd=cf7promo' );
 
 				echo '</p></div>';
 				/*
@@ -588,15 +588,17 @@ class ProsulumMabBase{
 			}
 			
 			/** Promo Notice - show only on plugin pages **/
+			/*
 			if( $screen->parent_base == 'mab-main' || $screen->post_type == $this->get_post_type() ){
 				$is_mab_page = true;
 			}
 			if( $is_mab_page && !get_user_meta( $user_id, $this->_option_PromoNotice . $this->get_current_version() ) ){
 				echo '<div class="updated"><p>';
 				printf( __('<a href="%1$s" target="_blank">Go Pro to do more!</a><br />
-				Get access to more action box types: <strong>Sales Box, Share Box & Contact Forms</strong> by <a href="%2$s" target="_blank">upgrading to Pro</a>. <a href="%3$s">Hide Notice</a>.','mab'), 'http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=goProNotice', 'http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=promoNotice', add_query_arg( array('mab-hide-promo-notice' => 'true' ) ) );
+				Get access to more action box types: <strong>Random Boxes, Sales Box, Share Box & Contact Forms</strong> by <a href="%2$s" target="_blank">upgrading to Pro</a>. <a href="%3$s">Hide Notice</a>.','mab'), 'http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=goProNotice', 'http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=promoNotice', add_query_arg( array('mab-hide-promo-notice' => 'true' ) ) );
 				echo '</p></div>';
 			}
+			//*/
 			
 			//check Magic Action Popup
 			if( class_exists( 'MagicActionPopupBase' ) ){
@@ -612,11 +614,12 @@ class ProsulumMabBase{
 	}
 	
 	function updated_plugin_notice_hide(){
+
 		global $current_user;
 		$user_id = $current_user->ID;
-
-		//$nag_notice = $this->_option_NagNotice . $this->get_current_version();
-		$nag_notice = $this->_option_NagNotice . '2.9.4'; //manually set since v2.9.5 is a very minor 
+		
+		$nag_notice = $this->_option_NagNotice . $this->get_current_version();
+		//$nag_notice = $this->_option_NagNotice . '2.9.4'; //manually set since v2.9.5 is a very minor update
 
 		/** Hide nag notice **/
 		if( isset( $_GET['mab-hide-update-notice'] ) && 'true' == $_GET['mab-hide-update-notice'] ){
@@ -650,9 +653,9 @@ class ProsulumMabBase{
 		wp_register_script( 'mab-actionbox-helper', MAB_ASSETS_URL . 'js/actionbox-helper.js', array('jquery') );
 		
 		/** ADMIN Scripts **/
-		wp_register_script( 'mab-admin-script', MAB_ASSETS_URL . 'js/magic-action-box-admin.js', array('jquery'), MAB_VERSION );
-		wp_register_script( 'mab-design-script', MAB_ASSETS_URL . 'js/magic-action-box-design.js', array('farbtastic', 'thickbox' ), MAB_VERSION );
-		
+		wp_register_script( 'mab-youtube-helpers', MAB_ASSETS_URL . 'js/youtube-helpers.js', array( 'jquery' ), MAB_VERSION );
+		wp_register_script( 'mab-admin-script', MAB_ASSETS_URL . 'js/magic-action-box-admin.js', array('jquery', 'mab-youtube-helpers'), MAB_VERSION );
+		wp_register_script( 'mab-design-script', MAB_ASSETS_URL . 'js/magic-action-box-design.js', array('farbtastic', 'thickbox' ), MAB_VERSION );		
 		
 		/** Styles **/
 		wp_register_style( 'mab-base-style', MAB_ASSETS_URL . 'css/magic-action-box-styles.css', array() );

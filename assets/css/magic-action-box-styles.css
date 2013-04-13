@@ -26,6 +26,8 @@
 	z-index: 8;
 }
 
+.magic-action-box .mab-aside-type-video .mab-aside{ z-index: 20; }
+
 .mab-aside img{ background: none; border: none; padding: 0; margin: 0; }
 
 .mab-aside-right .mab-aside{

@@ -5,6 +5,7 @@ class ProsulumMab{
 	private $_defaultActionBoxId = '';
 	private $_defaultActionBoxPlacement = 'bottom';
 	private $_defaultActionBoxObj = null;
+	private $_the_content_filter_priority = 10;
 	
 	function ProsulumMab(){
 		return $this->__construct();
@@ -94,7 +95,7 @@ class ProsulumMab{
 		//one blog post.
 		if( is_singular() || ( is_home() && $wp_query->post_count == 1 ) ){
 			
-			$mab_priority = 10; //default 10.
+			$mab_priority = $this->_the_content_filter_priority; //default 10.
 			
 			//TODO: have option to disable removal of filter
 			// Disable WordPress native formatters
@@ -158,6 +159,17 @@ class ProsulumMab{
 		
 		//check placement of action box
 		$placement = isset( $placement ) ? $placement : 'bottom';
+
+		/**
+		 * If defined, remove the filter after use
+		 */
+		if( defined('MAB_SINGLE_USE_FILTER') && MAB_SINGLE_USE_FILTER ){
+			if( is_main_query() ){
+				$mab_priority = $this->_the_content_filter_priority;
+				remove_filter( "the_content", array( $this, 'showActionBox'), $mab_priority);
+			}
+		}
+		
 
 		if( $placement === 'top' ){
 			return $actionBox . "\n" . $content;

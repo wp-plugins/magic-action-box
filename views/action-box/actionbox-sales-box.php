@@ -3,10 +3,19 @@ $meta = $data['meta'];
 $id = $meta['ID'];
 $action_box_type = $data['action-box-type'];
 
-$aside_placement_class = empty( $meta['aside-image-placement'] ) ? '' : 'mab-aside-' . $meta['aside-image-placement'];
+//$placement_class = empty( $meta['aside-image-placement'] ) ? '' : 'mab-aside-' . $meta['aside-image-placement'];
 
-$aside_image_width = empty( $meta['aside-image-width'] ) ? '' : 'width="' . intval($meta['aside-image-width']) . '"';
-$aside_image_height = empty( $meta['aside-image-height'] ) ? '' : 'height="' . intval($meta['aside-image-height']) . '"';
+$placement_class = '';
+if( !empty( $meta['aside-image-placement'] ) || !empty( $meta['aside']['placement'] ) ){
+	$placement_class = 'mab-aside-';
+	$placement_class .= empty( $meta['aside']['placement'] ) ? $meta['aside-image-placement'] : $meta['aside']['placement'];
+}
+
+if( isset( $meta['aside']['type'] ) ){
+	$placement_class .= ' mab-aside-type-' . $meta['aside']['type'];
+} else {
+	$placement_class .= !empty( $meta['aside-image-url'] ) ? ' mab-aside-type-image' : ' mab-aside-type-none';
+}
 
 //this to have unique ID of the main containing div in case there is more than action box with the same id
 $html_id = $data['mab-html-id'];
@@ -15,13 +24,9 @@ $mab_classes = $data['class'];
 ?>
 
 <div id="mab-<?php echo $html_id; ?>" <?php echo $mab_classes; ?>>
-	<div class="mab-pad mab-wrap <?php echo $aside_placement_class; ?>">
+	<div class="mab-pad mab-wrap <?php echo $placement_class; ?>">
 		
-		<?php if( !empty( $meta['aside-image-url'] ) ) : //ASIDE ?>
-		<div class="mab-aside">
-			<img src="<?php echo $meta['aside-image-url']; ?>" alt="Side Image" <?php echo $aside_image_width; ?> <?php echo $aside_image_height; ?> />
-		</div>
-		<?php endif; ?>
+		<?php include 'aside.php'; ?>
 		
 		<div class="mab-content">
 			

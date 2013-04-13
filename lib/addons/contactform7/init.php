@@ -1,11 +1,6 @@
 <?php
 /** Definitions **/
 define( 'MAB_CF7_TYPE', 'cf7' );
-define( 'MAB_CF7_DIR', MAB_ADDONS_DIR . 'contactform7/' );
-define( 'MAB_CF7_URL', MAB_ADDONS_URL . 'contactform7/' );
-define( 'MAB_CF7_VIEWS', MAB_CF7_DIR . 'views/' );
-define( 'MAB_CF7_VIEWS_URL', MAB_CF7_URL . 'views/' );
-define( 'MAB_CF7_ASSETS_URL', MAB_CF7_URL . 'assets/' );
 
 /** Initialize our addon **/
 add_action( 'mab_init', 'mab_cf7_init' );
