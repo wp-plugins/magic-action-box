@@ -3,13 +3,13 @@
  * Plugin Name: Magic Action Box
  * Plugin URI: http://magicactionbox.com
  * Description: Supercharge your blog posts!
- * Version: 2.9
+ * Version: 2.10
  * Author: Prosulum, LLC
  * Author URI: http://prosulum.com
  * License: GPLv2
  */
 
-define( 'MAB_VERSION', '2.9');
+define( 'MAB_VERSION', '2.10');
 //e.g. /var/www/example.com/wordpress/wp-content/plugins/after-post-action-box
 define( "MAB_DIR", plugin_dir_path( __FILE__ ) );
 //e.g. http://example.com/wordpress/wp-content/plugins/after-post-action-box
@@ -21,6 +21,9 @@ define( 'MAB_STYLES_URL', trailingslashit( MAB_URL ) . 'styles/' );
 //e.g. after-post-action-box/after-post-action-box.php
 define( 'MAB_BASENAME', plugin_basename( __FILE__ ) );
 define( 'MAB_LIB_DIR', trailingslashit( MAB_DIR ) . 'lib/' );
+define( 'MAB_LIB_URL', trailingslashit( MAB_URL ) . 'lib/' );
+define( 'MAB_ADDONS_DIR', trailingslashit( MAB_LIB_DIR ) . 'addons/' );
+define( 'MAB_ADDONS_URL', trailingslashit( MAB_LIB_URL ) . 'addons/' );
 define( 'MAB_CLASSES_DIR', trailingslashit( MAB_LIB_DIR ) . 'classes/' );
 define( 'MAB_VIEWS_DIR', trailingslashit( MAB_DIR ) . 'views/' );
 define( 'MAB_VIEWS_URL', trailingslashit( MAB_URL ) . 'views/' );
@@ -43,6 +46,8 @@ class ProsulumMabBase{
 	var $_optin_MailChimp_Lists = array();
 	var $_optin_MailChimpMergeVars = array();
 	var $_optin_AweberLists = array();
+
+	private $_registered_action_box_types = array();
 	
 	function ProsulumMabBase(){
 		return $this->__construct();
@@ -50,6 +55,7 @@ class ProsulumMabBase{
 	
 	function __construct(){
 		$this->loadFiles();
+		$this->loadAddOns();
 		
 		//register post type
 		add_action( 'setup_theme', array( $this, 'register_post_type' ) );
@@ -102,7 +108,7 @@ class ProsulumMabBase{
 			'capability_type' => 'post',
 			//added support for comments due to a hacky part. Read about it in ProsuluMabAdmin::addActions()
 			'supports' => array( 'title','comments' ),
-			'register_meta_box_cb' => array( &$this, 'register_meta_box_cb' )
+			'register_meta_box_cb' => array( $this, 'register_meta_box_cb' )
 		);
 		register_post_type( $this->_post_type, $args );
 	}
@@ -133,6 +139,7 @@ class ProsulumMabBase{
 	function loadFiles(){
 		
 		//TODO: call class Design_Settings?
+		require_once( MAB_LIB_DIR . 'functions.php' );
 		require_once( MAB_LIB_DIR . 'design-utilities.php' );
 		require_once( MAB_LIB_DIR . 'design-settings.php' );
 		require_once( MAB_LIB_DIR . 'stylesheets.php' );
@@ -144,29 +151,44 @@ class ProsulumMabBase{
 		require_once( MAB_CLASSES_DIR . 'ProsulumMab.php' );
 		require_once( MAB_CLASSES_DIR . 'MAB_Utils.php' );
 		require_once( MAB_LIB_DIR . 'shortcodes.php' );
+
+		require_once( MAB_CLASSES_DIR . 'ProsulumMabAdmin.php' );
+		require_once( MAB_CLASSES_DIR . 'ProsulumMabMetaboxes.php' );
 		
 		//deprecated stuff
 		require_once( MAB_CLASSES_DIR . 'deprecated-classes.php' );
+	}
+
+	function loadAddOns(){
+		/** TODO: load addons automatically **/
+		require_once MAB_ADDONS_DIR . 'load-addons.php';
+
+		do_action('mab_addons_loaded');
 	}
 	
 	function init(){
 		global $MabBase;
 		
-		if( is_admin() ){
-			require_once( MAB_CLASSES_DIR . 'ProsulumMabAdmin.php' );
-			require_once( MAB_CLASSES_DIR . 'ProsulumMabMetaboxes.php' );
-			global $MabAdmin;
-			$MabAdmin = new ProsulumMabAdmin();
-
-		}
+		$this->_initialize_action_box_types();
+		//$this->loadAddOns();
 		
 		global $Mab;
-		$Mab = new ProsulumMab();		
+		$Mab = new ProsulumMab();
+
+		do_action('mab_init');
+
+		if( is_admin() ){
+			global $MabAdmin;
+			$MabAdmin = new ProsulumMabAdmin();
+		}
+
+		do_action('mab_post_init');
 	}
 	
 	function register_meta_box_cb( $post ){
-		
+
 		$MabMetaBoxes = new ProsulumMabMetaBoxes( $post );
+		$MabMetaBoxes->initMetaboxes();
 	}
 	
 	function activate(){
@@ -193,6 +215,108 @@ class ProsulumMabBase{
 		flush_rewrite_rules( false );
 		
 	}
+
+	/**
+	 * Initialize action box types array
+	 * @return none
+	 */
+	private function _initialize_action_box_types(){
+		$boxes = array();
+		
+		//Optin
+		$boxes['optin'] = array( 'type' => 'optin', 'name' => __('Optin Form', 'mab' ), 'description' => __('An opt in form is used to build your email list.','mab'), 'template' => 'optin', 'status' => 'enabled' );
+		
+		//Sales Box
+		$boxes['sales-box'] = array( 'type' => 'sales-box', 'name' => __('Sales Box', 'mab' ), 'description' => __('A simple sales box. Use it to lead visitors to your sales page.','mab'), 'template' => 'sales-box', 'status' => 'enabled' );
+		
+		//Social Media
+		$boxes['share-box'] = array( 'type' => 'share-box', 'name' => __('Share Box', 'mab' ), 'description' => __('Action box made for sharing your content','mab'), 'template' => 'share-box', 'status' => 'enabled' );
+		
+		$this->_registered_action_box_types = apply_filters( 'mab_initialize_action_box_types', $boxes );
+	}
+
+	/**
+	 * Register action box type
+	 *
+	 * Adds to array of registered action box types
+	 * 
+	 * Form the array $box like this:
+	 * $box = array(
+	 *    'type'        => 'action-box-type', //use letters, numbers, underscore, dash only
+	 *    'name'        => 'Human readable name',
+	 *    'description' => 'Short description about the action box type',
+	 *    'status' => 'enabled'
+	 * );
+	 *
+	 * $box['status'] should be one of the following: enabled, disabled
+	 * 
+	 * @param  array  $box 
+	 * @return bool   true on successful registration, false otherwise
+	 */
+	function register_action_box_type( $box = array() ){
+		/**
+		 * TODO: validate array keys and values
+		 */
+		
+		$this->_registered_action_box_types[ $box['type'] ] = $box;
+	}
+
+	/**
+	 * Get action box type
+	 *
+	 * Returns information about the action box type as an associative array.
+	 * Returns false if the specified type is not registered.
+	 * 
+	 * @param  string $type type id of the box
+	 * @param  string $status 'enabled', 'disabled', 'all', 'any'
+	 * @return array|bool
+	 */
+	function get_registered_action_box_type( $type, $status = 'enabled' ){
+
+		$boxTypes = $this->_registered_action_box_types;
+
+		if( isset( $boxTypes[ $type ] ) ){
+
+			$data = $boxTypes[$type];
+			$data_status = !empty($data['status']) ? $data['status'] : '';
+
+			if( $status == 'all' || $status == 'any' || $data_status == $status ){
+				return $data;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get action box types
+	 *
+	 * @param  string $status 'enabled', 'disabled', 'all', 'any'
+	 * 
+	 * @return array registered action box types
+	 */
+	function get_registered_action_box_types( $status = 'enabled' ){
+
+		//set $status to a defined state.
+		if( empty($status) ) $status = 'enabled';
+
+		if( $status == 'all' || $status == 'any' ){
+			return $this->_registered_action_box_types;
+		} else {
+
+			$return = array();
+
+			foreach( $this->_registered_action_box_types as $key => $val ){
+				
+				$val_status = !empty($val['status']) ? $val['status'] : '';
+
+				if( $val_status == $status )
+					$return[$key] = $val;
+			}
+
+			return $return;
+		}
+	}
 	
 	function register_widgets(){
 		require_once( MAB_CLASSES_DIR . 'MAB_Widget.php' );
@@ -204,7 +328,19 @@ class ProsulumMabBase{
 		return $this->_post_type;
 	}
 	
+	/**
+	 * Synonymous function to get_action_box_type() method
+	 */
 	function get_actionbox_type( $post_id ){
+		return $this->get_action_box_type( $post_id );
+	}
+
+	/**
+	 * Get the type of the action box post type
+	 * @param  int $post_id the post type ID
+	 * @return string type of action box
+	 */
+	function get_action_box_type( $post_id ){
 		return $this->get_mab_meta( $post_id, 'type' );
 	}
 	
@@ -227,7 +363,7 @@ class ProsulumMabBase{
 	
 	function get_allowed_content_types(){
 		//TODO: have allowed content types as an option
-		$allowed = array( 'post', 'page', 'landing_page' );
+		$allowed = apply_filters('mab_allowed_post_types', array( 'post', 'page', 'landing_page' ) );
 		
 		return $allowed;
 	}
@@ -428,13 +564,20 @@ class ProsulumMabBase{
 		$is_mab_page = false;
 		$user_id = $current_user->ID;
 		
+		$nag_notice = $this->_option_NagNotice . $this->get_current_version();
+		//$nag_notice = $this->_option_NagNotice . '2.9.4'; //manually set since v2.9.5 is a very minor update
+
 		if ( current_user_can( 'manage_options' ) ){
+
 			/** Update Notice **/
 			//check that the user hasn't already clicked to ignore this message.
 			//if( !get_option( $this->_option_NagNotice . $this->get_current_version() ) ){
-			if( !get_user_meta( $user_id, $this->_option_NagNotice . $this->get_current_version() ) ){
+			if( !get_user_meta( $user_id, $nag_notice ) ){
+
 				echo '<div class="updated"><p>';
-				printf( __('Magic Action Box updated to version %1$s. <a href="%3$s">Hide notice</a>','mab'), $this->get_current_version(), add_query_arg( array('page'=>'mab-main'), admin_url('admin.php') ), add_query_arg( array('mab-hide-update-notice' => 'true' ) ) );
+
+				printf( __('New in Magic Action Box Pro:<br /><strong>Random Boxes</strong> - show a different action box on every page load. <br /><strong>Video Side Item</strong> - show videos instead of just images. <br /><a href="%2$s">Upgrade to Pro version now</a> | <a href="%1$s">Hide notice</a>', MAB_DOMAIN), add_query_arg( array('mab-hide-update-notice' => 'true' ) ), 'http://www.magicactionbox.com/pricing/?pk_campaign=LITE&pk_kwd=cf7promo' );
+
 				echo '</p></div>';
 				/*
 				echo '<div class="updated"><p>';
@@ -445,16 +588,17 @@ class ProsulumMabBase{
 			}
 			
 			/** Promo Notice - show only on plugin pages **/
+			/*
 			if( $screen->parent_base == 'mab-main' || $screen->post_type == $this->get_post_type() ){
 				$is_mab_page = true;
 			}
 			if( $is_mab_page && !get_user_meta( $user_id, $this->_option_PromoNotice . $this->get_current_version() ) ){
 				echo '<div class="updated"><p>';
 				printf( __('<a href="%1$s" target="_blank">Go Pro to do more!</a><br />
-				Easily add opt in forms and other action boxes to your sidebar with our new widget. Get access to more action box types: <strong>Sales Box &amp; Share Box</strong> by <a href="%2$s" target="_blank">upgrading to Pro</a>.<br />
-				See our <a href="http://www.magicactionbox.com/announcement-version-2-9-is-now-out-with-big-changes/?pk_campaign=LITE&pk_kwd=v9news" target="_blank">release announcement</a> for a summary of improvements to Pro. <a href="%3$s">Hide Notice</a>.','mab'), 'http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=goProNotice', 'http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=promoNotice', add_query_arg( array('mab-hide-promo-notice' => 'true' ) ) );
+				Get access to more action box types: <strong>Random Boxes, Sales Box, Share Box & Contact Forms</strong> by <a href="%2$s" target="_blank">upgrading to Pro</a>. <a href="%3$s">Hide Notice</a>.','mab'), 'http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=goProNotice', 'http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=promoNotice', add_query_arg( array('mab-hide-promo-notice' => 'true' ) ) );
 				echo '</p></div>';
 			}
+			//*/
 			
 			//check Magic Action Popup
 			if( class_exists( 'MagicActionPopupBase' ) ){
@@ -470,13 +614,18 @@ class ProsulumMabBase{
 	}
 	
 	function updated_plugin_notice_hide(){
+
 		global $current_user;
 		$user_id = $current_user->ID;
+		
+		$nag_notice = $this->_option_NagNotice . $this->get_current_version();
+		//$nag_notice = $this->_option_NagNotice . '2.9.4'; //manually set since v2.9.5 is a very minor update
+
 		/** Hide nag notice **/
 		if( isset( $_GET['mab-hide-update-notice'] ) && 'true' == $_GET['mab-hide-update-notice'] ){
 			$val = 1;
 			//update_option( $this->_option_NagNotice . $this->get_current_version(), $val );
-			add_user_meta( $user_id, $this->_option_NagNotice . $this->get_current_version(), $val, true );
+			add_user_meta( $user_id, $nag_notice, $val, true );
 		}
 		
 		/** Hide Promo notice **/
@@ -504,9 +653,9 @@ class ProsulumMabBase{
 		wp_register_script( 'mab-actionbox-helper', MAB_ASSETS_URL . 'js/actionbox-helper.js', array('jquery') );
 		
 		/** ADMIN Scripts **/
-		wp_register_script( 'mab-admin-script', MAB_ASSETS_URL . 'js/magic-action-box-admin.js', array('jquery'), MAB_VERSION );
-		wp_register_script( 'mab-design-script', MAB_ASSETS_URL . 'js/magic-action-box-design.js', array('farbtastic', 'thickbox' ), MAB_VERSION );
-		
+		wp_register_script( 'mab-youtube-helpers', MAB_ASSETS_URL . 'js/youtube-helpers.js', array( 'jquery' ), MAB_VERSION );
+		wp_register_script( 'mab-admin-script', MAB_ASSETS_URL . 'js/magic-action-box-admin.js', array('jquery', 'mab-youtube-helpers'), MAB_VERSION );
+		wp_register_script( 'mab-design-script', MAB_ASSETS_URL . 'js/magic-action-box-design.js', array('farbtastic', 'thickbox' ), MAB_VERSION );		
 		
 		/** Styles **/
 		wp_register_style( 'mab-base-style', MAB_ASSETS_URL . 'css/magic-action-box-styles.css', array() );
@@ -517,6 +666,7 @@ class ProsulumMabBase{
 
 }
 
+global $MabBase;
 $MabBase = new ProsulumMabBase();
 
 register_activation_hook( __FILE__, array( 'ProsulumMabBase', 'activate' ) );

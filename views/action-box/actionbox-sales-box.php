@@ -1,5 +1,4 @@
 <?php
-$form = $data['form'];
 $meta = $data['meta'];
 $id = $meta['ID'];
 $action_box_type = $data['action-box-type'];
@@ -43,9 +42,30 @@ $mab_classes = $data['class'];
 			<div class="mab-main-copy"><?php echo do_shortcode(wpautop($meta['main-copy'])); ?></div>
 			<?php endif; ?>
 			
-			<!-- add .mab-elements-pos-stacked or .mab-elements-pos-inline to .mab-main-action-wrap -->
-			<div class="mab-main-action-wrap ">
-				<?php echo $form; ?>
+			<div class="mab-main-action-wrap">
+				<?php 
+				$button_class = $meta['main-button-class'];
+				$button_style = ($meta['main-button-margin-top'] != '') ? "margin-top: " . intval($meta['main-button-margin-top']) . "px;" : '';
+				$button_style .= ($meta['main-button-margin-bottom'] != '') ? "margin-bottom: " . intval($meta['main-button-margin-bottom']) . "px;" : '';
+				$button_style .= ($meta['main-button-margin-left'] != '') ? "margin-left: " . intval($meta['main-button-margin-left']) . "px;" : '';
+				$button_style .= ($meta['main-button-margin-right'] != '') ? "margin-right: " . intval($meta['main-button-margin-right']) . "px;" : '';
+				
+				$button_attr = !empty( $meta['main-button-attributes'] ) ? html_entity_decode($meta['main-button-attributes']) : '';
+				if( $meta['main-button-type'] == 'image' ): ?>
+					<?php
+					$button_image_width = empty( $meta['main-button-image-width'] ) ? '' : 'width="' . intval($meta['main-button-image-width']) . '"';
+					$button_image_height = empty( $meta['main-button-image-height'] ) ? '' : 'height="' . intval($meta['main-button-image-height']) . '"';
+					?>
+					<a class="mab-main-button mab-button-type-image <?php echo $button_class; ?>" <?php echo $button_attr; ?> href="<?php echo $meta['main-button-url']; ?>" style="<?php echo $button_style; ?>" >
+						<img src="<?php echo $meta['main-button-image']; ?>" alt="" <?php echo $button_image_width; ?> <?php echo $button_image_height; ?> />
+					</a>
+					
+				<?php elseif( $meta['main-button-type'] == 'css3' ): ?>
+					<?php $button_class .= " mab-button-{$meta['main-button-key']}"; ?>
+					<a class="mab-main-button mab-button-type-css3 <?php echo $button_class; ?>" <?php echo $button_attr; ?> href="<?php echo $meta['main-button-url']; ?>" style="<?php echo $button_style; ?>" ><?php echo $meta['main-button-text']; ?></a>
+					
+				<?php endif; ?>
+				
 			</div>
 			
 			<?php if( !empty( $meta['secondary-copy'] ) ) : //SECONDARY COPY?>

@@ -40,7 +40,8 @@
 		'wpautop' => true,
 		'textarea_name' => 'mab[main-copy]'
 	);
-	wp_editor( $meta['main-copy'], 'mab-optin-form-copy', $settings ); ?>
+	$main_copy = isset( $meta['main-copy'] ) ? $meta['main-copy'] : '';
+	wp_editor( $main_copy, 'mab-optin-form-copy', $settings ); ?>
 </div>
 
 <div class="mab-option-box">
@@ -53,5 +54,6 @@
 		'wpautop' => true,
 		'textarea_name' => 'mab[secondary-copy]'
 	);
-	wp_editor( $meta['secondary-copy'], 'mab-optin-form-secondary-copy', $settings ); ?>
+	$secondary_copy = isset( $meta['secondary-copy'] ) ? $meta['secondary-copy'] : '';
+	wp_editor( $secondary_copy, 'mab-optin-form-secondary-copy', $settings ); ?>
 </div>

@@ -1,7 +1,7 @@
-ul#mab-type-choice{
+ul.mab-type-choice{
 }
 
-ul#mab-type-choice li{
+ul.mab-type-choice li{
 	background: #f5f5f5;
 	border: 1px solid #eee;
 	color: #555;
@@ -9,12 +9,12 @@ ul#mab-type-choice li{
 	max-width: 800px;
 }
 
-ul#mab-type-choice li a.mab-type-title{
+ul.mab-type-choice li a.mab-type-title{
 	font-weight: bold;
 	font-size: 120%;
 }
 
-ul#mab-type-choice li span.disabled-type{
+ul.mab-type-choice li span.disabled-type{
 	font-weight: bold;
 	font-size: 120%;
 	
@@ -61,7 +61,8 @@ div.mab-ad img.mab-ad-img{
 	padding: 6px 10px;
 }
 
-input[disabled],select[disabled]{ color: #aaa; }
+input[disabled],select[disabled],textarea[disabled]{ color: #aaa; }
+.mab-disabled{ color: #aaa !important; }
 
 /**
  * Tabbed Settings Content

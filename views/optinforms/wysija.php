@@ -12,42 +12,43 @@ $formIdReal = 'mab-wysija-' . $data['mab-html-id'];
 <form id="<?php echo $formIdReal; ?>" method="post" action="#wysija" class="widget_wysija form-valid-sub">
 	
 	<?php /** Create the input fields **/ ?>
-	<?php $fields = isset( $wysija['fields'] ) && is_array( $wysija['fields'] ) ? $wysija['fields'] : array(); 
-	
-	//placeholder text
-	if( in_array( 'firstname', $fields ) && in_array('lastname', $fields ) ){
-		//first and last name fields are enabled
-		$holderFName = 'Enter your first name';
-		$holderLName = 'Enter your last name';
-	} else {
-		//one of the fields are enabled
-		$holderFName = 'Enter your name';
-		$holderLName = 'Enter your last name';
-	}
+	<?php 
+	$fields = isset( $wysija['fields'] ) && is_array( $wysija['fields'] ) ? $wysija['fields'] : array(); 
+
+	$fieldlabels = isset($optinMeta['field-labels']) && is_array( $optinMeta['field-labels'] ) ? $optinMeta['field-labels'] : array( 'email' => __('Email', MAB_DOMAIN), 'fname' => __('First Name', MAB_DOMAIN), 'lname' => __('Last Name', MAB_DOMAIN) );
+
+	$infieldlabels = isset($optinMeta['infield-labels']) && is_array( $optinMeta['infield-labels'] ) ? $optinMeta['infield-labels'] : array( 'email' => __('Enter your email', MAB_DOMAIN), 'fname' => __('Enter your name', MAB_DOMAIN), 'lname' => __('Enter your last name', MAB_DOMAIN) );
+
 	?>
 	
 	<?php if( in_array( 'firstname', $fields ) ): ?>
 	<div class="mab-field wysija-p-firstname mab-field-firstname">
-		<label for="<?php echo $formIdReal; ?>-firstname">First Name</label>
-		<input id="<?php echo $formIdReal; ?>-firstname" class="wysija-firstname validate[required]" type="text" name="wysija[user][firstname]" placeholder="<?php echo $holderFName; ?>" />
+		<?php if( !empty( $fieldlabels['fname']) ) : ?>
+		<label for="<?php echo $formIdReal; ?>-firstname"><?php echo $fieldlabels['fname']; ?></label>
+		<?php endif; ?>
+		<input id="<?php echo $formIdReal; ?>-firstname" class="wysija-firstname validate[required]" type="text" name="wysija[user][firstname]" placeholder="<?php echo $infieldlabels['fname']; ?>" />
 	</div>
 	<?php endif; ?>
 	
 	<?php if( in_array( 'lastname', $fields ) ): ?>
 	<div class="mab-field wysija-p-lastname mab-field-lastname">
-		<label for="<?php echo $formIdReal; ?>-lastname">Last Name</label>
-		<input id="<?php echo $formIdReal; ?>-lastname" class="wysija-lastname validate[required]" type="text" name="wysija[user][lastname]" placeholder="<?php echo $holderLName; ?>" />
+		<?php if( !empty( $fieldlabels['lname']) ) : ?>
+		<label for="<?php echo $formIdReal; ?>-lastname"><?php echo $fieldlabels['lname']; ?></label>
+		<?php endif; ?>
+		<input id="<?php echo $formIdReal; ?>-lastname" class="wysija-lastname validate[required]" type="text" name="wysija[user][lastname]" placeholder="<?php echo $infieldlabels['lname']; ?>" />
 	</div>
 	<?php endif; ?>
 	
 	<div class="mab-field wysija-p-email mab-field-email">
-		<label for="<?php echo $formIdReal; ?>-wysija-to">Email</label>
-		<input id="<?php echo $formIdReal; ?>-wysija-to" class="wysija-email validate[required,custom[email]]" type="text" name="wysija[user][email]" placeholder="Enter your email" />
+		<?php if( !empty( $fieldlabels['email']) ) : ?>
+		<label for="<?php echo $formIdReal; ?>-wysija-to"><?php echo $fieldlabels['email']; ?></label>
+		<?php endif; ?>
+		<input id="<?php echo $formIdReal; ?>-wysija-to" class="wysija-email validate[required,custom[email]]" type="text" name="wysija[user][email]" placeholder="<?php echo $infieldlabels['email']; ?>" />
 		<?php /** TODO: ask ben@wysija.com what validate[required,custom[email]] class is supposed to do **/ ?>
 	</div>
 	
 	<?php $submit = isset( $wysija['button-label'] ) ? $wysija['button-label'] : ''; ?>
-	<div class="mab-field wysija-p-email mab-field-submit">
+	<div class="mab-field mab-field-submit">
 		<input type="submit" class="wysija-submit wysija-submit-field" name="submit" value="<?php echo esc_attr( $submit ); ?>" />
 	</div>
 	

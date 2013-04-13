@@ -1,8 +1,8 @@
 <?php
-$form = $data['form'];
 $meta = $data['meta'];
 $id = $meta['ID'];
-$action_box_type = $data['action-box-type'];
+
+$the_content = $data['the_content'];
 
 //$placement_class = empty( $meta['aside-image-placement'] ) ? '' : 'mab-aside-' . $meta['aside-image-placement'];
 
@@ -12,6 +12,8 @@ if( !empty( $meta['aside-image-placement'] ) || !empty( $meta['aside']['placemen
 	$placement_class .= empty( $meta['aside']['placement'] ) ? $meta['aside-image-placement'] : $meta['aside']['placement'];
 }
 
+/*$image_width = empty( $meta['aside-image-width'] ) ? '' : 'width="' . $meta['aside-image-width'] . '"';
+$image_height = empty( $meta['aside-image-height'] ) ? '' : 'height="' . $meta['aside-image-height'] . '"';*/
 if( isset( $meta['aside']['type'] ) ){
 	$placement_class .= ' mab-aside-type-' . $meta['aside']['type'];
 } else {
@@ -42,10 +44,9 @@ $mab_classes = $data['class'];
 			<?php if( !empty( $meta['main-copy'] ) ) : //MAIN COPY ?>
 			<div class="mab-main-copy"><?php echo do_shortcode(wpautop($meta['main-copy'])); ?></div>
 			<?php endif; ?>
-			
-			<!-- add .mab-elements-pos-stacked or .mab-elements-pos-inline to .mab-main-action-wrap -->
+
 			<div class="mab-main-action-wrap ">
-				<?php echo $form; ?>
+				<?php echo $the_content; ?>
 			</div>
 			
 			<?php if( !empty( $meta['secondary-copy'] ) ) : //SECONDARY COPY?>
@@ -58,5 +59,3 @@ $mab_classes = $data['class'];
 		echo apply_filters( 'mab_clearing_div', $clearing_div ); ?>
 	</div>
 </div>
-
-<?php //endif; ?>
