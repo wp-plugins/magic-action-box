@@ -42,7 +42,10 @@ class ProsulumMabAdmin{
 		
 		//add Magic Action Box metabox to post content types
 		add_action( 'add_meta_boxes', array( &$this, 'addMetaBoxToOtherContentTypes') );
-		
+
+		//set callback function for handling setting up the action box type post
+		add_action('mab_set_action_box_type', array( $this, 'setActionBoxType'), 10, 2 );
+
 		/**
 		 * Hacky part followed from Premise. This is to make sure people
 		 * select an Action Box type before an Action Box type is actually created.
@@ -66,6 +69,8 @@ class ProsulumMabAdmin{
 			
 			update_option($this->_option_CurrentVersion, MAB_VERSION);
 		}
+
+		do_action('mab_admin_init');
 	}
 	
 	function initializeActionBoxes(){
@@ -350,11 +355,15 @@ class ProsulumMabAdmin{
 		
 		//save action for Action Box post types
 		if( ( false === $wp_is_post_autosave || $wp_is_post_revision ) && is_object( $post ) && $MabBase->is_mab_post_type( $post->post_type ) ){
-		
+			
+			$actionBoxType = $MabBase->get_actionbox_type( $postId );
+
 			$this->processActionBoxTypeSpecificMeta( $postId, $post );
 
 			//process action box design meta
 			$this->processActionBoxDesignMeta( $postId, $post );
+
+			do_action( 'mab_save_action_box', $actionBoxType, $postId, $post );
 			
 		}
 		
@@ -400,10 +409,15 @@ class ProsulumMabAdmin{
 		return isset( $settings[$key] );
 	}
 	
-	function saveConfiguredButton( $button, $key ){
+	function saveConfiguredButton( $buttonSettings, $key ){
 		global $MabButton;
-		$key = $MabButton->updateSettings( $button, $key );
+		$key = $MabButton->updateSettings( $buttonSettings, $key );
 		return $key;
+	}
+
+	function duplicateButton( $key ){
+		global $MabButton;
+		return $MabButton->duplicateButton( $key );
 	}
 	
 	function deleteConfiguredButton( $key ){
@@ -457,7 +471,13 @@ class ProsulumMabAdmin{
 		
 		//process selection of Action Box type
 		if( isset( $_GET['action_box_set'] ) && $_GET['action_box_set'] == 1 && wp_verify_nonce( $_GET['_wpnonce'], 'action_box_set' ) ){
-			$this->setActionBoxType( $_GET['post'], $_GET['action_box_type'] );
+			
+			/**
+			 * TODO: do some security checks on the values
+			 */
+			//$this->setActionBoxType( $_GET['post'], $_GET['action_box_type'] ); //removed v2.9.3
+			do_action( 'mab_set_action_box_type', $_GET['post'], $_GET['action_box_type'] );
+
 			wp_redirect( get_edit_post_link( $_GET['post'], 'raw') );
 			exit();
 		}
@@ -495,10 +515,27 @@ class ProsulumMabAdmin{
 			$buttonMessage = $this->processButtonSettings();
 			wp_redirect(admin_url('admin.php?page=' . $_GET['page'] . '&' . $buttonMessage));
 			exit();
-		} elseif( isset( $_GET['mab-button-id'] ) && $_GET['mab-delete-button'] == 'true' && check_admin_referer( 'mab-delete-button' ) ){
-			$this->deleteConfiguredButton( $_GET['mab-button-id'] );
-			wp_redirect( admin_url('admin.php?page=mab-design&deleted=true') );
-			exit();
+		} elseif( isset( $_GET['mab-button-id'] ) && isset( $_GET['mab-button-action'] ) ){
+
+			$button_action = $_GET['mab-button-action'];
+			$button_id = $_GET['mab-button-id'];
+
+			//check button key if valid
+			if( !$this->isValidButtonKey( $button_id ) ){
+				//button id/key is NOT valid
+				wp_redirect( admin_url('admin.php?page=mab-design&mab-invalid-button-id=true') );
+				exit();
+			}
+
+			if( 'duplicate' == $button_action && check_admin_referer('mab-duplicate-button') ) {
+				$duplicate_button_id = $this->duplicateButton( $button_id );
+				wp_redirect( admin_url('admin.php?page=mab-design&mab-button-duplicated=' . $duplicate_button_id));
+				exit();
+			} elseif( 'delete' == $button_action && check_admin_referer('mab-delete-button') ){
+				$this->deleteConfiguredButton( $_GET['mab-button-id'] );
+				wp_redirect( admin_url('admin.php?page=mab-design&deleted=true') );
+				exit();
+			}
 		} elseif( isset( $_GET['mab-create-preconfigured'] ) && $_GET['mab-create-preconfigured'] == 'true' && check_admin_referer( 'mab-create-preconfigured' ) ){
 			$this->createPreconfiguredButtons();
 			wp_redirect( admin_url('admin.php?page=mab-design&mab-preconfigured-buttons=true' ) );
@@ -702,6 +739,8 @@ class ProsulumMabAdmin{
 				$mab['main-button-attributes'] = esc_attr( $mab['main-button-attributes'] );
 			}
 			
+			$mab = apply_filters( 'mab_update_action_box_meta', $mab, $postId, $data );
+
 			$MabBase->update_mab_meta( $postId, $mab );
 		}//ENDIF
 		
@@ -717,7 +756,7 @@ class ProsulumMabAdmin{
 		$data = stripslashes_deep($_POST);
 		
 		//Design Settings
-		if( is_array( $data['mab-design'] ) ){
+		if( isset( $data['mab-design'] ) && is_array( $data['mab-design'] ) ){
 			$design = $data['mab-design'];
 			
 			$MabBase->update_mab_meta( $postId, $design, 'design' );

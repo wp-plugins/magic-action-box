@@ -211,6 +211,52 @@
 
 </div>
 
+<div class="mab-option-box mab-option-field-labels">
+	<h4><?php _e('Outside Field Labels', MAB_DOMAIN); ?></h4>
+	<p><?php _e('Specify labels shown above or beside the input fields.', MAB_DOMAIN); ?></p>
+	<?php $fieldLabels = isset( $optinMeta['field-labels'] ) ? $optinMeta['field-labels'] : array( 'email' => __('Email', MAB_DOMAIN), 'fname' => __('First Name', MAB_DOMAIN), 'lname' => __('Last Name', MAB_DOMAIN) ); ?>
+	<ul>
+		<li><label><input type="text" value="<?php echo $fieldLabels['email']; ?>" name="mab[optin][field-labels][email]" /> <?php _e('Email Address', MAB_DOMAIN); ?></label></li>
+		<li><label><input type="text" value="<?php echo $fieldLabels['fname']; ?>" name="mab[optin][field-labels][fname]" /> <?php _e('First Name', MAB_DOMAIN); ?></label></li>
+		<li><label><input type="text" value="<?php echo $fieldLabels['lname']; ?>" name="mab[optin][field-labels][lname]" /> <?php _e('Last Name', MAB_DOMAIN); ?></label></li>
+	</ul>
+
+	<h4><?php _e('In-Field Labels', MAB_DOMAIN); ?></h4>
+	<p><?php _e('Specify the description text displayed within the input fields.', MAB_DOMAIN); ?></p>
+	<?php $inFieldLabels = isset( $optinMeta['infield-labels'] ) ? $optinMeta['infield-labels'] : array( 'email' => __('Enter your email', MAB_DOMAIN), 'fname' => __('Enter your name', MAB_DOMAIN), 'lname' => __('Enter your last name', MAB_DOMAIN) ); ?>
+	<ul>
+		<li><label><input type="text" value="<?php echo $inFieldLabels['email']; ?>" name="mab[optin][infield-labels][email]" /> <?php _e('Email Address', MAB_DOMAIN); ?></label></li>
+		<li><label><input type="text" value="<?php echo $inFieldLabels['fname']; ?>" name="mab[optin][infield-labels][fname]" /> <?php _e('First Name', MAB_DOMAIN); ?></label></li>
+		<li><label><input type="text" value="<?php echo $inFieldLabels['lname']; ?>" name="mab[optin][infield-labels][lname]" /> <?php _e('Last Name', MAB_DOMAIN); ?></label></li>
+	</ul>
+
+	<p><?php _e('<strong>Note:</strong> Label settings does not work for custom mailing list providers - when you select &quot;Other (Copy &amp; Paste).', MAB_DOMAIN ); ?></p>
+</div><!-- .mab-option-box -->
+
+<div class="mab-option-box mab-used-for-css3-button mab-disabled" >
+	<h4><label for="mab-button-select"><?php _e('Choose Button Style',MAB_DOMAIN ); ?></label></h4>
+	<div class="mab-notice"><a href="http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=custom_button_notice">Upgrade to Pro</a> and replace the default button with your own custom buttons.</div>
+	<p><?php _e( 'Select the button design you would like to use for your Opt In form.', MAB_DOMAIN ); ?></p>
+	<p>
+	<?php
+	$configured_buttons = $data['buttons'];
+	$optin_button_style = isset($meta['button-key']) ? $meta['button-key'] : 'default';
+	?>
+	<select id="mab-button-select" class="large-text" name="">
+		<option value="default" <?php selected('default', $optin_button_style); ?>>Use Default Button Style</option>
+		<?php foreach( $configured_buttons as $key => $button ): ?>
+			<option value="<?php echo $key; ?>" <?php selected( $optin_button_style, $key ); ?> ><?php echo $button['title']; ?></option>
+		<?php endforeach; ?>
+	</select>
+	</p>
+	<p>Create and edit buttons in the <a href="<?php echo admin_url('admin.php?page=mab-design'); ?>" title="Design settings">Design Settings</a> page. <strong class="alert">Don't forget to save your Action Box first!</strong></p>
+	
+	<div id="mab-button-preview">
+		<h4><?php _e( 'Button Preview', 'mab' ); ?></h4>
+		<a id="mab-example-button" onclick="return false;" href="#" class="mab-example-button mab-button-<?php echo $optin_button_style; ?>"><?php _e('Sample Submit Text', MAB_DOMAIN); ?></a>
+	</div>
+</div>
+
 <div class="mab-option-box">
 	<h4>Form Fields Layout</h4>
 	<?php $fieldsLayout = isset( $meta['optin']['fields-layout'] ) ? $meta['optin']['fields-layout'] : 'default';?>

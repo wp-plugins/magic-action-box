@@ -12,10 +12,19 @@
 if( isset( $_GET['deleted'] ) && 'true' == $_GET['deleted'] ):
 ?>
 	<div id="mab-settings-deleted-message" class="updated fade"><p><strong><?php esc_html_e( 'Item Deleted', 'mab' ); ?></strong></p></div>
+
 <?php elseif( isset( $_GET['duplicated'] ) && 'true' == $_GET['duplicated'] ) : ?>
-	<div id="mab-settings-duplicated-message" class="updated fade"><p><strong><?php esc_html_e( 'Style Duplicated', 'mab' ); ?></strong></p></div>
+	<div id="mab-settings-duplicated-message" class="updated fade"><p><strong><?php esc_html_e( 'Item Duplicated', 'mab' ); ?></strong></p></div>
+
+<?php elseif( isset( $_GET['mab-button-duplicated'] ) ): ?>
+	<?php $duplicate_key_url = esc_url( add_query_arg( array( 'page' => 'mab-button-settings', 'mab-button-id' => $_GET['mab-button-duplicated'] ), admin_url('admin.php') ) ); ?>
+	<div id="mab-settings-duplicated-button-message" class="updated fade"><p><strong><?php _e( sprintf( 'Button duplicated. <a href="%1$s">Click here</a> to edit the new button.', $duplicate_key_url ), 'mab' ); ?></strong></p></div>
+
 <?php elseif( isset( $_GET['mab-preconfigured-buttons'] ) && 'true' == $_GET['mab-preconfigured-buttons'] ): ?>
 	<div id="mab-settings-preconfigured-message" class="updated fade"><p><strong><?php esc_html_e( 'Preconfigured Buttons Created', 'mab' ); ?></strong></p></div>
+
+<?php elseif( isset( $_GET['mab-invalid-button-id'] ) && $_GET['mab-invalid-button-id'] == true ): ?>
+	<div id="mab-settings-invalid-button-id-message" class="updated fade"><p><strong><?php esc_html_e( 'Invalid button ID used', 'mab' ); ?></strong></p></div>
 <?php endif;
 
 ##END MESSAGES
@@ -92,8 +101,8 @@ $styles = $data['styles'];
 				<td><?php echo esc_html(date( 'F j, Y \a\t g:iA', $button['timesaved'] ) ); ?></td>
 				<td><a href="#" onclick="return false;" style="display:block; float: left; margin: 5px 0;" class="mab-button-<?php echo $key; ?>"><?php echo esc_html($button['title']); ?></a></td>
 				<td><a href="<?php echo esc_url( add_query_arg( array( 'page' => 'mab-button-settings', 'mab-button-id' => $key), admin_url('admin.php') ) ); ?>"><?php _e('Edit','mab'); ?></a>
-				<?php //TODO: Add "Duplicate" link ?>
-				| <a href="<?php echo esc_url( wp_nonce_url( add_query_arg( array( 'page' => 'mab-design', 'mab-button-id' => $key, 'mab-delete-button' => 'true'), admin_url('admin.php') ), 'mab-delete-button') ); ?>"><?php _e('Delete','mab' ); ?></a></td>
+				| <a href="<?php echo esc_url( wp_nonce_url( add_query_arg( array( 'page' => 'mab-design', 'mab-button-id' => $key, 'mab-button-action' => 'duplicate'), admin_url('admin.php') ), 'mab-duplicate-button') ); ?>"><?php _e('Duplicate','mab' ); ?></a>
+				| <a href="<?php echo esc_url( wp_nonce_url( add_query_arg( array( 'page' => 'mab-design', 'mab-button-id' => $key, 'mab-button-action' => 'delete'), admin_url('admin.php') ), 'mab-delete-button') ); ?>"><?php _e('Delete','mab' ); ?></a></td>
 			</tr>
 			<?php endforeach; ?>
 		</tbody>

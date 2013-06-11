@@ -5,6 +5,7 @@ class ProsulumMab{
 	private $_defaultActionBoxId = '';
 	private $_defaultActionBoxPlacement = 'bottom';
 	private $_defaultActionBoxObj = null;
+	private $_the_content_filter_priority = 10;
 	
 	function ProsulumMab(){
 		return $this->__construct();
@@ -18,8 +19,9 @@ class ProsulumMab{
 	
 	function add_actions(){
 		if( !is_admin() ){
+			$hook = apply_filters('mab_setup_main_action_box_hook','wp');
 			//load only on frontend
-			add_action( 'template_redirect', array( &$this, 'setupContentTypeActionBox' ) );
+			add_action( $hook, array( &$this, 'setupContentTypeActionBox' ) );
 			add_action( 'wp_enqueue_scripts', array( &$this, 'alwaysLoadAssets' ) );
 		}
 	}
@@ -70,6 +72,19 @@ class ProsulumMab{
 	function setupContentTypeActionBox(){
 		global $MabBase, $wp_query;
 		
+		/** 
+		 * Get query var "page" as some page templates may use this on custom queries and calling
+		 * get_queried_object() method seems to override this i.e. optimize press on Blog Template
+		 **/
+		$paged = get_query_var('paged');
+
+		/**
+		 * If on static front page, need to check 'page'
+		 * @source https://codex.wordpress.org/Pagination#static_front_page
+		 */
+		if( empty($paged) )
+			$paged = get_query_var('page');
+
 		$post = $wp_query->get_queried_object();
 		
 		//stop if the content type is not supposed to show action box
@@ -80,7 +95,7 @@ class ProsulumMab{
 		//one blog post.
 		if( is_singular() || ( is_home() && $wp_query->post_count == 1 ) ){
 			
-			$mab_priority = 10; //default 10.
+			$mab_priority = $this->_the_content_filter_priority; //default 10.
 			
 			//TODO: have option to disable removal of filter
 			// Disable WordPress native formatters
@@ -95,12 +110,24 @@ class ProsulumMab{
 			}
 			
 			$this->setUpDefaults();
-			
-			//TODO: check if page has action box
-			//add_action( 'wp_print_styles', array( &$this, 'printStylesScripts' ) );
-			add_action( 'wp_enqueue_scripts', array( &$this, 'printStylesScripts' ) );
-			add_filter( "the_content", array( &$this, 'showActionBox'), $mab_priority);
+
+			$queried_mab_obj = $this->getQueriedActionBoxObj();
+
+			if( is_object($queried_mab_obj) && !empty($queried_mab_obj)){
+				
+				//TODO: check if page has action box
+				//add_action( 'wp_print_styles', array( &$this, 'printStylesScripts' ) );
+				add_action( 'wp_enqueue_scripts', array( &$this, 'printStylesScripts' ) );
+				add_filter( "the_content", array( &$this, 'showActionBox'), $mab_priority);
+
+			}
 		}
+
+		/**
+		 * Set the 'paged' parameter as it may have been overwritten by call to
+		 * get_queried_object() above
+		 */
+		set_query_var('paged',$paged);
 	}
 	
 	function showActionBox( $content ){
@@ -138,6 +165,17 @@ class ProsulumMab{
 		
 		//check placement of action box
 		$placement = isset( $placement ) ? $placement : 'bottom';
+
+		/**
+		 * If defined, remove the filter after use
+		 */
+		if( defined('MAB_SINGLE_USE_FILTER') && MAB_SINGLE_USE_FILTER ){
+			if( is_main_query() ){
+				$mab_priority = $this->_the_content_filter_priority;
+				remove_filter( "the_content", array( $this, 'showActionBox'), $mab_priority);
+			}
+		}
+		
 
 		if( $placement === 'top' ){
 			return $actionBox . "\n" . $content;
@@ -370,6 +408,10 @@ class ProsulumMab{
 	 */
 	function printStylesScripts(){
 		$mainActionBox = $this->getQueriedActionBoxObj();
+
+		if( !is_object($mainActionBox) )
+			return;
+		
 		$mainActionBox->loadAssets();
 	}
 	
@@ -402,7 +444,6 @@ class ProsulumMab{
 				$actionBox = MAB_Template::getActionBoxOptin( $actionBoxObj );
 				break;
 			default:
-				return ''; //empty string
 				break;
 		}
 		return $actionBox;

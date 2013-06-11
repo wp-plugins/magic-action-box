@@ -3,14 +3,14 @@ Contributors: prosulum, pogidude
 Developer: Prosulum
 Tags: opt in, call to action, aweber, email, email marketing, form, mailing list, marketing, newsletter, webform, mailchimp, constant contact
 Requires at least: 3.1
-Tested up to: 3.4.2
-Stable tag: 2.9
+Tested up to: 3.5.1
+Stable tag: 2.11
 
-Magic Action Box is an easy to use but powerful lead generation plugin.
+Magic Action Box is an easy to use but powerful lead generation plugin that let's you create opt-in forms similar to the Derek Halpern feature box from Social Triggers.
 
 == Description ==
 
-Magic Action Box is an easy to use but powerful lead generation plugin that lets you create a focused and high converting action box in minutes.
+Magic Action Box is an easy to use but powerful lead generation plugin that lets you create a focused and high converting action box in minutes. It let's you create opt-in forms similar to the Derek Halpern feature box from Social Triggers.
 
 Some features:
 
@@ -20,16 +20,21 @@ Some features:
 * Make your own action box styles
 * Or, pick a style from one of the pre-configured designs
 
-[Upgrade to Pro Version](http://www.magicactionbox.com/?pk_campaign=LITE&pk_kwd=pluginPage1)
+[See more features in Pro version](http://www.magicactionbox.com/?pk_campaign=LITE&pk_kwd=pluginPage1)
 
 Some features available in Pro version:
 
-* Access to all action box types
-* More pre-configured styles
+* Create Contact Form Boxes
+* Create Sales Boxes
+* Create Share Boxes
+* Create Custom Buttons (NEW)
+* Display random action boxes
+* Show video (not just images) with your action boxes
+* More pre-designed styles
 * Shortcodes
 * Sidebar Widget
-* Professional Customer Support
-* Create and upload your own buttons (currently used for Sales Boxes only)
+* VIP Support
+* Create and upload your own buttons
 * [And more...](http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=pluginPage2)
 
 [View changelog](http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=pluginPage2)
@@ -81,6 +86,38 @@ Try checking the *Reorder post content filter priorities* checkbox found in WP A
 5. Action Box Settings Screen
 
 == Changelog ==
+= 2.11 = 
+* [fix] fixed action box style dropdown select box reverting to User Styles after save when selecting None as style.
+* [fix] fixed style creator not putting out border-radius css
+* [fix] fixed php notices
+* [fix] fixed php error if the page content type is not allowed by MAB but MAB still tries to set action box.
+* made paths to functions file in addons use absolute paths
+* added more classes to generated button css code
+* [fix] updated linear-gradient in button css code to use new W3c implementation
+
+= 2.9.10 = 
+* Fixes
+
+= 2.9.5 =
+* Fixed css generator where it wasn't putting out the property for submit buttons on hover
+* Fixed paging issue when on page with custom query
+* added mab_allowed_post_types filter for making it possible to show action boxes on other post types
+
+= 2.9.4 =
+* Added new action box type - Contact Form 7 box
+* Added a number of action and filter hooks for extending the plugin :)
+* Added options for setting the input field labels of integrated mailing list providers
+
+= 2.9.3 =
+* Replaced the hook used to call the main action box from template_redirect to wp hook.
+
+= 2.9.2 =
+* Improved Custom Style editor generated stylesheets due to label color being overridden.
+
+= 2.9.1 =
+* Fixed Custom Style editor stylesheets
+* Updated default action box css
+
 = 2.9 =
 * Added new action box styles
 * Reorganized plugin assets so they're all registered at magic-action-box.php
@@ -197,6 +234,15 @@ Try checking the *Reorder post content filter priorities* checkbox found in WP A
 * Original Version.
 
 == Upgrade Notice ==
+= 2.10 =
+Feature updates
+
+= 2.9.3 =
+Minor update
+
+= 2.9.1 =
+Styling fixes
+
 = 2.9 =
 Major update. See Changelog
 

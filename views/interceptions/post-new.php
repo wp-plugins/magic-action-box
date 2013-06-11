@@ -5,15 +5,19 @@ global $MabAdmin;
 	<?php screen_icon(); ?>
 	<h2><?php _e('Add New Action Box', 'mab' ); ?></h2>
 
+	<h3>Select Action Box Type</h3>
+
 	<p>
 		<?php _e('Choose the type of Magic Action Box you wish to create. You cannot change the type of an Action Box after creating it, so choose wisely.', 'mab' )?>
 	</p>
-	<ul id="mab-type-choice">
+	<ul class="mab-type-choice">
 		<?php
-		global $post;
-		$types = $MabAdmin->getAvailableActionBoxTypes();
+		global $post, $MabBase;
+		$types = $MabBase->get_registered_action_box_types('all');
 		foreach($types as $type => $info) {
-			?>
+			$enabled = !empty( $info['status'] ) && $info['status'] == 'enabled' ? true : false;
+			
+			if( $enabled ){ ?>
 			<li>
 				<?php
 				$query_args = array( 'action' => 'edit', 'post' => $post->ID, 'action_box_set' => 1, 'action_box_type' => $type );
@@ -31,15 +35,23 @@ global $MabAdmin;
 					
 				<?php endif; ?>
 			</li>
-			<?php
+			<?php } else { ?>
+			<li>
+				<span class="disabled-type"><?php esc_html_e($info['name'], 'mab' ); ?><?php echo apply_filters('mab_disabled_type_text', ' (Disabled)' ); ?></span><br />
+				<?php echo $info['description']; ?>
+			</li>
+			<?php }//endif
 		}
 		?>
+	</ul>
+
+	<h3>Coming Soon</h3>
+	<ul class="mab-type-choice">
 		<li>
-			<span class="disabled-type">Contact Form Box (Coming Soon)</span><br />
+			<span class="disabled-type">Gravity Forms (New)</span><br />
+			<!--em><small>Coming Soon</small></em><br /-->
 
-			<em><small>Coming Soon</small></em><br />
-
-			Make it easy for visitors to contact you right away. Adds a contact form action box to your blog posts and pages.<br />
+			Combine Gravity Forms with Magic Action Box's slick designs.<br />
 		</li>
 	</ul>
 
@@ -47,23 +59,28 @@ global $MabAdmin;
 		<a href="http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=addScreen" target="_blank"><img src="<?php echo MAB_ASSETS_URL . 'images/adbox.png'; ?>" alt="" class="mab-ad-img" width="200"/></a>
 		<div class="mab-ad-content">
 			<p>Get additional action box types by getting <a href="http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=addScreen" target="_blank">Magic Action Box Pro</a>.</p>
-			<h4>Some of the features available in the full version:</h4>
+			<h3>Some of the features available in the full version:</h3>
 			<ul>
-				<li>Sidebar Widgets (NEW)</li>
+				<li>Display random action boxes on every page load (NEW)</li>
+				<li>Show a video (not just images) with your action boxes</li>
+				<li>Use Contact Form action box type with Contact Form 7 (NEW)</li>
 				<li>Use Sales Box action box type</li>
 				<li>Use Share Box action box type</li>
 				<li>Future action box types not available in the lite version.</li>
 				<li>Use shortcodes and template tags</li>
-				<li>Professional Customer Support</li>
-				<li>More pre-configured styles</li>
-				<li>Conversion Tips and Advice</li>
+				<li>VIP Customer Support</li>
+				<li>More pre-designed styles</li>
 				<li>Create and upload your own buttons (for Sales Boxes)</li>
 				<li><a href="http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=addScreen" target="_blank">And more...</a></li>
 			</ul>
+
+			<h3>Upcoming Features</h3>
+			<ul>
+				<li>Use FaceBook Connect to allow visitors to subscribe to your mailing list.</li>
+				<li>Gravity Forms integration.</li>
+			</ul>
+
 		</div>
-	</ul>
-	
-	<!--div class="mab-ad updated">
-		<p><strong>Coming Soon! Contact Form action box type.</strong></p>
-	</div-->
-</div>
+	</div><!-- .mab-ad -->
+
+</div><!-- .wrap -->

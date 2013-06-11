@@ -70,6 +70,18 @@ jQuery(document).ready(function(){
 		//show related dependent container
 		$div.show('fast');
 		
+		//Hide Field Labels options if "Manual" is selected as email provider
+		var $fieldLabels = jQuery('.mab-option-field-labels');
+		if( val == 'manual'){
+			$fieldLabels.hide();
+			$fieldLabels.addClass('hide');
+		} else {
+			if( $fieldLabels.hasClass('hide') ){
+				$fieldLabels.removeClass('hide');
+				$fieldLabels.show('fast');
+			}
+		}
+
 	}).change();
 	
 	//Force Update Optin Lists from Email Provider servers
@@ -151,7 +163,95 @@ jQuery(document).ready(function(){
 		jQuery( '#mab-style-' + $selectedStyle + '-preview' ).show();
 	}).change();
 	
-	
+	/**
+	 * Side Item Type selection
+	 */
+	jQuery( '.mab-side-item-type-control input:radio' ).change( function(){
+
+		var $this = jQuery(this);
+		var $type = $this.val();
+		var $selected_class = '.mab-aside-settings-' + $type;
+		var $selected = jQuery( $selected_class );
+
+		if( $this.is(':not(:checked)') )
+			return;
+
+		jQuery( '.mab-aside-settings:not(' + $selected_class + ')' ).fadeOut('fast');
+
+		//if selected type is hidden, then show it
+		if( $selected.is(':hidden') ){
+			$selected.fadeIn('fast');
+		}
+
+		if( $type == 'none' )
+			jQuery('.mab-aside-settings-general').fadeOut('fast');
+		else
+			jQuery('.mab-aside-settings-general:hidden').fadeIn('fast');
+
+	}).change();
+
+	/**
+	 * Side item Youtube Video Embed Code Creator
+	 */
+	//when the Generate Embed Code button is clicked
+	jQuery( '.mab-embed-code-creator-wrap a.button-secondary' ).click( function(e){
+		var $this = jQuery(this);
+
+		var $show_notice = function(){
+			$this.siblings('.mab-notice').fadeIn('fast');
+		};
+
+		var $url = jQuery('#mab-aside-yt-url').val();
+
+		if( $url == '' ){
+			$show_notice();
+			return false;
+		}
+
+		var $size_select_field = jQuery('.mab-aside-yt-size-select');
+		var $size = $size_select_field.val();
+		var $height = '';
+		var $width = '';
+
+		if( $size == 'custom' ){
+			$width = jQuery('#mab-aside-yt-width').val();
+			$height = jQuery('#mab-aside-yt-height').val();
+		} else {
+			var $size_data = $size_select_field.find('option:selected').data();
+			$width = $size_data.width;
+			$height = $size_data.height;
+		}
+
+		//make sure $width and $height is not empty
+		if( $width == '' || $height == '' ){
+			$show_notice();
+			return false;
+		}
+
+		var $yt_id = mab_get_youtube_id( $url );
+		var $embed_code = mab_create_youtube_embed_code($yt_id, $width, $height);
+		
+		//add the entries to the fields
+		jQuery('#mab-aside-video-embed-code').val($embed_code);
+		// jQuery('#mab-aside-width').val($width);
+		// jQuery('#mab-aside-height').val($height);
+
+		return false;
+	});
+
+	//selecting Youtube Video Size
+	jQuery( 'select.mab-aside-yt-size-select' ).bind('keyup keydown change', function(){
+		var $this = jQuery(this);
+		var $val = $this.val();
+		var $fields = jQuery('.mab-aside-yt-size-fields');
+
+		if( $val == 'custom' ){
+			//show Youtube Video Size fields
+			$fields.fadeIn('fast');
+		} else {
+			$fields.fadeOut('fast');
+		}
+	}).change();
 	
 	/**
 	 * Other Stuff
