@@ -26,33 +26,24 @@ $mab_classes = $data['class'];
 
 <div id="mab-<?php echo $html_id; ?>" <?php echo $mab_classes; ?>>
 	<div class="mab-pad mab-wrap <?php echo $placement_class; ?>">
-		
 		<?php include 'aside.php'; ?>
-		
 		<div class="mab-content">
-			
 			<?php if( !empty( $meta['main-heading'] ) ) : //HEADING ?>
 			<div class="mab-heading"><?php echo do_shortcode($meta['main-heading']); ?></div>
 			<?php endif; ?>
-			
 			<?php if( !empty( $meta['subheading'] ) ) : ?>
 			<div class="mab-subheading"><?php echo do_shortcode($meta['subheading']); //SUBHEADING ?></div>
 			<?php endif; ?>
-	
 			<?php if( !empty( $meta['main-copy'] ) ) : //MAIN COPY ?>
 			<div class="mab-main-copy"><?php echo do_shortcode(wpautop($meta['main-copy'])); ?></div>
 			<?php endif; ?>
-			
-			<!-- add .mab-elements-pos-stacked or .mab-elements-pos-inline to .mab-main-action-wrap -->
 			<div class="mab-main-action-wrap ">
 				<?php echo $form; ?>
 			</div>
-			
 			<?php if( !empty( $meta['secondary-copy'] ) ) : //SECONDARY COPY?>
 			<div class="mab-secondary-copy"><?php echo do_shortcode(wpautop($meta['secondary-copy'])); ?></div>
 			<?php endif; ?>
-			
-		</div><!-- .mab-content-->
+		</div>
 		<?php 
 		$clearing_div = '<div class="clear" style="clear:both;"></div>'; 
 		echo apply_filters( 'mab_clearing_div', $clearing_div ); ?>

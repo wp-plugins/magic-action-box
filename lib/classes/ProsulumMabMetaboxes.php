@@ -184,7 +184,7 @@ class ProsulumMabMetaBoxes{
 	}
 	
 	function optInSettings( $post ){
-		global $MabBase, $MabAdmin;
+		global $MabBase, $MabAdmin, $MabButton;
 
 		$data['meta'] = $MabBase->get_mab_meta( $post->ID );
 		$data['assets-url'] = MAB_ASSETS_URL;
@@ -194,6 +194,9 @@ class ProsulumMabMetaBoxes{
 		
 		//get available action box styles
 		$data['styles'] = ProsulumMabCommon::getStyles();
+
+		//get buttons
+		$data['buttons'] = $MabButton->getConfiguredButtons();
 		
 		$filename = 'metaboxes/type/optin-settings.php';
 		$box = ProsulumMabCommon::getView( $filename, $data );

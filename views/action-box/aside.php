@@ -14,10 +14,6 @@ if( isset( $meta['aside'] )){
 
 		$aside_content = !empty( $image_url ) ? sprintf( '<img src="%s" alt="Opt In Image" %s %s />', $image_url, $width, $height ) : '';
 
-	} elseif( 'video' == $type ) {
-
-		$aside_content = isset( $aside['video']['embed-code'] ) ? $aside['video']['embed-code'] : '';
-
 	}
 } else {
 	//old system

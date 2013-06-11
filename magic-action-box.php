@@ -3,13 +3,13 @@
  * Plugin Name: Magic Action Box
  * Plugin URI: http://magicactionbox.com
  * Description: Supercharge your blog posts!
- * Version: 2.10
+ * Version: 2.11
  * Author: Prosulum, LLC
  * Author URI: http://prosulum.com
  * License: GPLv2
  */
 
-define( 'MAB_VERSION', '2.10');
+define( 'MAB_VERSION', '2.11');
 //e.g. /var/www/example.com/wordpress/wp-content/plugins/after-post-action-box
 define( "MAB_DIR", plugin_dir_path( __FILE__ ) );
 //e.g. http://example.com/wordpress/wp-content/plugins/after-post-action-box
@@ -576,14 +576,10 @@ class ProsulumMabBase{
 
 				echo '<div class="updated"><p>';
 
-				printf( __('New in Magic Action Box Pro:<br /><strong>Random Boxes</strong> - show a different action box on every page load. <br /><strong>Video Side Item</strong> - show videos instead of just images. <br /><a href="%2$s">Upgrade to Pro version now</a> | <a href="%1$s">Hide notice</a>', MAB_DOMAIN), add_query_arg( array('mab-hide-update-notice' => 'true' ) ), 'http://www.magicactionbox.com/pricing/?pk_campaign=LITE&pk_kwd=cf7promo' );
+				printf( __('New in Magic Action Box Pro: Use custom buttons in Opt In boxes. <a href="%2$s" target="_blank">Upgrade now</a> to get this feature. <a href="%1$s">Hide notice</a>', MAB_DOMAIN), add_query_arg( array('mab-hide-update-notice' => 'true' ) ), 'http://www.magicactionbox.com/pricing/?pk_campaign=LITE&pk_kwd=cbuttons_promo_notice' );
 
 				echo '</p></div>';
-				/*
-				echo '<div class="updated"><p>';
-				printf( __('Magic Action Box now has integrated support for the <a href="http://www.wysija.com/?aff=8" target="_blank" title="Wysija Newsletter plugin">Wysija Newsletter</a> plugin. You can now select it as a Mailing List provider in the Opt In form metabox section (used in Opt In and Share Box action box types). <a href="%3$s">Hide Notice</a>.','mab'), $this->get_current_version(), add_query_arg( array('page'=>'mab-main'), admin_url('admin.php') ), add_query_arg( array('mab-hide-update-notice' => 'true' ) ) );
-				echo '</p></div>';
-				*/
+
 				
 			}
 			
@@ -659,6 +655,7 @@ class ProsulumMabBase{
 		
 		/** Styles **/
 		wp_register_style( 'mab-base-style', MAB_ASSETS_URL . 'css/magic-action-box-styles.css', array() );
+		wp_register_style( 'mab-extras', MAB_ASSETS_URL . 'css/mab-extras.css', array());
 		
 		/** ADMIN styles **/
 		wp_register_style( 'mab-admin-style', MAB_ASSETS_URL . 'css/magic-action-box-admin.css', array(), MAB_VERSION );

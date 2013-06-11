@@ -126,15 +126,6 @@ class MAB_Template{
 			wp_enqueue_style( "mab-actionbox-style-{$actionBoxId}", mab_get_actionbox_stylesheet_url($actionBoxId), array( ), filemtime( $custom_css_stylesheet ) );
 		}
 		
-		/** LOAD BUTTONS CSS **/
-		/* create custom buttons stylesheet if its not there */
-		if( !file_exists( mab_get_custom_buttons_stylesheet_path() ) ){
-			global $MabButton;
-			$MabButton->writeConfiguredButtonsStylesheet( $MabButton->getConfiguredButtons(), '' );
-		}
-		//load buttons stylesheet
-		wp_enqueue_style( 'mab-custom-buttons-css', mab_get_custom_buttons_stylesheet_url() );
-		
 		/** LOAD MISC **/
 	}
 	
@@ -166,6 +157,10 @@ class MAB_Template{
 		if( $selectedStyle == 'mabstyle-user' ){
 			$classes[] = 'userstyle-' . $meta['userstyle'];
 		}
+
+		//button style
+		$buttonStyle = isset($meta['button-key']) ? $meta['button-key'] : 'default';
+		$classes[] = 'use-mab-button-' . $buttonStyle;
 		
 		//fields layout
 		if( isset( $meta['optin']['fields-layout'] ) ){
