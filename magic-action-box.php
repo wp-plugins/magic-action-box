@@ -3,13 +3,13 @@
  * Plugin Name: Magic Action Box
  * Plugin URI: http://magicactionbox.com
  * Description: Supercharge your blog posts!
- * Version: 2.11
+ * Version: 2.12
  * Author: Prosulum, LLC
  * Author URI: http://prosulum.com
  * License: GPLv2
  */
 
-define( 'MAB_VERSION', '2.11');
+define( 'MAB_VERSION', '2.12');
 //e.g. /var/www/example.com/wordpress/wp-content/plugins/after-post-action-box
 define( "MAB_DIR", plugin_dir_path( __FILE__ ) );
 //e.g. http://example.com/wordpress/wp-content/plugins/after-post-action-box
@@ -576,7 +576,7 @@ class ProsulumMabBase{
 
 				echo '<div class="updated"><p>';
 
-				printf( __('New in Magic Action Box Pro: Use custom buttons in Opt In boxes. <a href="%2$s" target="_blank">Upgrade now</a> to get this feature. <a href="%1$s">Hide notice</a>', MAB_DOMAIN), add_query_arg( array('mab-hide-update-notice' => 'true' ) ), 'http://www.magicactionbox.com/pricing/?pk_campaign=LITE&pk_kwd=cbuttons_promo_notice' );
+				printf( __('Using Gravity Forms? Make it look more awesome by <a href="%3$s">creating an action box</a> for it.<br >Magic Action Box now integrates with Gravity Forms to create great looking contact forms. <a href="%1$s">Hide notice</a>', MAB_DOMAIN), add_query_arg( array('mab-hide-update-notice' => 'true' ) ), $this->get_current_version(), admin_url('post-new.php?post_type=action-box') );
 
 				echo '</p></div>';
 

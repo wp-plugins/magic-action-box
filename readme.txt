@@ -4,19 +4,22 @@ Developer: Prosulum
 Tags: opt in, call to action, aweber, email, email marketing, form, mailing list, marketing, newsletter, webform, mailchimp, constant contact
 Requires at least: 3.1
 Tested up to: 3.5.1
-Stable tag: 2.11
+Stable tag: 2.12
 
-Magic Action Box is an easy to use but powerful lead generation plugin that let's you create opt-in forms similar to the Derek Halpern feature box from Social Triggers.
+Magic Action Box let's you display professional looking opt-in forms and feature boxes in your WordPress site.
 
 == Description ==
 
-Magic Action Box is an easy to use but powerful lead generation plugin that lets you create a focused and high converting action box in minutes. It let's you create opt-in forms similar to the Derek Halpern feature box from Social Triggers.
+Magic Action Box is an easy to use but powerful lead generation plugin that lets you create a focused and high converting feature box in minutes. It let's you display professional looking opt-in forms and feature boxes in your WordPress site.
+
+Magic Action Box also integrates with Gravity Forms to build complex, powerful and beautiful contact forms in just minutes.
 
 Some features:
 
 * Easily add an action box before or after a blog post or page
-* Easily add opt in forms - with stunning designs - to your sidebar.
+* Easily add opt in forms - with stunning designs - to your sidebar
 * Create Email Opt In Forms
+* Integrates with Gravity Forms
 * Make your own action box styles
 * Or, pick a style from one of the pre-configured designs
 
@@ -27,17 +30,17 @@ Some features available in Pro version:
 * Create Contact Form Boxes
 * Create Sales Boxes
 * Create Share Boxes
-* Create Custom Buttons (NEW)
+* Create Custom CSS3 Buttons
 * Display random action boxes
 * Show video (not just images) with your action boxes
 * More pre-designed styles
-* Shortcodes
+* Shortcodes and template tag
 * Sidebar Widget
 * VIP Support
-* Create and upload your own buttons
 * [And more...](http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=pluginPage2)
 
 [View changelog](http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=pluginPage2)
+
 
 == Installation ==
 
@@ -55,6 +58,22 @@ Yes you can. As long as your autoresponder lets you create html forms that you c
 = Can I place an action box on my website's sidebar? =
 
 Yes. In the WordPress Dashboard, go to the Widgets page and lookg for the Magic Action Box Widget (available only in Pro).
+=======
+2. Upload the magic-action-box-lite folder to the /wp-content/plugins/ directory in your web site.
+3. Activate the plugin through the 'Plugins' menu in your WordPress administration page.
+
+== Frequently Asked Questions ==
+
+= My autoresponder is not on the list. Can I use it with the plugin? =
+Yes you can. As long as your autoresponder lets you create html forms that you can copy and paste, then you are all good. Watch this [video tutorial](http://www.magicactionbox.com/how-use-magic-action-box-with-any-email-marketing-service/) to learn more.
+
+= Shortcode and Template Tag (available in Pro) =
+
+You may use the *[magicactionbox id="ACTION BOX ID"]* shortcode in your blog posts or the `mab_get_actionbox( ACTION_BOX_ID )` template tag in your theme template.
+
+= Can I place an action box on my website's sidebar? =
+
+Yes. In the WordPress Dashboard, go to the Widgets page and lookg for the Magic Action Box Widget.
 
 = My action box doesn't seem to have any styles to it. What's wrong? =
 
@@ -86,6 +105,12 @@ Try checking the *Reorder post content filter priorities* checkbox found in WP A
 5. Action Box Settings Screen
 
 == Changelog ==
+= 2.12 =
+* Added Gravity Forms add-on
+* Improved custom style generator
+* Improved the category tab in main settings to also display parent categories.
+* Minor fixes
+
 = 2.11 = 
 * [fix] fixed action box style dropdown select box reverting to User Styles after save when selecting None as style.
 * [fix] fixed style creator not putting out border-radius css
@@ -95,8 +120,15 @@ Try checking the *Reorder post content filter priorities* checkbox found in WP A
 * added more classes to generated button css code
 * [fix] updated linear-gradient in button css code to use new W3c implementation
 
+= 2.10 =
+* Added Random Box type to display a random action box from a specified set of action boxes
+* Added feature to display video beside selected action boxes
+
 = 2.9.10 = 
 * Fixes
+* made css more specific in button css code
+* custom buttons now working for Opt In box type
+* added [mab_button] shortcode
 
 = 2.9.5 =
 * Fixed css generator where it wasn't putting out the property for submit buttons on hover
