@@ -197,7 +197,7 @@ class ProsulumMabAdmin{
 		//get all categories and store in array
 		$categoriesObj = get_categories( array( 'hide_empty' => 0 ) );
 		foreach( $categoriesObj as $cat ){
-			$categories[ $cat->cat_ID ] = $cat->cat_name;
+			$categories[ $cat->cat_ID ] = $cat;
 		}
 		
 		//add other variables as keys to the data array

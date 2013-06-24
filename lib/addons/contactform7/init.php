@@ -2,6 +2,7 @@
 /** Definitions **/
 define( 'MAB_CF7_TYPE', 'cf7' );
 
+
 /** Initialize our addon **/
 add_action( 'mab_init', 'mab_cf7_init' );
 

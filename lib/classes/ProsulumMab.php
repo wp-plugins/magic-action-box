@@ -110,11 +110,17 @@ class ProsulumMab{
 			}
 			
 			$this->setUpDefaults();
-			
-			//TODO: check if page has action box
-			//add_action( 'wp_print_styles', array( &$this, 'printStylesScripts' ) );
-			add_action( 'wp_enqueue_scripts', array( &$this, 'printStylesScripts' ) );
-			add_filter( "the_content", array( &$this, 'showActionBox'), $mab_priority);
+
+			$queried_mab_obj = $this->getQueriedActionBoxObj();
+
+			if( is_object($queried_mab_obj) && !empty($queried_mab_obj)){
+				
+				//TODO: check if page has action box
+				//add_action( 'wp_print_styles', array( &$this, 'printStylesScripts' ) );
+				add_action( 'wp_enqueue_scripts', array( &$this, 'printStylesScripts' ) );
+				add_filter( "the_content", array( &$this, 'showActionBox'), $mab_priority);
+
+			}
 		}
 
 		/**
@@ -402,6 +408,10 @@ class ProsulumMab{
 	 */
 	function printStylesScripts(){
 		$mainActionBox = $this->getQueriedActionBoxObj();
+
+		if( !is_object($mainActionBox) )
+			return;
+		
 		$mainActionBox->loadAssets();
 	}
 	

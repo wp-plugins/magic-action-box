@@ -13,9 +13,8 @@ $submitValue = !empty( $meta['optin']['aweber']['submit-value'] ) ? $meta['optin
 $fieldlabels = isset($optinMeta['field-labels']) && is_array( $optinMeta['field-labels'] ) ? $optinMeta['field-labels'] : array( 'email' => __('Email', MAB_DOMAIN), 'fname' => __('First Name', MAB_DOMAIN), 'lname' => __('Last Name', MAB_DOMAIN) );
 
 $infieldlabels = isset($optinMeta['infield-labels']) && is_array( $optinMeta['infield-labels'] ) ? $optinMeta['infield-labels'] : array( 'email' => __('Enter your email', MAB_DOMAIN), 'fname' => __('Enter your name', MAB_DOMAIN), 'lname' => __('Enter your last name', MAB_DOMAIN) );
-?>
-<!-- form method="POST" action="http://www.aweber.com/scripts/addlead.pl" -->
-<form method="POST" action="<?php echo $actionUrl; ?>">
+
+?><form method="POST" action="<?php echo $actionUrl; ?>">
 	<div class="mab-field mab-field-name">
 		<?php if( !empty( $fieldlabels['fname']) ) : ?>
 		<label for="mab-name"><?php echo $fieldlabels['fname']; ?></label>
