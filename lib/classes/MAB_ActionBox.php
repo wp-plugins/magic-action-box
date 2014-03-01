@@ -6,6 +6,8 @@ class MAB_ActionBox{
 	private $_type = null;
 	private $_meta = array();
 	private $_html_UniqueId = '_mab_html_unique_id';
+
+	protected $_template_obj = null;
 	
 	/**
 	 * Get Action Box
@@ -85,6 +87,11 @@ class MAB_ActionBox{
 		if( empty( $actionbox ) ){
 			return false;
 		}
+
+		// make sure the $actionbox post object is not trashed
+		if($actionbox->post_status == 'trash'){
+			return false;
+		}
 		
 		//make sure action box type is registered
 		$type = $MabBase->get_mab_meta( $id, 'type' );
@@ -122,6 +129,24 @@ class MAB_ActionBox{
 	
 	function getMeta(){
 		return $this->_meta;
+	}
+
+	/**
+	 * See MAB_Template::addClass() method for description
+	 */
+	function addClass($class){
+		if(!$this->isConfigured()) return false;
+
+		return $this->getTemplateObj()->addClass($class);
+	}
+
+	/**
+	 * See MAB_Template::addClass() method for description
+	 */
+	function addAttr($name, $value){
+		if(!$this->isConfigured()) return false;
+
+		return $this->getTemplateObj()->addAttr($class);		
 	}
 	
 	/**

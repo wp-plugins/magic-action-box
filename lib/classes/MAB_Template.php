@@ -15,10 +15,18 @@ class MAB_Template{
 	private static $_current_template_style_dir = '';
 	private static $_current_template_style_url = '';
 	private static $_current_actionbox_obj = null;
+
+	protected $classes = array(); // css class
+	protected $htmlData = array(); // html data i.e. data-color="red"
 	
 	public function getTemplate(){
 		$actionBoxObj = $this->_actionbox_obj;
 		
+		/**
+		 * NOTES:
+		 * self::setCurrentTemplateVars() isn't currently used anywhere.
+		 * Not really sure why I created this though :P
+		 */
 		self::setCurrentTemplateVars( $actionBoxObj );
 		
 		$type = $actionBoxObj->getActionBoxType();
@@ -126,6 +134,23 @@ class MAB_Template{
 			wp_enqueue_style( "mab-actionbox-style-{$actionBoxId}", mab_get_actionbox_stylesheet_url($actionBoxId), array( ), filemtime( $custom_css_stylesheet ) );
 		}
 		
+		/** LOAD BUTTONS CSS **/
+		/* create custom buttons stylesheet if its not there */
+		if( !file_exists( mab_get_custom_buttons_stylesheet_path() ) ){
+			global $MabButton;
+			$MabButton->writeConfiguredButtonsStylesheet( $MabButton->getConfiguredButtons(), '' );
+		}
+		
+		// load buttons stylesheet.		
+		// we do this way to ensure that mab-custom-buttons-css stylesheet will always be the last
+		// to load. this is especially important when two action boxes use custom buttons.
+		if(wp_style_is('mab-custom-buttons-css', 'enqueued')){ 
+			//dequeue the style so we can enqueue it to footer 
+			wp_dequeue_style('mab-custom-buttons-css'); 
+		} 
+
+		wp_enqueue_style( 'mab-custom-buttons-css', mab_get_custom_buttons_stylesheet_url() );
+
 		/** LOAD MISC **/
 	}
 	
@@ -136,7 +161,7 @@ class MAB_Template{
 	function getClassArray($class=''){
 		$actionBoxObj = $this->_actionbox_obj;
 
-		$classes = array();
+		$classes = $this->classes;
 		
 		$classes[] = 'magic-action-box';
 
@@ -187,6 +212,58 @@ class MAB_Template{
 	function getClass( $class = '' ){
 		// Separates classes with a single space, collates classes for .magic-action-box
 		return 'class="' . implode( ' ', $this->getClassArray( $class ) ) . '"';
+	}
+
+	/**
+	 * Adds css classes to $this->classes
+	 * @param  string|array $class css class as space separated string or array
+	 */
+	function addClass($class){
+		
+		if(empty($class)) return false;
+
+		// convert $class to an array if it's not yet one
+		if(!is_array($class))
+			$class = preg_split('#\s+#', $class);
+
+		$class = array_map('esc_attr', $class);
+
+		$this->classes = array_merge($this->classes, $class);
+
+		return true;
+	}
+
+	/**
+	 * For adding HTML data attribute
+	 */
+	function setHtmlData($name ,$value){
+		if(empty($name)) return false;
+		
+		// lower case string
+		$name = strtolower($name);
+
+		// make alphanumeric
+		$name = preg_replace("/[^a-z0-9_\s-]/", "", $name);
+
+		// convert white space to dash
+		$name = preg_replace("/[\s]/", "-", $string);
+
+		$this->htmlData[$name] = esc_attr($value);
+
+		return true;
+	}
+
+	/**
+	 * Get HTML data attribute value
+	 */
+	function getHtmlData($name = ''){
+
+		// assume we want everthing
+		if(empty($name)) return $this->htmlData;
+
+		if(!isset($this->htmlData[$name])) return '';
+		
+		return $this->htmlData[$name];
 	}
 	
 	function getTemplateFile(){

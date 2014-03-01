@@ -51,6 +51,7 @@ function mab_gforms_meta_box( $post ){
 	$data['forms'] = is_array($forms) ? $forms : array();
 	//error_log();
 	$filename = 'metabox/metabox.php';
+
 	$box = mab_gforms_get_view( $filename, $data );
 	echo $box;
 }
@@ -105,6 +106,7 @@ function mab_gforms_the_content( $content, $action_box_obj ){
 	//if( empty( $form_id ) ) return '';
 
 	$form = RGForms::get_form($form_id, $show_title, $show_desc, false, $field_value_array, $do_ajax, $tab_index);
+
 	return $form;
 }
 

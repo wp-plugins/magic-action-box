@@ -2,9 +2,9 @@
 Contributors: prosulum, pogidude
 Developer: Prosulum
 Tags: opt in, call to action, aweber, email, email marketing, form, mailing list, marketing, newsletter, webform, mailchimp, constant contact
-Requires at least: 3.1
-Tested up to: 3.5.1
-Stable tag: 2.12
+Requires at least: 3.3
+Tested up to: 3.8.1
+Stable tag: 2.13
 
 Magic Action Box let's you display professional looking opt-in forms and feature boxes in your WordPress site.
 
@@ -58,9 +58,6 @@ Yes you can. As long as your autoresponder lets you create html forms that you c
 = Can I place an action box on my website's sidebar? =
 
 Yes. In the WordPress Dashboard, go to the Widgets page and lookg for the Magic Action Box Widget (available only in Pro).
-=======
-2. Upload the magic-action-box-lite folder to the /wp-content/plugins/ directory in your web site.
-3. Activate the plugin through the 'Plugins' menu in your WordPress administration page.
 
 == Frequently Asked Questions ==
 
@@ -105,8 +102,17 @@ Try checking the *Reorder post content filter priorities* checkbox found in WP A
 5. Action Box Settings Screen
 
 == Changelog ==
+
+= 2.13 =
+* [fix] php notices and various undefined indices
+* [fix] if action box is trash status, then, do not show.
+* [add] custom buttons stylesheet should now load after the last action box (so it is not overridden).
+* [add] updated get_settings() method in base class to return default settings if it is not yet set.
+* [add] added mab_load_addons action hook to ProsulumMabBase class.
+* Move all admin pages under one main menu item.
+
 = 2.12 =
-* Added Gravity Forms add-on
+* [pro] Added Gravity Forms add-on
 * Improved custom style generator
 * Improved the category tab in main settings to also display parent categories.
 * Minor fixes

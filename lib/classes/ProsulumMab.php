@@ -228,7 +228,7 @@ class ProsulumMab{
 		global $MabBase;
 		
 		$settings = $this->getSettings();
-		$globalMab = $settings['global-mab'];
+		$globalMab = isset($settings['global-mab']) ? $settings['global-mab'] : array();
 		
 		$actionBoxId = '';
 		

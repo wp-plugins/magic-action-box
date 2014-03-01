@@ -31,7 +31,8 @@ function mab_get_actionbox( $actionBoxId = null, $loadAssets = true, $forceShow 
 		//from a regular post/CPT where Action Box is to be shown
 		$postmeta = $MabBase->get_mab_meta( $post->ID, 'post' );
 
-		$post_action_box = $postmeta['post-action-box'];
+		$post_action_box = isset($postmeta['post-action-box']) ? $postmeta['post-action-box'] : '';
+		$post_action_box_placement = isset($postmeta['post-action-box-placement']) ? $postmeta['post-action-box-placement'] : '';
 		
 		//return nothing if action box is disabled or if placement is not set to 'manual'
 		if( 'none' == $post_action_box ){
@@ -40,7 +41,7 @@ function mab_get_actionbox( $actionBoxId = null, $loadAssets = true, $forceShow 
 
 		//if action box is not set or is set to "default"
 		} elseif( !isset( $post_action_box ) || $post_action_box === '' || $post_action_box == 'default' ){
-			if( $fallbackToDefaults && ($forceShow || $postmeta['post-action-box-placement'] == 'manual' ) ){
+			if( $fallbackToDefaults && ($forceShow || $post_action_box_placement == 'manual' ) ){
 				//get post type
 				$post_type = get_post_type( $post );
 				$post_type = ( $post_type == 'page' ) ? 'page' : 'single';
@@ -48,7 +49,7 @@ function mab_get_actionbox( $actionBoxId = null, $loadAssets = true, $forceShow 
 			} else {
 				return '';
 			}
-		} elseif( !$forceShow && $postmeta['post-action-box-placement'] != 'manual' ){
+		} elseif( !$forceShow && $post_action_box_placement != 'manual' ){
 			/** Action box must be set to show "manually" **/
 			return '';
 		}

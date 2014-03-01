@@ -3,13 +3,13 @@
  * Plugin Name: Magic Action Box
  * Plugin URI: http://magicactionbox.com
  * Description: Supercharge your blog posts!
- * Version: 2.12
+ * Version: 2.13
  * Author: Prosulum, LLC
  * Author URI: http://prosulum.com
  * License: GPLv2
  */
 
-define( 'MAB_VERSION', '2.12');
+define( 'MAB_VERSION', '2.13');
 //e.g. /var/www/example.com/wordpress/wp-content/plugins/after-post-action-box
 define( "MAB_DIR", plugin_dir_path( __FILE__ ) );
 //e.g. http://example.com/wordpress/wp-content/plugins/after-post-action-box
@@ -98,7 +98,7 @@ class ProsulumMabBase{
 			'public' => false,
 			'publicly_queryable' => false,
 			'show_ui' => true,
-			'show_in_menu' => true,
+			'show_in_menu' => false,
 			'hierarchichal' => false,
 			'menu_position' => 777,
 			'capability_type' => 'post',
@@ -162,6 +162,8 @@ class ProsulumMabBase{
 	function loadAddOns(){
 		/** TODO: load addons automatically **/
 		require_once MAB_ADDONS_DIR . 'load-addons.php';
+		
+		do_action('mab_load_addons');
 
 		do_action('mab_addons_loaded');
 	}
@@ -203,9 +205,9 @@ class ProsulumMabBase{
 			$MabBase->register_post_type();
 		
 		//setup initial settings?
-		$settings = get_option( $MabBase->_metakey_Settings, array() );
+		$settings = get_option( $MabBase->_metakey_Settings );
 		if( !is_array( $settings ) )
-			$settings = array();
+			$settings = $MabBase->default_settings();
 			
 		if( !isset( $settings['optin']['allowed']['manual'] ) )
 			$settings['optin']['allowed']['manual'] = 1;
@@ -447,10 +449,10 @@ class ProsulumMabBase{
 		$settings = wp_cache_get( $this->_metakey_Settings );
 		
 		if( !$settings || !is_array( $settings ) ){
-			$settings = get_option( $this->_metakey_Settings, array() );
+			$settings = get_option( $this->_metakey_Settings );
 			
 			if( !is_array( $settings ) )
-				$settings = array();
+				$settings = $this->default_settings();
 				
 			if( !isset( $settings['optin']['allowed'] ) || !is_array( $settings['optin']['allowed'] ) )
 				$settings['optin']['allowed'] = array();
@@ -466,6 +468,39 @@ class ProsulumMabBase{
 		
 		update_option( $this->_metakey_Settings, $settings );
 		//wp_cache_set( $this->_metakey_Settings, $settings, null, time() + 24*60*60 );//cache for 24 hours
+	}
+
+	function default_settings(){
+		$default = array(
+			'others' => array(
+				'reorder-content-filters' => 0,
+				'minify-output' => 0
+				),
+			'optin' => array(
+				'aweber-authorization' => '',
+				'mailchimp-api' => '',
+				'allowed' => array(
+					'manual' => 1
+					)
+				),
+			'global-mab' => array(
+				'default' => array(
+					'actionbox' => '',
+					'placement' => 'bottom'
+					),
+				'page' => array(
+					'actionbox' => '',
+					'placement' => 'bottom'
+					),
+				'post' => array(
+					'actionbox' => '',
+					'placement' => 'bottom'
+					),
+				'category' => array()
+				)
+			);
+
+		return $default;
 	}
 	
 	function get_selected_style( $actionBoxId ){
