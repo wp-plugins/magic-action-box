@@ -25,7 +25,7 @@ global $MabAdmin;
 				$url = wp_nonce_url( $url, 'action_box_set' );
 				?>
 
-				<?php if( $type === 'optin' ) : ?>
+				<?php if( $type === 'optin' || $type == 'gforms' ) : ?>
 					<a class="mab-type-title" href="<?php echo esc_attr($url); ?>"><?php esc_html_e($info['name'], 'mab' ); ?></a><br />
 					<?php esc_html_e($info['description'], 'mab' ); ?>
 				<?php else: ?>
@@ -44,7 +44,7 @@ global $MabAdmin;
 		}
 		?>
 	</ul>
-
+<?php /*
 	<h3>Coming Soon</h3>
 	<ul class="mab-type-choice">
 		<li>
@@ -54,6 +54,7 @@ global $MabAdmin;
 			Combine Gravity Forms with Magic Action Box's slick designs.<br />
 		</li>
 	</ul>
+*/ ?>
 
 	<div class="mab-ad updated">
 		<a href="http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=addScreen" target="_blank"><img src="<?php echo MAB_ASSETS_URL . 'images/adbox.png'; ?>" alt="" class="mab-ad-img" width="200"/></a>
@@ -77,10 +78,14 @@ global $MabAdmin;
 			<h3>Upcoming Features</h3>
 			<ul>
 				<li>Use FaceBook Connect to allow visitors to subscribe to your mailing list.</li>
-				<li>Gravity Forms integration.</li>
 			</ul>
 
 		</div>
 	</div><!-- .mab-ad -->
+
+	<h3>Upcoming Features</h3>
+	<ul>
+		<li>Use FaceBook Connect to allow visitors to subscribe to your mailing list.</li>
+	</ul>
 
 </div><!-- .wrap -->

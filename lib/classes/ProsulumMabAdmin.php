@@ -94,15 +94,20 @@ class ProsulumMabAdmin{
 	}
 	
 	function addAdminInterface(){
-		global $MabButton;
+		global $MabButton, $MabBase;
 		
 		$hooks = array( 'post-new.php', 'post.php' );
 		
 		## MAIN SETTINGS
-		$hooks[] = add_menu_page( __('Magic Action Box Settings', 'mab'), __('Magic Action Box Settings', 'mab'), 'manage_options', 'mab-main', array( &$this, 'displaySettingsPage' ), MAB_ASSETS_URL . 'images/cube.png', '66.5' );
+		$hooks[] = add_menu_page( __('Magic Action Box', 'mab'), __('Magic Action Box', 'mab'), 'manage_options', 'mab-main', array( &$this, 'displaySettingsPage' ), MAB_ASSETS_URL . 'images/cube.png', '66.5' );
 		## MAIN SETTINGS
 		$hooks[] = add_submenu_page( 'mab-main', __('Main Settings', 'mab' ), __('Main Settings', 'mab' ), 'manage_options', 'mab-main', array( &$this, 'displaySettingsPage' ) );
+
+		## ACTION BOXES
+		$hooks[] = add_submenu_page( 'mab-main', __('Action Boxes','mab'), __('Action Boxes','mab'), 'manage_options', 'edit.php?post_type=' . $MabBase->get_post_type() );
 		
+		$hooks[] = add_submenu_page( 'mab-main', __('New Action Box','mab'), __('New Action Box','mab'), 'manage_options', 'post-new.php?post_type=' . $MabBase->get_post_type() );
+
 		## ACTION BOX SETTINGS
 		//$hooks[] = add_submenu_page( 'mab-main', __('Action Box Settings', 'mab' ), __('Action Box Settings', 'mab' ), 'manage_options', 'mab-actionbox-settings', array( &$this, 'displayActionBoxSettingsPage' ) );
 		
@@ -125,7 +130,7 @@ class ProsulumMabAdmin{
 		}
 		
 		$hooks[] = add_submenu_page( 'mab-main', $buttonTitle , $buttonTitle , 'manage_options', 'mab-button-settings', array( &$this, 'displayButtonSettingsPage' ) );
-		
+
 		$hooks[] = add_submenu_page( 'mab-main', __('Support', MAB_DOMAIN ), __('Support &amp; Links', MAB_DOMAIN), 'manage_options', 'mab-support', array( &$this, 'displaySupportPage' ) );
 		
 		$mab_hooks = apply_filters( 'mab_add_submenu_filter', $hooks );
@@ -141,8 +146,8 @@ class ProsulumMabAdmin{
 		global $menu;
 		
 		$menu['66.3'] = array( '', 'read', 'separator-mab', '' , 'wp-menu-separator' );
-		$menu['66.4'] = $menu[777];
-		unset( $menu[777] );
+		//$menu['66.4'] = $menu[777];
+		//unset( $menu[777] );
 		$menu['66.9'] = array( '', 'read', 'separator-mab', '' , 'wp-menu-separator' );
 	}
 	
@@ -197,7 +202,7 @@ class ProsulumMabAdmin{
 		//get all categories and store in array
 		$categoriesObj = get_categories( array( 'hide_empty' => 0 ) );
 		foreach( $categoriesObj as $cat ){
-			$categories[ $cat->cat_ID ] = $cat->cat_name;
+			$categories[ $cat->cat_ID ] = $cat;
 		}
 		
 		//add other variables as keys to the data array
@@ -779,7 +784,7 @@ class ProsulumMabAdmin{
 		
 		//TODO: do nonce check
 		
-		if( is_array( $data['postmeta'] ) ){
+		if( !empty($data['postmeta']) && is_array( $data['postmeta'] ) ){
 			$postmeta = $data['postmeta'];
 			
 			$MabBase->update_mab_meta( $post_id, $postmeta, 'post' );
