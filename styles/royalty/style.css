@@ -41,7 +41,7 @@
 	z-index: 10;
 }
 
-.mabstyle-royalty.magic-action-box .mab-heading{
+.mabstyle-royalty .mab-heading{
 	clear: none;
 	color: #FAAB31;
 	font-size: 175%;
@@ -53,7 +53,7 @@
 	text-shadow: 1px 1px 3px #07293D;
 }
 
-.mabstyle-royalty.magic-action-box .mab-subheading{
+.mabstyle-royalty .mab-subheading{
 	clear: none;
 	color: #fff;
 	font-size: 120%;
@@ -64,28 +64,15 @@
 	text-shadow: 1px 1px 3px #07293D;
 }
 
-.mabstyle-royalty.magic-action-box .mab-main-copy{
-}
 
 .mabstyle-royalty.magic-action-box .mab-secondary-copy{
 	font-size: 95%;
 }
 
-.mabstyle-royalty .mab-main-action-wrap{ overflow: hidden; }
-
 /* Form */
-.mabstyle-royalty.magic-action-box form{
-	margin: 10px 0;
-}
-
-.mabstyle-royalty.magic-action-box form .mab-field{
-}
-
 .mabstyle-royalty.magic-action-box form .mab-field label{
 	color: #fff !important;
-	display: block;
 	font-size: 85%!important;
-	margin-bottom: 1px;
 }
 
 .mabstyle-royalty.magic-action-box form .mab-field input, .mabstyle-royalty.magic-action-box form .mab-field textarea{

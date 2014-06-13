@@ -2,21 +2,25 @@
 Contributors: prosulum, pogidude
 Developer: Prosulum
 Tags: opt in, call to action, aweber, email, email marketing, form, mailing list, marketing, newsletter, webform, mailchimp, constant contact
-Requires at least: 3.1
-Tested up to: 3.5.1
-Stable tag: 2.9.10
+Requires at least: 3.3
+Tested up to: 3.9.1
+Stable tag: 2.14
 
-Magic Action Box is an easy to use but powerful lead generation plugin.
+Magic Action Box let's you display professional looking opt-in forms and feature boxes in your WordPress site.
 
 == Description ==
 
-Magic Action Box is an easy to use but powerful lead generation plugin that lets you create a focused and high converting action box in minutes.
+Magic Action Box is an easy to use but powerful lead generation plugin that lets you create a focused and high converting feature box in minutes. It let's you display professional looking opt-in forms and feature boxes in your WordPress site.
+
+Magic Action Box also integrates with Gravity Forms to build complex, powerful and beautiful contact forms in just minutes.
 
 Some features:
 
 * Easily add an action box before or after a blog post or page
-* Easily add opt in forms - with stunning designs - to your sidebar.
+* Set up horizontal opt in forms in your header or home page
+* Easily add opt in forms - with stunning designs - to your sidebar
 * Create Email Opt In Forms
+* Integrates with Gravity Forms
 * Make your own action box styles
 * Or, pick a style from one of the pre-configured designs
 
@@ -27,16 +31,18 @@ Some features available in Pro version:
 * Create Contact Form Boxes
 * Create Sales Boxes
 * Create Share Boxes
+* Create Custom CSS3 Buttons
+* Use your custom image as submit button for OptIn forms
 * Display random action boxes
 * Show video (not just images) with your action boxes
 * More pre-designed styles
-* Shortcodes
+* Shortcodes and template tag
 * Sidebar Widget
 * VIP Support
-* Create and upload your own buttons (currently used for Sales Boxes only)
 * [And more...](http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=pluginPage2)
 
-[View changelog](http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=pluginPage2)
+[View changelog](http://www.magicactionbox.com/changelog/changelog-mab/?pk_campaign=LITE&pk_kwd=changelog)
+
 
 == Installation ==
 
@@ -47,13 +53,21 @@ Some features available in Pro version:
 
 == Frequently Asked Questions ==
 
+= I've installed the plugin. What now? =
+
+Check out the [Quick Start guide](http://www.magicactionbox.com/quick-start?pk_campaign=LITE&pk_kwd=faq_qs) to get started.
+
 = My autoresponder is not on the list. Can I use it with the plugin? =
 
 Yes you can. As long as your autoresponder lets you create html forms that you can copy and paste, then you are all good. Watch this [video tutorial](http://www.magicactionbox.com/how-use-magic-action-box-with-any-email-marketing-service/?pk_campaign=LITE&pk_kwd=faq) to learn more.
 
+= Shortcode and Template Tag (available in Pro) =
+
+You may use the *[magicactionbox id="ACTION BOX ID"]* shortcode in your blog posts or the `mab_get_actionbox( ACTION_BOX_ID )` template tag in your theme template.
+
 = Can I place an action box on my website's sidebar? =
 
-Yes. In the WordPress Dashboard, go to the Widgets page and lookg for the Magic Action Box Widget (available only in Pro).
+Yes. In the WordPress Dashboard, go to the Widgets page and lookg for the Magic Action Box Widget.
 
 = My action box doesn't seem to have any styles to it. What's wrong? =
 
@@ -85,8 +99,55 @@ Try checking the *Reorder post content filter priorities* checkbox found in WP A
 5. Action Box Settings Screen
 
 == Changelog ==
+= 2.14 =
+* [fix] processing of textarea element.
+* Add button style selector for Contact Form 7 action box type.
+* Styling fixes to widget.
+* Add edit link to action boxes
+* Add ability to use image for submit buttons
+* Add option in widget to force field stacking layout.
+* Improve action box class and templating.
+* Add css box-sizing to everything.
+* Add responsive checkbox option.
+* Add horizontal layout setting.
+* Add helper script for responsive videos.
+* Improve fields layout setting.
+* Add center content option.
+* Add auto adjust submit button width option.
+
+= 2.13 =
+* [fix] php notices and various undefined indices
+* [fix] if action box is trash status, then, do not show.
+* [add] custom buttons stylesheet should now load after the last action box (so it is not overridden).
+* [add] updated get_settings() method in base class to return default settings if it is not yet set.
+* [add] added mab_load_addons action hook to ProsulumMabBase class.
+* [add] option to center form elements
+* Move all admin pages under one main menu item.
+
+= 2.12 =
+* [pro] Added Gravity Forms add-on
+* Improved custom style generator
+* Improved the category tab in main settings to also display parent categories.
+* Minor fixes
+
+= 2.11 = 
+* [fix] fixed action box style dropdown select box reverting to User Styles after save when selecting None as style.
+* [fix] fixed style creator not putting out border-radius css
+* [fix] fixed php notices
+* [fix] fixed php error if the page content type is not allowed by MAB but MAB still tries to set action box.
+* made paths to functions file in addons use absolute paths
+* added more classes to generated button css code
+* [fix] updated linear-gradient in button css code to use new W3c implementation
+
+= 2.10 =
+* Added Random Box type to display a random action box from a specified set of action boxes
+* Added feature to display video beside selected action boxes
+
 = 2.9.10 = 
 * Fixes
+* made css more specific in button css code
+* custom buttons now working for Opt In box type
+* added [mab_button] shortcode
 
 = 2.9.5 =
 * Fixed css generator where it wasn't putting out the property for submit buttons on hover
@@ -224,6 +285,9 @@ Try checking the *Reorder post content filter priorities* checkbox found in WP A
 * Original Version.
 
 == Upgrade Notice ==
+= 2.10 =
+Feature updates
+
 = 2.9.3 =
 Minor update
 

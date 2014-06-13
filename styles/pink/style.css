@@ -50,7 +50,7 @@
 	z-index: 10;
 }
 
-.mabstyle-pink.magic-action-box .mab-heading{
+.mabstyle-pink .mab-heading{
 	clear: none;
 	font-size: 170% ;
 	font-weight: bold ;
@@ -60,7 +60,7 @@
 	text-transform: none ;
 }
 
-.mabstyle-pink.magic-action-box .mab-subheading{
+.mabstyle-pink .mab-subheading{
 	clear: none;
 	font-size: 120% ;
 	font-weight: bold ;
@@ -68,26 +68,10 @@
 	margin: 0 0 10px ;
 }
 
-.mabstyle-pink.magic-action-box .mab-main-copy{
-}
-
-.mabstyle-pink.magic-action-box .mab-secondary-copy{
-
-}
-
 /* Form */
-.mabstyle-pink.magic-action-box form{
-	margin: 10px 0;
-	overflow: hidden;
-}
 
-.mabstyle-pink.magic-action-box form .mab-field{
-}
-
-.mabstyle-pink.magic-action-box form .mab-field label{
-	display: block;
-	font-size: 90% !important;
-	margin-bottom: 1px;
+.mabstyle-pink form .mab-field label{
+	font-size: 90%;
 }
 
 .mabstyle-pink.magic-action-box form .mab-field input[type="text"], .mabstyle-pink.magic-action-box form .mab-field input[type="email"], .mabstyle-pink.magic-action-box form .mab-field input[type="password"] .mabstyle-pink.magic-action-box form .mab-field textarea{
@@ -114,14 +98,9 @@
 	border-radius: 15px;
 	color: #B20D40;
 	font-size: 100%;
-	text-transform: none
+	text-transform: none;
 }
 
 .mabstyle-pink.magic-action-box mab-main-action-wrap  form input[type="submit"]:hover, .mabstyle-pink.magic-action-box form input[type="submit"]:focus{
 	background: #FFE37D;
 }
-
-/* Widgets */
-.mab-widget .mab-inside-wrap .mabstyle-pink.magic-action-box .mab-main-action-wrap form{ overflow: visible; }
-
-.mab-widget .mab-inside-wrap .mabstyle-pink.magic-action-box form .mab-field input[type="text"], .mab-widget .mab-inside-wrap .mabstyle-pink.magic-action-box form .mab-field input[type="email"], .mab-widget .mab-inside-wrap .mabstyle-pink.magic-action-box form .mab-field input[type="password"], .mab-widget .mab-inside-wrap .mabstyle-pink.magic-action-box form .mab-field textarea{}

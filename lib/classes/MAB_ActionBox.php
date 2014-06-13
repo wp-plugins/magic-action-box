@@ -6,6 +6,9 @@ class MAB_ActionBox{
 	private $_type = null;
 	private $_meta = array();
 	private $_html_UniqueId = '_mab_html_unique_id';
+
+	protected $track = true; // enable or disable tracking
+	protected $_template_obj = null;
 	
 	/**
 	 * Get Action Box
@@ -85,6 +88,11 @@ class MAB_ActionBox{
 		if( empty( $actionbox ) ){
 			return false;
 		}
+
+		// make sure the $actionbox post object is not trashed
+		if($actionbox->post_status == 'trash'){
+			return false;
+		}
 		
 		//make sure action box type is registered
 		$type = $MabBase->get_mab_meta( $id, 'type' );
@@ -103,6 +111,14 @@ class MAB_ActionBox{
 		
 		$this->_template_obj = new MAB_Template( $this );
 		
+		// set html data
+		$this->setHtmlData('mabid', $id);
+		$this->setHtmlData('trackid', $id);
+		$this->setHtmlData('type', $this->getActionBoxType());
+
+		// set tracking/analytics
+		$this->track(true);
+
 		return true;
 	}
 	
@@ -122,6 +138,87 @@ class MAB_ActionBox{
 	
 	function getMeta(){
 		return $this->_meta;
+	}
+
+	/**
+	 * See MAB_Template::addClass() method for description
+	 */
+	function addClass($class){
+		if(!$this->isConfigured()) return false;
+
+		return $this->getTemplateObj()->addClass($class);
+	}
+
+	/**
+	 * @see  MAB_Template::removeClass
+	 */
+	function removeClass($class){
+		if(!$this->isConfigured()) return false;
+
+		return $this->getTemplateObj()->removeClass($class);
+	}
+
+	/**
+	 * See MAB_Template::setHtmlData() method for description
+	 */
+	function setHtmlData($name, $value){
+		if(!$this->isConfigured()) return false;
+
+		return $this->getTemplateObj()->setHtmlData($name, $value);		
+	}
+
+	/**
+	 * See MAB_Template::getHtmlData() method for description
+	 */
+	function getHtmlData($name = ''){
+		if(!$this->isConfigured()) return false;
+
+		return $this->getTemplateObj()->getHtmlData($name);	
+	}
+
+	function htmlData(){
+		if(!$this->isConfigured()) return false;
+		return $this->getTemplateObj()->htmlData();
+	}
+
+
+	/**
+	 * See MAB_Template::setInlineStyle() method for description
+	 */
+	function setInlineStyle($name, $value){
+		if(!$this->isConfigured()) return false;
+
+		return $this->getTemplateObj()->setInlineStyle($name, $value);		
+	}
+
+	/**
+	 * See MAB_Template::getInlineStyle() method for description
+	 */
+	function getInlineStyle($name = ''){
+		if(!$this->isConfigured()) return false;
+
+		return $this->getTemplateObj()->getInlineStyle($name);	
+	}
+
+	function inlineStyles(){
+		if(!$this->isConfigured()) return false;
+		return $this->getTemplateObj()->inlineStyles();
+	}
+
+
+	function track($track = true){
+		if($track){
+			$this->track = true;
+			$this->setHtmlData('track', true);
+		}
+		else{
+			$this->track = false;
+			$this->setHtmlData('track', false);
+		}
+	}
+
+	function isTracked(){
+		return $this->track;
 	}
 	
 	/**

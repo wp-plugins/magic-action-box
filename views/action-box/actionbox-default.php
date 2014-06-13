@@ -24,38 +24,37 @@ if( isset( $meta['aside']['type'] ) ){
 $html_id = $data['mab-html-id'];
 
 $mab_classes = $data['class'];
-?>
 
-<div id="mab-<?php echo $html_id; ?>" <?php echo $mab_classes; ?>>
+$html_data = $data['html-data'];
+
+$inline_style = $data['inline-style'];
+
+?><div id="mab-<?php echo $html_id; ?>" <?php echo $mab_classes; ?> <?php echo $html_data; ?> <?php echo $inline_style; ?>>
 	<div class="mab-pad mab-wrap <?php echo $placement_class; ?>">
-		
 		<?php include 'aside.php'; ?>
-		
 		<div class="mab-content">
-			
 			<?php if( !empty( $meta['main-heading'] ) ) : //HEADING ?>
 			<div class="mab-heading"><?php echo do_shortcode($meta['main-heading']); ?></div>
 			<?php endif; ?>
-			
 			<?php if( !empty( $meta['subheading'] ) ) : ?>
 			<div class="mab-subheading"><?php echo do_shortcode($meta['subheading']); //SUBHEADING ?></div>
 			<?php endif; ?>
-	
 			<?php if( !empty( $meta['main-copy'] ) ) : //MAIN COPY ?>
 			<div class="mab-main-copy"><?php echo do_shortcode(wpautop($meta['main-copy'])); ?></div>
 			<?php endif; ?>
-
 			<div class="mab-main-action-wrap ">
 				<?php echo $the_content; ?>
 			</div>
-			
 			<?php if( !empty( $meta['secondary-copy'] ) ) : //SECONDARY COPY?>
 			<div class="mab-secondary-copy"><?php echo do_shortcode(wpautop($meta['secondary-copy'])); ?></div>
 			<?php endif; ?>
-			
-		</div><!-- .mab-content-->
+		</div>
 		<?php 
 		$clearing_div = '<div class="clear" style="clear:both;"></div>'; 
 		echo apply_filters( 'mab_clearing_div', $clearing_div ); ?>
 	</div>
+
+	<?php if(current_user_can('manage_options')): ?>
+	<a class="mab-edit" href="<?php echo get_edit_post_link($ID); ?>" target="_blank">edit</a>
+	<?php endif; ?>
 </div>

@@ -94,15 +94,20 @@ class ProsulumMabAdmin{
 	}
 	
 	function addAdminInterface(){
-		global $MabButton;
+		global $MabButton, $MabBase;
 		
 		$hooks = array( 'post-new.php', 'post.php' );
 		
 		## MAIN SETTINGS
-		$hooks[] = add_menu_page( __('Magic Action Box Settings', 'mab'), __('Magic Action Box Settings', 'mab'), 'manage_options', 'mab-main', array( &$this, 'displaySettingsPage' ), MAB_ASSETS_URL . 'images/cube.png', '66.5' );
+		$hooks[] = add_menu_page( __('Magic Action Box', 'mab'), __('Magic Action Box', 'mab'), 'manage_options', 'mab-main', array( &$this, 'displaySettingsPage' ), MAB_ASSETS_URL . 'images/cube.png', '66.5' );
 		## MAIN SETTINGS
 		$hooks[] = add_submenu_page( 'mab-main', __('Main Settings', 'mab' ), __('Main Settings', 'mab' ), 'manage_options', 'mab-main', array( &$this, 'displaySettingsPage' ) );
+
+		## ACTION BOXES
+		$hooks[] = add_submenu_page( 'mab-main', __('Action Boxes','mab'), __('Action Boxes','mab'), 'manage_options', 'edit.php?post_type=' . $MabBase->get_post_type() );
 		
+		$hooks[] = add_submenu_page( 'mab-main', __('New Action Box','mab'), __('New Action Box','mab'), 'manage_options', 'post-new.php?post_type=' . $MabBase->get_post_type() );
+
 		## ACTION BOX SETTINGS
 		//$hooks[] = add_submenu_page( 'mab-main', __('Action Box Settings', 'mab' ), __('Action Box Settings', 'mab' ), 'manage_options', 'mab-actionbox-settings', array( &$this, 'displayActionBoxSettingsPage' ) );
 		
@@ -125,7 +130,7 @@ class ProsulumMabAdmin{
 		}
 		
 		$hooks[] = add_submenu_page( 'mab-main', $buttonTitle , $buttonTitle , 'manage_options', 'mab-button-settings', array( &$this, 'displayButtonSettingsPage' ) );
-		
+
 		$hooks[] = add_submenu_page( 'mab-main', __('Support', MAB_DOMAIN ), __('Support &amp; Links', MAB_DOMAIN), 'manage_options', 'mab-support', array( &$this, 'displaySupportPage' ) );
 		
 		$mab_hooks = apply_filters( 'mab_add_submenu_filter', $hooks );
@@ -141,8 +146,8 @@ class ProsulumMabAdmin{
 		global $menu;
 		
 		$menu['66.3'] = array( '', 'read', 'separator-mab', '' , 'wp-menu-separator' );
-		$menu['66.4'] = $menu[777];
-		unset( $menu[777] );
+		//$menu['66.4'] = $menu[777];
+		//unset( $menu[777] );
 		$menu['66.9'] = array( '', 'read', 'separator-mab', '' , 'wp-menu-separator' );
 	}
 	
@@ -197,7 +202,7 @@ class ProsulumMabAdmin{
 		//get all categories and store in array
 		$categoriesObj = get_categories( array( 'hide_empty' => 0 ) );
 		foreach( $categoriesObj as $cat ){
-			$categories[ $cat->cat_ID ] = $cat->cat_name;
+			$categories[ $cat->cat_ID ] = $cat;
 		}
 		
 		//add other variables as keys to the data array
@@ -738,6 +743,15 @@ class ProsulumMabAdmin{
 			} elseif ( $type == 'sales-box' ){
 				$mab['main-button-attributes'] = esc_attr( $mab['main-button-attributes'] );
 			}
+
+			if(isset($mab['optin'])){
+				if(isset($mab['optin']['manual']['code'])){
+					$mab['optin']['manual']['code'] = htmlspecialchars_decode($mab['optin']['manual']['code']);
+				}
+				if(isset($mab['optin']['manual']['processed'])){
+					$mab['optin']['manual']['processed'] = htmlspecialchars_decode($mab['optin']['manual']['processed']);
+				}				
+			}
 			
 			$mab = apply_filters( 'mab_update_action_box_meta', $mab, $postId, $data );
 
@@ -779,7 +793,7 @@ class ProsulumMabAdmin{
 		
 		//TODO: do nonce check
 		
-		if( is_array( $data['postmeta'] ) ){
+		if( !empty($data['postmeta']) && is_array( $data['postmeta'] ) ){
 			$postmeta = $data['postmeta'];
 			
 			$MabBase->update_mab_meta( $post_id, $postmeta, 'post' );
@@ -1231,13 +1245,14 @@ class ProsulumMabAdmin{
 	function ajaxProcessOptinCode(){
 		$regex_form = '/(<form\b[^>]*>)(.*?)(<\/form>)/ims';
 		//allowed fields <input>, <select>, <button>
-		$regex_input = '/(.*?)(<input\b[^>]*>|<select(?!<\/select>).*?<\/select>|<button(?!<\/button>).*?<\/button>)/ims';
+		$regex_input = '/(.*?)(<input\b[^>]*>|<select(?!<\/select>).*?<\/select>|<textarea(?!<\/textarea>).*?<\/textarea>|<button(?!<\/button>).*?<\/button>)/ims';
 		
 		$formComponents = array();
 		$data = stripslashes_deep( $_POST );
 		
 		$optinCode = $data['optinFormCode'];
 		$submitvalue = $data['submitValue'];
+		$submitImage = $data['submitImage'];
 		
 		//process the code
 		preg_match($regex_form, $optinCode, $formComponents);
@@ -1425,6 +1440,13 @@ class ProsulumMabAdmin{
 		$regex_src_alt = '/(alt=".*?")|src=".*?"/i';
 		$newtag = preg_replace( $regex_src_alt, '', $newtag );
 		
+		// if submitImage is available, then turn submit buttons into
+		// <input type="image">
+		if($input_type == 'submit' && !empty($data['submitImage'])){
+			// create new tag
+			$newtag = sprintf('<input type="image" class="%1$s mab-optin-submit-image" src="%2$s" alt="Submit">', $submitClass, $data['submitImage']);
+		}
+
 		$out = array(
 			'tag' => $newtag,
 			'type' => $tag_type,
@@ -1558,7 +1580,7 @@ class ProsulumMabAdmin{
 	
 	function possiblyEndOutputBuffering(){
 		global $pagenow, $MabBase;
-		
+		$data = array();
 		if($pagenow == 'post-new.php' && isset( $_GET['post_type'] ) && $_GET['post_type'] == $MabBase->get_post_type()) {
 			$result = ob_get_clean();
 			$filename = 'interceptions/post-new.php';	
