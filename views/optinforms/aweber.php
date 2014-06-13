@@ -8,6 +8,7 @@ $redirectUrl = !empty($meta['optin']['aweber']['thank-you']) ? $meta['optin']['a
 $trackingCode = !empty( $meta['optin']['aweber']['tracking-code'] ) ? $meta['optin']['aweber']['tracking-code'] : ''; 
 $actionUrl = !empty( $meta['optin']['aweber']['form-action-url'] ) ? $meta['optin']['aweber']['form-action-url'] : '';
 $submitValue = !empty( $meta['optin']['aweber']['submit-value'] ) ? $meta['optin']['aweber']['submit-value'] : 'Submit';
+$submitImage = !empty( $meta['optin']['aweber']['submit-image'] ) ? $meta['optin']['aweber']['submit-image'] : '';
 
 //labels
 $fieldlabels = isset($optinMeta['field-labels']) && is_array( $optinMeta['field-labels'] ) ? $optinMeta['field-labels'] : array( 'email' => __('Email', MAB_DOMAIN), 'fname' => __('First Name', MAB_DOMAIN), 'lname' => __('Last Name', MAB_DOMAIN) );
@@ -28,7 +29,13 @@ $infieldlabels = isset($optinMeta['infield-labels']) && is_array( $optinMeta['in
 		<input type="email" id="mab-email" placeholder="<?php echo $infieldlabels['email']; ?>" name="email" />
 	</div>
 	<div class="mab-field mab-field-submit">
+		<?php
+		if($submitImage):
+		?>
+		<input type="image" class="mab-optin-submit mab-submit" src="<?php echo $submitImage; ?>" alt="Submit">
+		<?php else: ?>
 		<input class="mab-submit" type="submit" value="<?php echo $submitValue; ?>" />
+		<?php endif; ?>
 	</div>
 	
 	<div class="clear"></div>

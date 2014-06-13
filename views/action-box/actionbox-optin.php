@@ -1,5 +1,5 @@
 <?php
-$form = $data['form'];
+$form = isset($data['form']) ? $data['form'] : '';
 $meta = $data['meta'];
 $id = $meta['ID'];
 $action_box_type = $data['action-box-type'];
@@ -22,9 +22,11 @@ if( isset( $meta['aside']['type'] ) ){
 $html_id = $data['mab-html-id'];
 
 $mab_classes = $data['class'];
-?>
+$html_data = $data['html-data'];
 
-<div id="mab-<?php echo $html_id; ?>" <?php echo $mab_classes; ?>>
+$inline_style = $data['inline-style'];
+
+?><div id="mab-<?php echo $html_id; ?>" <?php echo $mab_classes; ?> <?php echo $html_data; ?> <?php echo $inline_style; ?>>
 	<div class="mab-pad mab-wrap <?php echo $placement_class; ?>">
 		<?php include 'aside.php'; ?>
 		<div class="mab-content">
@@ -48,6 +50,8 @@ $mab_classes = $data['class'];
 		$clearing_div = '<div class="clear" style="clear:both;"></div>'; 
 		echo apply_filters( 'mab_clearing_div', $clearing_div ); ?>
 	</div>
-</div>
 
-<?php //endif; ?>
+	<?php if(current_user_can('manage_options')): ?>
+	<a class="mab-edit" href="<?php echo get_edit_post_link($id); ?>" target="_blank">edit</a>
+	<?php endif; ?>
+</div>

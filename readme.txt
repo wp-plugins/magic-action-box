@@ -3,8 +3,8 @@ Contributors: prosulum, pogidude
 Developer: Prosulum
 Tags: opt in, call to action, aweber, email, email marketing, form, mailing list, marketing, newsletter, webform, mailchimp, constant contact
 Requires at least: 3.3
-Tested up to: 3.8.1
-Stable tag: 2.13
+Tested up to: 3.9.1
+Stable tag: 2.14
 
 Magic Action Box let's you display professional looking opt-in forms and feature boxes in your WordPress site.
 
@@ -17,6 +17,7 @@ Magic Action Box also integrates with Gravity Forms to build complex, powerful a
 Some features:
 
 * Easily add an action box before or after a blog post or page
+* Set up horizontal opt in forms in your header or home page
 * Easily add opt in forms - with stunning designs - to your sidebar
 * Create Email Opt In Forms
 * Integrates with Gravity Forms
@@ -31,6 +32,7 @@ Some features available in Pro version:
 * Create Sales Boxes
 * Create Share Boxes
 * Create Custom CSS3 Buttons
+* Use your custom image as submit button for OptIn forms
 * Display random action boxes
 * Show video (not just images) with your action boxes
 * More pre-designed styles
@@ -39,7 +41,7 @@ Some features available in Pro version:
 * VIP Support
 * [And more...](http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=pluginPage2)
 
-[View changelog](http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=pluginPage2)
+[View changelog](http://www.magicactionbox.com/changelog/changelog-mab/?pk_campaign=LITE&pk_kwd=changelog)
 
 
 == Installation ==
@@ -51,18 +53,13 @@ Some features available in Pro version:
 
 == Frequently Asked Questions ==
 
+= I've installed the plugin. What now? =
+
+Check out the [Quick Start guide](http://www.magicactionbox.com/quick-start?pk_campaign=LITE&pk_kwd=faq_qs) to get started.
+
 = My autoresponder is not on the list. Can I use it with the plugin? =
 
 Yes you can. As long as your autoresponder lets you create html forms that you can copy and paste, then you are all good. Watch this [video tutorial](http://www.magicactionbox.com/how-use-magic-action-box-with-any-email-marketing-service/?pk_campaign=LITE&pk_kwd=faq) to learn more.
-
-= Can I place an action box on my website's sidebar? =
-
-Yes. In the WordPress Dashboard, go to the Widgets page and lookg for the Magic Action Box Widget (available only in Pro).
-
-== Frequently Asked Questions ==
-
-= My autoresponder is not on the list. Can I use it with the plugin? =
-Yes you can. As long as your autoresponder lets you create html forms that you can copy and paste, then you are all good. Watch this [video tutorial](http://www.magicactionbox.com/how-use-magic-action-box-with-any-email-marketing-service/) to learn more.
 
 = Shortcode and Template Tag (available in Pro) =
 
@@ -102,6 +99,21 @@ Try checking the *Reorder post content filter priorities* checkbox found in WP A
 5. Action Box Settings Screen
 
 == Changelog ==
+= 2.14 =
+* [fix] processing of textarea element.
+* Add button style selector for Contact Form 7 action box type.
+* Styling fixes to widget.
+* Add edit link to action boxes
+* Add ability to use image for submit buttons
+* Add option in widget to force field stacking layout.
+* Improve action box class and templating.
+* Add css box-sizing to everything.
+* Add responsive checkbox option.
+* Add horizontal layout setting.
+* Add helper script for responsive videos.
+* Improve fields layout setting.
+* Add center content option.
+* Add auto adjust submit button width option.
 
 = 2.13 =
 * [fix] php notices and various undefined indices
@@ -109,6 +121,7 @@ Try checking the *Reorder post content filter priorities* checkbox found in WP A
 * [add] custom buttons stylesheet should now load after the last action box (so it is not overridden).
 * [add] updated get_settings() method in base class to return default settings if it is not yet set.
 * [add] added mab_load_addons action hook to ProsulumMabBase class.
+* [add] option to center form elements
 * Move all admin pages under one main menu item.
 
 = 2.12 =

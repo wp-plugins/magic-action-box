@@ -62,13 +62,14 @@ global $MabAdmin;
 			<p>Get additional action box types by getting <a href="http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=addScreen" target="_blank">Magic Action Box Pro</a>.</p>
 			<h3>Some of the features available in the full version:</h3>
 			<ul>
-				<li>Display random action boxes on every page load (NEW)</li>
+				<li>Use your own custom image for submit button in Opt-In Form action box type.</li>
+				<li>Display random action boxes on every page load.</li>
 				<li>Show a video (not just images) with your action boxes</li>
-				<li>Use Contact Form action box type with Contact Form 7 (NEW)</li>
-				<li>Use Sales Box action box type</li>
-				<li>Use Share Box action box type</li>
+				<li>Use Contact Form action box type with Contact Form 7.</li>
+				<li>Use Sales Box action box type.</li>
+				<li>Use Share Box action box type.</li>
 				<li>Future action box types not available in the lite version.</li>
-				<li>Use shortcodes and template tags</li>
+				<li>Use shortcodes and template tags.</li>
 				<li>VIP Customer Support</li>
 				<li>More pre-designed styles</li>
 				<li>Create and upload your own buttons (for Sales Boxes)</li>

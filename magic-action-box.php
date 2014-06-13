@@ -3,13 +3,13 @@
  * Plugin Name: Magic Action Box
  * Plugin URI: http://magicactionbox.com
  * Description: Supercharge your blog posts!
- * Version: 2.13
+ * Version: 2.14
  * Author: Prosulum, LLC
  * Author URI: http://prosulum.com
  * License: GPLv2
  */
 
-define( 'MAB_VERSION', '2.13');
+define( 'MAB_VERSION', '2.14');
 //e.g. /var/www/example.com/wordpress/wp-content/plugins/after-post-action-box
 define( "MAB_DIR", plugin_dir_path( __FILE__ ) );
 //e.g. http://example.com/wordpress/wp-content/plugins/after-post-action-box
@@ -593,6 +593,7 @@ class ProsulumMabBase{
 	}
 
 	function updated_plugin_notice(){
+
 		global $current_user, $post, $pagenow;
 		
 		$screen = get_current_screen();
@@ -611,7 +612,7 @@ class ProsulumMabBase{
 
 				echo '<div class="updated"><p>';
 
-				printf( __('Using Gravity Forms? Make it look more awesome by <a href="%3$s">creating an action box</a> for it.<br >Magic Action Box now integrates with Gravity Forms to create great looking contact forms. <a href="%1$s">Hide notice</a>', MAB_DOMAIN), add_query_arg( array('mab-hide-update-notice' => 'true' ) ), $this->get_current_version(), admin_url('post-new.php?post_type=action-box') );
+				printf( __('Magic Action Box plugin has been updated to version 2.14 | <a href="%1$s">Close</a>', MAB_DOMAIN), add_query_arg( array('mab-hide-update-notice' => 'true' ) ), $this->get_current_version(), admin_url('post-new.php?post_type=action-box') );
 
 				echo '</p></div>';
 
@@ -682,6 +683,7 @@ class ProsulumMabBase{
 		/** Scripts **/		
 		wp_register_script( 'mab-wpautop-fix', MAB_ASSETS_URL . 'js/wpautopfix.js', array( 'jquery' ) );
 		wp_register_script( 'mab-actionbox-helper', MAB_ASSETS_URL . 'js/actionbox-helper.js', array('jquery') );
+		wp_register_script( 'mab-responsive-videos', MAB_ASSETS_URL . 'js/responsive-videos.js', array('jquery'), MAB_VERSION, true);
 		
 		/** ADMIN Scripts **/
 		wp_register_script( 'mab-youtube-helpers', MAB_ASSETS_URL . 'js/youtube-helpers.js', array( 'jquery' ), MAB_VERSION );
@@ -694,6 +696,9 @@ class ProsulumMabBase{
 		
 		/** ADMIN styles **/
 		wp_register_style( 'mab-admin-style', MAB_ASSETS_URL . 'css/magic-action-box-admin.css', array(), MAB_VERSION );
+
+		/** Languages **/
+		load_plugin_textdomain( 'mab', false,  MAB_DIR . 'languages' );
 	}
 
 }

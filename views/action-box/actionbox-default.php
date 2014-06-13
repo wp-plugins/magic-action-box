@@ -25,7 +25,11 @@ $html_id = $data['mab-html-id'];
 
 $mab_classes = $data['class'];
 
-?><div id="mab-<?php echo $html_id; ?>" <?php echo $mab_classes; ?>>
+$html_data = $data['html-data'];
+
+$inline_style = $data['inline-style'];
+
+?><div id="mab-<?php echo $html_id; ?>" <?php echo $mab_classes; ?> <?php echo $html_data; ?> <?php echo $inline_style; ?>>
 	<div class="mab-pad mab-wrap <?php echo $placement_class; ?>">
 		<?php include 'aside.php'; ?>
 		<div class="mab-content">
@@ -49,4 +53,8 @@ $mab_classes = $data['class'];
 		$clearing_div = '<div class="clear" style="clear:both;"></div>'; 
 		echo apply_filters( 'mab_clearing_div', $clearing_div ); ?>
 	</div>
+
+	<?php if(current_user_can('manage_options')): ?>
+	<a class="mab-edit" href="<?php echo get_edit_post_link($ID); ?>" target="_blank">edit</a>
+	<?php endif; ?>
 </div>

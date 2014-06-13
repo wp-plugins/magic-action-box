@@ -24,7 +24,7 @@
 	<!-- ## AWEBER -->
 	<?php if( isset( $allowed_providers['aweber'] ) ) : ?>
 	<div id="mab-aweber-settings" class="mab-dependent-container mab-optin-list-dependent-container">
-		<p class="mab-notice">You selected to use an integrated opt-in form. This form displays two input fields to take the visitor's name and e-mail address. If you wish to use other input field arrangements, <em>(i.e. use only one field for e-mail address)</em>, then select <em>Other (Copy & Paste)</em> in the <label for="mab-optin-provider"><strong>Mailing List Provider</strong></label> select box.</p>
+		<p class="mab-notice"><?php _e('You selected to use an integrated opt-in form. This form displays two input fields to take the visitor\'s name and e-mail address. If you wish to use other input field arrangements, <em>(i.e. use only one field for e-mail address)</em>, then select <em>Other (Copy & Paste)</em> in the <label for="mab-optin-provider"><strong>Mailing List Provider</strong></label> select box.', 'mab'); ?></p>
 		<h4><label for="mab-optin-aweber-list"><?php _e('List','mab'); ?></label></h4>
 		<p><?php _e('Select list to subscribe users to. Click on the Update List button below if you just recently added/removed a list from Aweber.', 'mab' ); ?></p>
 		<select id="mab-optin-aweber-list" class="large-text mab-optin-list" name="mab[optin][aweber][list]">
@@ -54,11 +54,18 @@
 		<br />
 		*/ ?>
 		<h4><label for="mab-optin-aweber-submit-value"><?php _e( 'Text for submit button','mab' ); ?></label></h4>
-		<p>You can specify the text for your submit button (ex: "Subscribe" or "Get it now") Leave this blank to use default value. <strong>Default:</strong> Submit
+		<p><?php _e('You can specify the text for your submit button (ex: "Subscribe" or "Get it now") Leave this blank to use default value. <strong>Default:</strong> Submit', 'mab'); ?>
 		</p>
 		<input id="mab-optin-aweber-submit-value" type="text" name="mab[optin][aweber][submit-value]" value="<?php echo isset( $meta['optin']['aweber']['submit-value'] ) ? $meta['optin']['aweber']['submit-value'] : ''; ?>" />
-		
-		<br />
+
+		<br>
+		<br>
+		<h4><?php _e('Use image for submit button', 'mab'); ?></h4>
+		<div class="mab-notice"><a href="http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=image_button_notice">Upgrade to Pro</a> and use your own image as a button.</div>
+		<div>
+			<input class="mab-image-select-target" type="text" name="" disabled><a class="button mab-image-select-trigger" href="#" style="pointer-events: none; cursor: default;">Upload image <em>(not available)</em></a>
+		</div>
+
 		<br />
 		<h4><label for="mab-optin-aweber-thankyou"><?php _e('Thank You Page', 'mab' ); ?></label></h4>
 		<p><?php _e('Enter URL to thank you page where users will be redirected to after signing up. Leave blank to use default URL used by Aweber.','mab' ); ?></p>
@@ -76,7 +83,7 @@
 	<!-- #MAILCHIMP -->
 	<?php if( isset( $allowed_providers['mailchimp'] ) ) : ?>
 	<div id="mab-mailchimp-settings" class="mab-dependent-container mab-optin-list-dependent-container">
-		<p class="mab-notice">You selected to use an integrated opt-in form. This form displays two input fields to take the visitor's name and e-mail address. If you wish to use other input field arrangements, <em>(i.e. use only one field for e-mail address)</em>, then select <em>Other (Copy & Paste)</em> in the <label for="mab-optin-provider"><strong>Mailing List Provider</strong></label> select box.</p>
+		<p class="mab-notice"><?php _e('You selected to use an integrated opt-in form. This form displays two input fields to take the visitor\'s name and e-mail address. If you wish to use other input field arrangements, <em>(i.e. use only one field for e-mail address)</em>, then select <em>Other (Copy & Paste)</em> in the <label for="mab-optin-provider"><strong>Mailing List Provider</strong></label> select box.', 'mab'); ?></p>
 		<h4><label for="mab-optin-mailchimp-list"><?php _e('List','mab'); ?></label></h4>
 		<p><?php _e('Select list to subscribe users to. Click on the Update List button below if you just recently added/removed a list from MailChimp.', 'mab' ); ?></p>
 		<select id="mab-optin-mailchimp-list" class="large-text mab-optin-list" name="mab[optin][mailchimp][list]">
@@ -90,7 +97,7 @@
 			<option value="<?php echo $list['id']; ?>" <?php selected( $selected_list, $list['id'] ); ?> ><?php echo $list['name']; ?></option>
 		<?php endforeach; ?>
 		</select>
-		<a id="mab-optin-mailchimp-get-list" class="button mab-optin-get-list" href="#">Update List</a>
+		<a id="mab-optin-mailchimp-get-list" class="button mab-optin-get-list" href="#"><?php _e('Update List', 'mab'); ?></a>
 		<img id="mab-optin-mailchimp-feedback" class="ajax-feedback" src="<?php echo admin_url('images/wpspin_light.gif'); ?>" alt="" />
 		<?php 
 		//test output of single list
@@ -110,9 +117,17 @@
 		<br />
 		*/ ?>
 		<h4><label for="mab-optin-mailchimp-submit-value"><?php _e( 'Text for submit button','mab' ); ?></label></h4>
-		<p>You can specify the text for your submit button (ex: "Subscribe" or "Get it now") Leave this blank to use default value. <strong>Default value:</strong> Submit.
+		<p><?php _e('You can specify the text for your submit button (ex: "Subscribe" or "Get it now") Leave this blank to use default value. <strong>Default value:</strong> Submit.', 'mab'); ?>
 		</p>
 		<input id="mab-optin-mailchimp-submit-value" type="text" name="mab[optin][mailchimp][submit-value]" value="<?php echo isset( $meta['optin']['mailchimp']['submit-value'] ) ? $meta['optin']['mailchimp']['submit-value'] : ''; ?>" />
+		<br>
+		<br>
+
+		<h4><?php _e('Use image for submit button', 'mab'); ?></h4>
+		<div class="mab-notice"><a href="http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=image_button_notice">Upgrade to Pro</a> and use your own image as a button.</div>
+		<div>
+			<input class="mab-image-select-target" type="text" name="" disabled><a class="button mab-image-select-trigger" href="#" style="pointer-events: none; cursor: default;">Upload image <em>(not available)</em></a>
+		</div>
 	</div>
 	<?php endif; ?>
 	
@@ -122,13 +137,20 @@
 		<p class="mab-notice">This option allows you to use just about any autoresponder service or email list provider with Magic Action Box as long as your service allows you to generate an HTML - not Javascript - code for you to copy and paste on your website. To learn more about this feature, <a href="http://www.magicactionbox.com/how-use-magic-action-box-with-any-email-marketing-service/?pk_campaign=LITE&pk_kwd=editScreen-videoTut" target="_blank">watch this video tutorial</a>.</p>
 		<h4><label for="mab-optin-manual-code"><?php _e('Opt In Form Code','mab'); ?></label></h4>
 		<p>Paste your opt-in form code here. This HTML code is generated by your email service provider for you to place on your website. Make sure this isn't the javascript version, but the full or raw HTML version of the optin form. Then click on the <strong>Process Code</strong> button below.</p>
-		<textarea id="mab-optin-manual-code" class="code large-text" name="mab[optin][manual][code]" rows="5"><?php echo isset( $meta['optin']['manual']['code'] ) ? $meta['optin']['manual']['code'] : ''; ?></textarea>
+		<textarea id="mab-optin-manual-code" class="code large-text" name="mab[optin][manual][code]" rows="5"><?php echo isset( $meta['optin']['manual']['code'] ) ? htmlspecialchars($meta['optin']['manual']['code']) : ''; ?></textarea>
 		<br />
 		<h4><label for="mab-optin-submit-value"><?php _e( 'Text for submit button','mab' ); ?></label></h4>
 		<p>You can specify the text for your submit button (ex: "Subscribe" or "Get it now") Leave this blank to use the value specified in the Opt In Form Code you entered above.
 		</p>
 		<input id="mab-optin-submit-value" type="text" name="mab[optin][manual][submit-value]" value="<?php echo isset( $meta['optin']['manual']['submit-value'] ) ? $meta['optin']['manual']['submit-value'] : ''; ?>" />
-		<br />
+		<br>
+		<br>
+		<h4><?php _e('Use image for submit button', 'mab'); ?></h4>
+		<div class="mab-notice"><a href="http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=image_button_notice">Upgrade to Pro</a> and use your own image as a button.</div>
+		<div>
+			<input class="mab-image-select-target" type="text" name="" disabled><a class="button mab-image-select-trigger" href="#" style="pointer-events: none; cursor: default;">Upload image <em>(not available)</em></a>
+		</div>
+
 		<br />
 		<a id="mab-process-manual-optin-code" href="#" class="button-secondary">Process Code</a>
 		<img id="mab-optin-process-manual-feedback" class="ajax-feedback" src="<?php echo admin_url('images/wpspin_light.gif'); ?>" alt="" />
@@ -136,7 +158,7 @@
 		<br />
 		<h4><label for="mab-optin-manual-processed-code"><?php _e('Processed Opt In Form Code','mab'); ?></label></h4>
 		<p>This is the resulting code that will be used in your opt in form. It is generated by placing your email service provider's raw HTML code in the text field above and clicking on the Process Code button.</p>
-		<textarea id="mab-optin-manual-processed-code" class="code large-text" name="mab[optin][manual][processed]" rows="5"><?php echo isset( $meta['optin']['manual']['processed'] ) ? $meta['optin']['manual']['processed'] : ''; ?></textarea>
+		<textarea id="mab-optin-manual-processed-code" class="code large-text" name="mab[optin][manual][processed]" rows="5"><?php echo isset( $meta['optin']['manual']['processed'] ) ? htmlspecialchars($meta['optin']['manual']['processed']) : ''; ?></textarea>
 		
 		<?php /*TODO: add the following block later 
 		<br />
@@ -196,7 +218,17 @@
 				$buttonLabel = isset( $wysija['button-label'] ) ? $wysija['button-label'] : 'Subscribe!'; 
 				?>
 				<input type="text" id="mab-wysija-button-label" name="mab[optin][wysija][button-label]" value="<?php echo $buttonLabel; ?>" />
-				<br />
+
+				<br>
+				<br>
+
+				<h4><?php _e('Use image for submit button', 'mab'); ?></h4>
+				<div class="mab-notice"><a href="http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=image_button_notice">Upgrade to Pro</a> and use your own image as a button.</div>
+				<div>
+					<input class="mab-image-select-target" type="text" name="" disabled ><a class="button mab-image-select-trigger" href="#" style="pointer-events: none; cursor: default;">Upload image <em>(not available)</em></a>
+				</div>
+
+
 				<br />
 				<h4><label for="mab-wysija-success-message"><?php _e('Success Message:','mab'); ?></label></h4>
 				<?php
@@ -212,25 +244,25 @@
 </div>
 
 <div class="mab-option-box mab-option-field-labels">
-	<h4><?php _e('Outside Field Labels', MAB_DOMAIN); ?></h4>
-	<p><?php _e('Specify labels shown above or beside the input fields.', MAB_DOMAIN); ?></p>
-	<?php $fieldLabels = isset( $optinMeta['field-labels'] ) ? $optinMeta['field-labels'] : array( 'email' => __('Email', MAB_DOMAIN), 'fname' => __('First Name', MAB_DOMAIN), 'lname' => __('Last Name', MAB_DOMAIN) ); ?>
+	<h4><?php _e('Outside Field Labels', 'mab'); ?></h4>
+	<p><?php _e('Specify labels shown above or beside the input fields.', 'mab'); ?></p>
+	<?php $fieldLabels = isset( $optinMeta['field-labels'] ) ? $optinMeta['field-labels'] : array( 'email' => __('Email', 'mab'), 'fname' => __('First Name', 'mab'), 'lname' => __('Last Name', 'mab') ); ?>
 	<ul>
-		<li><label><input type="text" value="<?php echo $fieldLabels['email']; ?>" name="mab[optin][field-labels][email]" /> <?php _e('Email Address', MAB_DOMAIN); ?></label></li>
-		<li><label><input type="text" value="<?php echo $fieldLabels['fname']; ?>" name="mab[optin][field-labels][fname]" /> <?php _e('First Name', MAB_DOMAIN); ?></label></li>
-		<li><label><input type="text" value="<?php echo $fieldLabels['lname']; ?>" name="mab[optin][field-labels][lname]" /> <?php _e('Last Name', MAB_DOMAIN); ?></label></li>
+		<li><label><input type="text" value="<?php echo $fieldLabels['email']; ?>" name="mab[optin][field-labels][email]" /> <?php _e('Email Address', 'mab'); ?></label></li>
+		<li><label><input type="text" value="<?php echo $fieldLabels['fname']; ?>" name="mab[optin][field-labels][fname]" /> <?php _e('First Name', 'mab'); ?></label></li>
+		<li><label><input type="text" value="<?php echo $fieldLabels['lname']; ?>" name="mab[optin][field-labels][lname]" /> <?php _e('Last Name', 'mab'); ?></label></li>
 	</ul>
 
-	<h4><?php _e('In-Field Labels', MAB_DOMAIN); ?></h4>
-	<p><?php _e('Specify the description text displayed within the input fields.', MAB_DOMAIN); ?></p>
-	<?php $inFieldLabels = isset( $optinMeta['infield-labels'] ) ? $optinMeta['infield-labels'] : array( 'email' => __('Enter your email', MAB_DOMAIN), 'fname' => __('Enter your name', MAB_DOMAIN), 'lname' => __('Enter your last name', MAB_DOMAIN) ); ?>
+	<h4><?php _e('In-Field Labels', 'mab'); ?></h4>
+	<p><?php _e('Specify the description text displayed within the input fields.', 'mab'); ?></p>
+	<?php $inFieldLabels = isset( $optinMeta['infield-labels'] ) ? $optinMeta['infield-labels'] : array( 'email' => __('Enter your email', 'mab'), 'fname' => __('Enter your name', 'mab'), 'lname' => __('Enter your last name', 'mab') ); ?>
 	<ul>
-		<li><label><input type="text" value="<?php echo $inFieldLabels['email']; ?>" name="mab[optin][infield-labels][email]" /> <?php _e('Email Address', MAB_DOMAIN); ?></label></li>
-		<li><label><input type="text" value="<?php echo $inFieldLabels['fname']; ?>" name="mab[optin][infield-labels][fname]" /> <?php _e('First Name', MAB_DOMAIN); ?></label></li>
-		<li><label><input type="text" value="<?php echo $inFieldLabels['lname']; ?>" name="mab[optin][infield-labels][lname]" /> <?php _e('Last Name', MAB_DOMAIN); ?></label></li>
+		<li><label><input type="text" value="<?php echo $inFieldLabels['email']; ?>" name="mab[optin][infield-labels][email]" /> <?php _e('Email Address', 'mab'); ?></label></li>
+		<li><label><input type="text" value="<?php echo $inFieldLabels['fname']; ?>" name="mab[optin][infield-labels][fname]" /> <?php _e('First Name', 'mab'); ?></label></li>
+		<li><label><input type="text" value="<?php echo $inFieldLabels['lname']; ?>" name="mab[optin][infield-labels][lname]" /> <?php _e('Last Name', 'mab'); ?></label></li>
 	</ul>
 
-	<p><?php _e('<strong>Note:</strong> Label settings does not work for custom mailing list providers - when you select &quot;Other (Copy &amp; Paste).', MAB_DOMAIN ); ?></p>
+	<p><?php _e('<strong>Note:</strong> Label settings does not work for custom mailing list providers - when you select &quot;Other (Copy &amp; Paste).', 'mab' ); ?></p>
 </div><!-- .mab-option-box -->
 
 <div class="mab-option-box mab-used-for-css3-button mab-disabled" >
@@ -253,20 +285,47 @@
 	
 	<div id="mab-button-preview">
 		<h4><?php _e( 'Button Preview', 'mab' ); ?></h4>
-		<a id="mab-example-button" onclick="return false;" href="#" class="mab-example-button mab-button-<?php echo $optin_button_style; ?>"><?php _e('Sample Submit Text', MAB_DOMAIN); ?></a>
+		<a id="mab-example-button" onclick="return false;" href="#" class="mab-example-button mab-button-<?php echo $optin_button_style; ?>"><?php _e('Sample Submit Text', 'mab'); ?></a>
 	</div>
+</div>
+
+<div class="mab-option-box">
+	<?php $centerFields = !empty($meta['optin']['center-fields']) ? 1 : 0; ?>
+	<h4>Center opt in form elements</h4>
+	<label><input type="checkbox" value="1" name="mab[optin][center-fields]" <?php checked($centerFields, 1); ?>> Check this box to center the opt in form elements.</label>
+	<p class="description">Note: May not always work depending on the css applied to the form elements and the style selected.</p>
 </div>
 
 <div class="mab-option-box">
 	<h4>Form Fields Layout</h4>
 	<?php $fieldsLayout = isset( $meta['optin']['fields-layout'] ) ? $meta['optin']['fields-layout'] : 'default';?>
 	<ul>
-		<li><label><input type="radio" value="default" name="mab[optin][fields-layout]" <?php checked( $fieldsLayout, 'default' ); ?>/> Default</label></li>
-		<li><label><input type="radio" value="stacked" name="mab[optin][fields-layout]" <?php checked( $fieldsLayout, 'stacked' ); ?>/> Stacked</label></li>
+		<li><label><input type="radio" value="default" name="mab[optin][fields-layout]" <?php checked( $fieldsLayout, 'default' ); ?>/> Default (auto width)</label></li>
+		<li><label><input type="radio" value="stacked" name="mab[optin][fields-layout]" <?php checked( $fieldsLayout, 'stacked' ); ?>/> 1 Field per line (100% width)</label></li>
+		<li><label><input type="radio" value="bytwo" name="mab[optin][fields-layout]" <?php checked( $fieldsLayout, 'bytwo' ); ?>/> 2 Fields per line (~50% width)</label></li>
+		<li><label><input type="radio" value="bythree" name="mab[optin][fields-layout]" <?php checked( $fieldsLayout, 'bythree' ); ?>/> 3 Fields per line (~30% width)</label></li>
+		<li><label><input type="radio" value="byfour" name="mab[optin][fields-layout]" <?php checked( $fieldsLayout, 'byfour' ); ?>/> 4 Fields per line (~25% width)</label></li>
 	</ul>
-	<p><strong>Note:</strong> Actual support for field layout will depend if the style selected supports it.</p>
-	<p><strong>Note 2:</strong> This setting will most probably have no effect if this action box is used on the Action Box Widget.</p>
+	<p><strong>Note:</strong> Support for <code>field layout</code> will depend if the style selected supports it.</p>
+	<p><strong>Note 2:</strong> Set this to <em>Default</em> if you specify <code>input field</code> width setting in custom styles.</p>
+	<p><strong>Note 3:</strong> The number of fields include the <em>Submit</em> button.</p>
+
 </div><!-- .mab-option-box -->
+
+<div class="mab-option-box">
+	<h4>Field Label Position</h4>
+	<?php $fieldsLayout = isset( $meta['optin']['label-position'] ) ? $meta['optin']['label-position'] : 'stacked';?>
+	<ul>
+		<li><label><input type="radio" value="stacked" name="mab[optin][label-position]" <?php checked( $fieldsLayout, 'stacked' ); ?>/> Stacked on field</label></li>
+		<li><label><input type="radio" value="inline" name="mab[optin][label-position]" <?php checked( $fieldsLayout, 'inline' ); ?>/> In-line with field</label></li>
+	</ul>
+</div>
+
+<div class="mab-option-box">
+	<?php $submitWidth = !empty($meta['optin']['auto-width-submit']) ? 1 : 0; ?>
+	<label><input type="checkbox" value="1" name="mab[optin][auto-width-submit]" <?php checked($submitWidth, 1); ?>> <strong>Auto adjust submit button width.</strong></label>
+	<p class="descriptiona">Will apply css declaration <code>width: auto;</code> to the submit button element.</p>
+</div>
 
 <?php /*
 <div class="mab-option-box">
