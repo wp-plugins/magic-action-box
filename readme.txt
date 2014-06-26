@@ -4,7 +4,7 @@ Developer: Prosulum
 Tags: opt in, call to action, aweber, email, email marketing, form, mailing list, marketing, newsletter, webform, mailchimp, constant contact
 Requires at least: 3.3
 Tested up to: 3.9.1
-Stable tag: 2.14
+Stable tag: 2.14.1
 
 Magic Action Box let's you display professional looking opt-in forms and feature boxes in your WordPress site.
 
@@ -18,7 +18,7 @@ Some features:
 
 * Easily add an action box before or after a blog post or page
 * Set up horizontal opt in forms in your header or home page
-* Easily add opt in forms - with stunning designs - to your sidebar
+* Easily add opt in forms - with stunning designs - to your sidebar.
 * Create Email Opt In Forms
 * Integrates with Gravity Forms
 * Make your own action box styles
@@ -99,12 +99,18 @@ Try checking the *Reorder post content filter priorities* checkbox found in WP A
 5. Action Box Settings Screen
 
 == Changelog ==
+= 2.14.1 =
+* Hide edit link
+* [fix] typo in templates
+* [fix] use new unique_list_id for aweber api
+* drop support for PHP4. no more PHP4-style constructors
+
 = 2.14 =
 * [fix] processing of textarea element.
 * Add button style selector for Contact Form 7 action box type.
 * Styling fixes to widget.
 * Add edit link to action boxes
-* Add ability to use image for submit buttons
+* Add ability to use image for submit buttons (Pro only)
 * Add option in widget to force field stacking layout.
 * Improve action box class and templating.
 * Add css box-sizing to everything.

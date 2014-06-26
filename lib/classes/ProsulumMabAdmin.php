@@ -15,10 +15,6 @@ class ProsulumMabAdmin{
 	var $_option_CurrentVersion = '_mab_current_version';
 	
 	var $_regex_Form = '/(<form\b[^>]*>)(.*?)(<\/form>)/ims';
-	
-	function ProsulumMabAdmin(){
-		return $this->__construct();
-	}
 
 	function __construct(){
 		$this->add_actions();
@@ -1030,7 +1026,7 @@ class ProsulumMabAdmin{
 		//*/
 		
 		foreach( $lists as $this_list ){
-			$return[] = array( 'id' => $this_list->name, 'name' => $this_list->name );
+			$return[] = array( 'id' => $this_list->unique_list_id, 'name' => $this_list->name );
 		}
 		
 		set_transient( $this->_optin_AweberListsTransient, $return, 24*60*60 ); //set for one day.

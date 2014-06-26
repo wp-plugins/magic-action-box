@@ -3,13 +3,13 @@
  * Plugin Name: Magic Action Box
  * Plugin URI: http://magicactionbox.com
  * Description: Supercharge your blog posts!
- * Version: 2.14
+ * Version: 2.14.1
  * Author: Prosulum, LLC
  * Author URI: http://prosulum.com
  * License: GPLv2
  */
 
-define( 'MAB_VERSION', '2.14');
+define( 'MAB_VERSION', '2.14.1');
 //e.g. /var/www/example.com/wordpress/wp-content/plugins/after-post-action-box
 define( "MAB_DIR", plugin_dir_path( __FILE__ ) );
 //e.g. http://example.com/wordpress/wp-content/plugins/after-post-action-box
@@ -48,10 +48,6 @@ class ProsulumMabBase{
 	var $_optin_AweberLists = array();
 
 	private $_registered_action_box_types = array();
-	
-	function ProsulumMabBase(){
-		return $this->__construct();
-	}
 	
 	function __construct(){
 		$this->loadFiles();
@@ -611,9 +607,7 @@ class ProsulumMabBase{
 			if( !get_user_meta( $user_id, $nag_notice ) ){
 
 				echo '<div class="updated"><p>';
-
-				printf( __('Magic Action Box plugin has been updated to version 2.14 | <a href="%1$s">Close</a>', MAB_DOMAIN), add_query_arg( array('mab-hide-update-notice' => 'true' ) ), $this->get_current_version(), admin_url('post-new.php?post_type=action-box') );
-
+				printf( __('Magic Action Box plugin has been updated to version 2.14.1 | <a href="%1$s">Close</a>', MAB_DOMAIN), add_query_arg( array('mab-hide-update-notice' => 'true' ) ), $this->get_current_version(), admin_url('post-new.php?post_type=action-box') );
 				echo '</p></div>';
 
 				

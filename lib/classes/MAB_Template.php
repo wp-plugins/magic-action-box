@@ -584,10 +584,6 @@ class MAB_Template{
 	function __construct( $actionBoxObj = null ){
 		$this->init( $actionBoxObj );
 	}
-	
-	function MAB_Template( $actionBoxObj = null ){
-		$this->__construct($actionBoxObj);
-	}
 
 	
 	public static function getActionBoxDefaultCallback( $actionBoxObj ){

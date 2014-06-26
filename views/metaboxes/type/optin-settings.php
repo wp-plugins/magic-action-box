@@ -319,6 +319,7 @@
 		<li><label><input type="radio" value="stacked" name="mab[optin][label-position]" <?php checked( $fieldsLayout, 'stacked' ); ?>/> Stacked on field</label></li>
 		<li><label><input type="radio" value="inline" name="mab[optin][label-position]" <?php checked( $fieldsLayout, 'inline' ); ?>/> In-line with field</label></li>
 	</ul>
+	<p class="description">May not always work depending on the layout and theme's css. Try setting <code>Fields Layout</code> to <em>Default</em> option.</p>
 </div>
 
 <div class="mab-option-box">

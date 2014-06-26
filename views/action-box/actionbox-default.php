@@ -55,6 +55,6 @@ $inline_style = $data['inline-style'];
 	</div>
 
 	<?php if(current_user_can('manage_options')): ?>
-	<a class="mab-edit" href="<?php echo get_edit_post_link($ID); ?>" target="_blank">edit</a>
+	<a class="mab-edit" href="<?php echo get_edit_post_link($id); ?>" target="_blank">edit</a>
 	<?php endif; ?>
 </div>

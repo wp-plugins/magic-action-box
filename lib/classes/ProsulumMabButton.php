@@ -4,10 +4,6 @@ class ProsulumMabButton{
 
 	var $_option_ButtonSettings = '_mab_button_settings';
 	
-	function ProsulumMabButton(){
-		$this->__construct();
-	}
-	
 	function __construct(){
 	}
 

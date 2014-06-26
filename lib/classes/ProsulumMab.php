@@ -7,10 +7,6 @@ class ProsulumMab{
 	private $_defaultActionBoxObj = null;
 	private $_the_content_filter_priority = 10;
 	
-	function ProsulumMab(){
-		return $this->__construct();
-	}
-	
 	function __construct(){
 	//	$this->setUpDefaults();
 		$this->add_actions();

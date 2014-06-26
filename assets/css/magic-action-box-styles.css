@@ -10,7 +10,7 @@
 	border: 1px solid #ccc;
 	border-radius: 0 0 3px 3px;
 	color: #21759b;
-	display: block;
+	display: none;
 	position: absolute;
 	bottom: -20px;
 	right: 0;

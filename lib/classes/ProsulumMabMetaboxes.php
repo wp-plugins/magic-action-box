@@ -5,10 +5,6 @@
 class ProsulumMabMetaBoxes{
 	private $_post = null;
 	
-	function ProsulumMabMetaBoxes( $post ){
-		return $this->__construct( $post );
-	}
-	
 	function __construct( $post ){
 		$this->_post = $post;
 

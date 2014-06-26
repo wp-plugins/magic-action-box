@@ -236,7 +236,4 @@ class MAB_ActionBox{
 			$this->init( $id );
 		}
 	}
-	function MAB_ActionBox($id = null){
-		$this->__construct( $id );
-	}
 }
