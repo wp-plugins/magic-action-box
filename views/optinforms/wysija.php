@@ -47,9 +47,18 @@ $formIdReal = 'mab-wysija-' . $data['mab-html-id'];
 		<?php /** TODO: ask ben@wysija.com what validate[required,custom[email]] class is supposed to do **/ ?>
 	</div>
 	
-	<?php $submit = isset( $wysija['button-label'] ) ? $wysija['button-label'] : ''; ?>
+	<?php 
+	$submit = isset( $wysija['button-label'] ) ? $wysija['button-label'] : ''; 
+	$submitImage = !empty( $wysija['submit-image'] ) ? $wysija['submit-image'] : '';
+	?>
 	<div class="mab-field mab-field-submit">
-		<input type="submit" class="wysija-submit wysija-submit-field" name="submit" value="<?php echo esc_attr( $submit ); ?>" />
+		<?php
+		if($submitImage):
+		?>
+		<input type="image" class="mab-optin-submit mab-submit wysija-submit wysija-submit-field" src="<?php echo $submitImage; ?>" alt="Submit">
+		<?php else: ?>
+		<input class="mab-submit wysija-submit wysija-submit-field" type="submit" value="<?php echo esc_attr($submit); ?>" />
+		<?php endif; ?>
 	</div>
 	
 	<?php /** Email Lists field **/

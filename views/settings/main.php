@@ -261,12 +261,29 @@ $actionBoxesSelect = $data['actionboxList'];
 				<tbody>
 					<?php $categories = $data['categories']; 
 					$actionBoxesSelect = $data['actionboxList']; ?>
-					<?php foreach( $categories as $catId => $catName ) : ?>
+					<?php foreach( $categories as $catId => $cat ) : ?>
 					<tr>
 						<?php
+
 						$catActionBox = 'default';
+
+						//append cat parent name
+						$cat_parent_id = $cat->parent;
+						$cat_name = $cat->name;
+						$cat_limit = 0;
+						while(!empty($cat_parent_id) && $cat_limit < 20){
+							
+							$cat_parent = get_category($cat_parent_id);
+							$sep = '&raquo;';
+							$cat_name = $cat_parent->name.$sep.$cat_name;
+
+							//check for next ancestor
+							$cat_parent_id = $cat_parent->parent;
+							$cat_limit++;
+						}
+
 						?>
-						<th scope="row"><label for="mab-category-<?php echo $catId; ?>-actionbox"><?php echo $catName; ?></label></th>
+						<th scope="row"><label for="mab-category-<?php echo $catId; ?>-actionbox"><?php echo $cat_name; ?></label></th>
 						<td>
 							<select id="mab-pages-actionbox" class="large-text" disabled>
 								<?php foreach( $actionBoxesSelect as $boxId => $boxName ): ?>
