@@ -69,6 +69,22 @@ jQuery(document).ready(function(){
 		
 		//show related dependent container
 		$div.show('fast');
+
+		$optionBoxes = $div.data('option-box');
+		if($optionBoxes){
+			$optionBoxesArr = $optionBoxes.split(',');
+			$hidableBoxes = jQuery('.mab-hidable');
+			$toShow = jQuery(); // we'll add elements to show here
+			jQuery.each($optionBoxesArr, function(index, className){
+				jQuery('.mab-option-'+className).addClass('mab-toshow');
+			});
+
+			$hidableBoxes.not(jQuery('.mab-toshow')).hide();
+			jQuery('.mab-toshow').show().removeClass('mab-toshow');
+		} else {
+			// hide all .mab-hidable
+			jQuery('.mab-hidable').hide();
+		}
 		
 		//Hide Field Labels options if "Manual" is selected as email provider
 		var $fieldLabels = jQuery('.mab-option-field-labels');

@@ -75,7 +75,7 @@
 	font-size: 85%!important;
 }
 
-.mabstyle-royalty.magic-action-box form .mab-field input, .mabstyle-royalty.magic-action-box form .mab-field textarea{
+.mabstyle-royalty.magic-action-box form .mab-field input, .mabstyle-royalty.magic-action-box form .mab-field textarea, .mabstyle-royalty.magic-action-box form .mab-field select{
 	background: #fff !important;
 	background-image: linear-gradient(bottom, #fff, #ccc) !important;
 	background-image: -o-linear-gradient(bottom, #fff, #ccc) !important;
@@ -102,7 +102,9 @@
 	margin: 0 !important;
 }
 
-.mabstyle-royalty.magic-action-box form .mab-field input:focus, .mabstyle-royalty.magic-action-box form .mab-field textarea:focus{
+.mabstyle-royalty.magic-action-box form .mab-field input[type="checkbox"]{ background: #fff !important; }
+
+.mabstyle-royalty.magic-action-box form .mab-field input:focus, .mabstyle-royalty.magic-action-box form .mab-field textarea:focus, .mabstyle-royalty.magic-action-box form .mab-field select:focus{
 	box-shadow: 0 0 3px #000;
 	color: #111 !important;
 }

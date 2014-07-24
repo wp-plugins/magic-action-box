@@ -145,12 +145,15 @@ class MAB_Template{
 		// load buttons stylesheet.		
 		// we do this way to ensure that mab-custom-buttons-css stylesheet will always be the last
 		// to load. this is especially important when two action boxes use custom buttons.
-		if(wp_style_is('mab-custom-buttons-css', 'enqueued')){ 
+		if(wp_style_is('mab-custom-buttons-css', 'queue')){ 
 			//dequeue the style so we can enqueue it to footer 
 			wp_dequeue_style('mab-custom-buttons-css'); 
 		} 
 
-		wp_enqueue_style( 'mab-custom-buttons-css', mab_get_custom_buttons_stylesheet_url() );
+		$buttons_stylesheet = mab_get_custom_buttons_stylesheet_path();
+		if( file_exists($buttons_stylesheet)){
+			wp_enqueue_style( 'mab-custom-buttons-css', mab_get_custom_buttons_stylesheet_url(), array(), filemtime($buttons_stylesheet) );
+		}
 
 		/** LOAD MISC **/
 	}
@@ -775,6 +778,16 @@ class MAB_Template{
 					break;
 				
 				$filename = $viewDir . 'constant-contact.php';
+				$form = ProsulumMabCommon::getView( $filename, $meta );
+				break;
+
+			case 'sendreach':
+				$settings = $MabBase->get_settings();
+				//break if sendreach is not allowed
+				if( !$settings['optin']['allowed']['sendreach'] )
+					break;
+
+				$filename = $viewDir . 'sendreach.php';
 				$form = ProsulumMabCommon::getView( $filename, $meta );
 				break;
 				

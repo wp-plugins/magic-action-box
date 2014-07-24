@@ -108,7 +108,7 @@ class ProsulumMabMetaBoxes{
 	function saveBox( $post ){
 		$filename = 'metaboxes/save-box.php';
 		$data = $post;
-		$box = ProsulumMabCommon::getView( $filename, $data );
+		$box = MAB_Utils::getView( $filename, $data );
 		echo $box;
 	}
 	
@@ -126,7 +126,7 @@ class ProsulumMabMetaBoxes{
 		$meta = $MabBase->get_mab_meta( $post->ID, 'design' );
 		$data['custom_css'] = isset( $meta['mab_custom_css'] ) ? $meta['mab_custom_css'] : '';
 		$filename = 'metaboxes/metabox-customcss.php';
-		$box = ProsulumMabCommon::getView( $filename, $data );
+		$box = MAB_Utils::getView( $filename, $data );
 		echo $box;
 	}
 	
@@ -139,10 +139,10 @@ class ProsulumMabMetaBoxes{
 		$data['assets-url'] = MAB_ASSETS_URL;
 		
 		//get available action box styles
-		$data['styles'] = ProsulumMabCommon::getStyles();
+		$data['styles'] = MAB_Utils::getStyles();
 		
 		$filename = 'metaboxes/type/actionbox-settings.php';
-		$box = ProsulumMabCommon::getView( $filename, $data );
+		$box = MAB_Utils::getView( $filename, $data );
 		echo $box;
 	}
 	
@@ -153,7 +153,7 @@ class ProsulumMabMetaBoxes{
 		$data['meta'] = $MabBase->get_mab_meta( $post->ID );
 		$data['assets-url'] = MAB_ASSETS_URL;
 		$filename = 'metaboxes/type/actionbox-content.php';
-		$box = ProsulumMabCommon::getView( $filename, $data );
+		$box = MAB_Utils::getView( $filename, $data );
 		echo $box;
 	}
 	
@@ -164,7 +164,7 @@ class ProsulumMabMetaBoxes{
 		$data['meta'] = $MabBase->get_mab_meta( $post->ID );
 		$data['assets-url'] = MAB_ASSETS_URL;		
 		$filename = 'metaboxes/type/actionbox-aside.php';
-		$box = ProsulumMabCommon::getView( $filename, $data );
+		$box = MAB_Utils::getView( $filename, $data );
 		echo $box;
 	}
 	
@@ -175,7 +175,7 @@ class ProsulumMabMetaBoxes{
 		$data['meta'] = $MabBase->get_mab_meta( $post->ID );
 		$data['assets-url'] = MAB_ASSETS_URL;
 		$filename = 'metaboxes/type/optin.php';
-		$box = ProsulumMabCommon::getView( $filename, $data );
+		$box = MAB_Utils::getView( $filename, $data );
 		echo $box;
 	}
 	
@@ -189,13 +189,13 @@ class ProsulumMabMetaBoxes{
 		$data['optin-providers'] = $MabAdmin->getAllowedOptinProviders();
 		
 		//get available action box styles
-		$data['styles'] = ProsulumMabCommon::getStyles();
+		$data['styles'] = MAB_Utils::getStyles();
 
 		//get buttons
 		$data['buttons'] = $MabButton->getConfiguredButtons();
 		
 		$filename = 'metaboxes/type/optin-settings.php';
-		$box = ProsulumMabCommon::getView( $filename, $data );
+		$box = MAB_Utils::getView( $filename, $data );
 		echo $box;
 	}
 	
@@ -211,7 +211,7 @@ class ProsulumMabMetaBoxes{
 		$data['meta'] = $MabBase->get_mab_meta( $post->ID, 'post' );
 		$data['assets-url'] = MAB_ASSETS_URL;
 		$filename = 'metaboxes/post-select-actionbox.php';
-		$box = ProsulumMabCommon::getView( $filename, $data );
+		$box = MAB_Utils::getView( $filename, $data );
 		echo $box;
 	}
 	

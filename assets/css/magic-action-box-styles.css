@@ -131,6 +131,7 @@ div.magic-action-box .mab-secondary-copy p:last-child, div.magic-action-box .mab
 	display: inline-block;
 	margin: 0 10px 0 0;
 	margin-bottom: 10px;
+	vertical-align: middle;
 	/* for ie */
     *display: inline;
     zoom: 1;
@@ -146,7 +147,8 @@ div.magic-action-box .mab-secondary-copy p:last-child, div.magic-action-box .mab
 }
 
 .magic-action-box form .mab-field input[type="text"], .magic-action-box form .mab-field input[type="email"], .magic-action-box form .mab-field input[type="password"], .magic-action-box form .mab-field textarea, .magic-action-box form .mab-field select{
-	border: none;
+	background: #fff;
+	border: 1px solid #ddd;
 	border-radius: 2px;
 	color: #777;
 	margin: 0;
@@ -185,8 +187,14 @@ div.magic-action-box .mab-secondary-copy p:last-child, div.magic-action-box .mab
 .mab-center-content .mab-content{ text-align: center; }
 .mab-center-content form{ text-align: initial; }
 
+.mab-layout-horizontal{ text-align: center; }
+
+.mab-layout-horizontal .mab-aside-left .mab-aside{
+	display: inline-block; float: none; margin-right: 10px; vertical-align: middle;
+}
+
 .mab-layout-horizontal .mab-content{
-	text-align: center;
+	display: inline-block; text-align: center; vertical-align: middle;
 }
 
 .mab-layout-horizontal .mab-wrap .mab-content .mab-heading, 

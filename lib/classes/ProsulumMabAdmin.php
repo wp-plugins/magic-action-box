@@ -3,13 +3,15 @@ class ProsulumMabAdmin{
 	
 	var $_data_RegisteredActionBoxes = array();
 	
-	var $_optin_Keys = array('aweber' => 'Aweber', 'mailchimp' => 'MailChimp', 'manual' => 'Other (Copy & Paste)');
+	var $_optin_Providers = array();
 	var $_optin_AweberApplicationId = '60e2f3cd';
 	var $_optin_AweberAuthenticationUrl = 'https://auth.aweber.com/1.0/oauth/authorize_app/';
 	var $_optin_AweberFormActionUrl = 'http://www.aweber.com/scripts/addlead.pl';
 	var $_optin_AweberListsTransient = '_mab_aweber_lists_transient';
 	var $_optin_ConstantContactKey = '07671de3-6060-4ef8-b431-f1f48f8de026';
 	var $_optin_MailChimpListsTransient = 'mab_mailchimp_lists_transient';
+
+	var $_optin_SendReachListsTransient = 'mab_sendreach_lists_transient';
 
 	var $_option_SettingsTransient = '_mab_settings_transient';
 	var $_option_CurrentVersion = '_mab_current_version';
@@ -65,6 +67,8 @@ class ProsulumMabAdmin{
 			
 			update_option($this->_option_CurrentVersion, MAB_VERSION);
 		}
+
+		$this->initializeOptinProviders();
 
 		do_action('mab_admin_init');
 	}
@@ -621,13 +625,60 @@ class ProsulumMabAdmin{
 			$settings['optin']['allowed']['mailchimp'] = $old_settings['optin']['allowed']['mailchimp'];
 			$settings['optin']['mailchimp-lists'] = $old_settings['optin']['mailchimp-lists'];
 		}
+
+		// process SendReach
+		$sendReachSettingsChanged = false;
+		$processSendReach = false;
+		if( !empty($settings['optin']['sendreach']['key']) && !empty($settings['optin']['sendreach']['secret'])){
+			// sendreach is filled out
+
+			if(empty($old_settings['optin']['sendreach'])){
+				// no previous sendreach settings
+				$processSendReach = true;
+
+			} else {
+				// check if there is change between old and current settings
+
+				foreach($settings['optin']['sendreach'] as $k => $v){
+					if($settings['optin']['sendreach'][$k] != $old_settings['optin']['sendreach'][$k]){
+						$processSendReach = true;
+					}
+				}
+			}
+		} else {
+			// sendreach is not filled out or one of the required fields
+			// is missing
+			if( !empty($settings['optin']['sendreach']['key']) || !empty($settings['optin']['sendreach']['secret']) ){
+				$errors[] = __('SendReach app key and secret are both required fields.');
+			}
+			$settings['optin']['sendreach']['key'] = '';
+			$settings['optin']['sendreach']['secret'] = '';
+			$settings['optin']['allowed']['sendreach'] = 0;
+		}
+
+		if($processSendReach){
+
+			$srKey = trim($settings['optin']['sendreach']['key']);
+			$srSecret = trim($settings['optin']['sendreach']['secret']);
+			$sendReachCheck = $this->validateSendReachApi($srKey, $srSecret);
+
+			if(true === $sendReachCheck){
+				$settings['optin']['sendreach']['key'] = $srKey;
+				$settings['optin']['sendreach']['secret'] = $srSecret;
+				$settings['optin']['allowed']['sendreach'] = 1;
+			} else {
+				$errors[] = $sendReachCheck['error'];
+				$settings['optin']['sendreach']['key'] = '';
+				$settings['optin']['sendreach']['secret'] = '';
+				$settings['optin']['allowed']['sendreach'] = 0;
+			}
+		}
 		
 		//process manual opt in form. Created for consistency.
 		$settings['optin']['allowed']['manual'] = 1;
 
 
 		/* TODO: Process Global ActionBox Setting */
-		
 
 		//save settings
 		$this->saveSettings($settings);
@@ -888,7 +939,59 @@ class ProsulumMabAdmin{
 	/**
 	 * OPTIN PROVIDERS
 	 * ================================================ */
-	
+
+	function initializeOptinProviders(){
+		$_optin_Keys = array(
+			array(
+				'id' => 'aweber', 
+				'name' => 'Aweber', 
+				'auto_allow' => false),
+			array(
+				'id' => 'mailchimp', 
+				'name' => 'MailChimp', 
+				'auto_allow' => false),
+			array(
+				'id' => 'sendreach',
+				'name' => 'SendReach',
+				'auto_allow' => false),
+			array(
+				'id' => 'manual', 
+				'name' => 'Other (Copy & Paste)',
+				'auto_allow' => true)
+		);
+
+		$this->_optin_Providers = apply_filters('mab_set_initial_optin_providers', $_optin_Keys);
+	}
+
+	/**
+	 * Register an optin provider
+	 * @param  string $id  unique name
+	 * @param  string $name human friendly name
+	 * @param  bool   $auto_allow if FALSE, this provider will only be
+	 *                            shown if it is allowed in settings
+	 * @return bool FALSE if $id exists or missing $id parameter, 
+	 *              otherwise returns TRUE
+	 */
+	function registerOptinProvider($id, $name ='', $auto_allow = false){
+		if(empty($id)) return false;
+
+		// check if $id already exists
+		foreach($this->_optin_Providers as $k => $prov){
+			if($prov['id'] == $id) return false;
+		}
+
+		if(empty($name))
+			$name = $id;
+
+		$this->_optin_Providers[] = array(
+			'id' => $id,
+			'name' => $name,
+			'auto_allow' => $auto_allow
+			);
+
+		return true;
+	}
+
 	/**
 	 * Returns list of allowed optin providers in an array
 	 * @return array 
@@ -899,10 +1002,18 @@ class ProsulumMabAdmin{
 		$settings = ProsulumMabCommon::getSettings();
 		$allowed = array();
 		
-		foreach( $this->_optin_Keys as $key => $provider ){
-			//add optin providers where value is not 0 or empty or null
-			if( !empty( $settings['optin']['allowed'][$key] ) ){
-				$allowed[] = array('id' => $key, 'name' => $provider );
+		foreach( $this->_optin_Providers as $k => $provider ){
+			if($provider['auto_allow']){
+
+				$allowed[] = array('id' => $provider['id'], 'name' => $provider['name'] );
+
+			} else {
+
+				//add optin providers where value is not 0 or empty or null
+				if( !empty( $settings['optin']['allowed'][$provider['id']] ) ){
+					$allowed[] = array('id' => $provider['id'], 'name' => $provider['name'] );
+				}
+
 			}
 		}
 		
@@ -1120,6 +1231,78 @@ class ProsulumMabAdmin{
 		global $MabBase;
 		return $MabBase->validate_mailchimp_key( $key );
 	}
+
+
+	/**
+	 * SendReach API
+	 * =================================
+	 */
+	
+
+	function initializeSendReachApi(){
+		require_once( MAB_LIB_DIR . 'integration/sendreach/api.php');
+	}
+
+	function validateSendReachApi($key, $secret){
+		$this->initializeSendReachApi();
+
+		$sendReach = new SendReachApi($key, $secret);
+
+		if(!$sendReach->validate()){
+			return array('error' => __('Invalid SendReach App Key or Secret.', 'mab'));
+		}
+
+		return true;
+	}
+
+	/**
+	 * Get SendReach email list
+	 * 
+	 * @param  boolean $forceUpdate will check WP transient cache if
+	 *                              FALSE
+	 * @return array               [description]
+	 */
+	function getSendReachLists($forceUpdate = false){
+
+		if( !$forceUpdate ){
+			//check from cache
+			$sendReachLists = get_transient( $this->_optin_SendReachListsTransient );
+		
+			if( $sendReachLists !== false ){
+				return $sendReachLists;
+			}
+		}
+
+		$lists = array();
+
+		$settings = $this->getSettings();
+
+		if(empty($settings['optin']['sendreach']['key']) || empty($settings['optin']['sendreach']['secret']) || empty($settings['optin']['allowed']['sendreach'])){
+			return $lists;
+		}
+
+		$key = $settings['optin']['sendreach']['key'];
+		$secret = $settings['optin']['sendreach']['secret'];
+
+		$this->initializeSendReachApi();
+
+		$sendReach = new SendReachApi($key, $secret);
+
+		$srLists = $sendReach->lists_view();
+
+		if($srLists->error){
+			// returns empty array
+			return $lists;
+		}
+
+		foreach($srLists->lists as $list){
+			$lists[] = array('id' => $list->id, 'name' => $list->list_name);
+		}
+		
+		set_transient( $this->_optin_SendReachListsTransient, $lists, 24*60*60 ); //set for one day.
+		
+		return $lists;
+	}
 	
 	/**
 	 * Constant Contact
@@ -1230,6 +1413,9 @@ class ProsulumMabAdmin{
 				break;
 			case 'mailchimp':
 				$lists = $this->getMailChimpLists( true ); //TRUE - don't get from cache
+				break;
+			case 'sendreach':
+				$lists = $this->getSendReachLists(true);
 				break;
 		}
 		

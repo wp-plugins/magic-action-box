@@ -74,7 +74,7 @@
 	font-size: 90%;
 }
 
-.mabstyle-pink.magic-action-box form .mab-field input[type="text"], .mabstyle-pink.magic-action-box form .mab-field input[type="email"], .mabstyle-pink.magic-action-box form .mab-field input[type="password"] .mabstyle-pink.magic-action-box form .mab-field textarea{
+.mabstyle-pink.magic-action-box form .mab-field input[type="text"], .mabstyle-pink.magic-action-box form .mab-field input[type="email"], .mabstyle-pink.magic-action-box form .mab-field input[type="password"], .mabstyle-pink.magic-action-box form .mab-field textarea, .mabstyle-pink.magic-action-box form .mab-field select{
 	border: 2px solid #CC0F49 !important;
 	-moz-border-radius: 15px;
 	-webkit-border-radius: 15px;
@@ -85,7 +85,7 @@
 	margin: 0 !important;
 }
 
-.mabstyle-pink.magic-action-box form .mab-field input:focus, .mabstyle-pink.magic-action-box form .mab-field textarea:focus{
+.mabstyle-pink.magic-action-box form .mab-field input:focus, .mabstyle-pink.magic-action-box form .mab-field textarea:focus, .mabstyle-pink.magic-action-box form .mab-field select:focus{
 	color: #111 !important;
 }
 

@@ -108,7 +108,7 @@ $actionBoxesSelect = $data['actionboxList'];
 					</tr>
 				</tbody>
 			</table>
-			
+
 			<h4><?php _e('MailChimp', 'mab' ); ?></h4>
 			<table class="form-table">
 				<tbody>
@@ -117,6 +117,29 @@ $actionBoxesSelect = $data['actionboxList'];
 						<td>
 							<input type="text" class="code large-text" name="mab[optin][mailchimp-api]" id="mab-optin-mailchimp-api" value="<?php echo esc_attr($optin['mailchimp-api']); ?>" /><br />
 							<a href="http://admin.mailchimp.com/account/api-key-popup" target="_blank"><?php _e('Get your API key.', 'mab' ); ?></a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<?php
+			$sendreach_key = !empty($optin['sendreach']['key']) ? esc_attr($optin['sendreach']['key']) : '';
+			$sendreach_secret = !empty($optin['sendreach']['secret']) ? esc_attr($optin['sendreach']['secret']) : '';
+			?>
+			<h4><?php _e('SendReach', 'mab' ); ?></h4>
+			<table class="form-table">
+				<tbody>
+					<tr>
+						<th scope="row"><label for="mab-optin-sendreach-key"><?php _e('SendReach App Key', 'mab' ); ?></label></th>
+						<td>
+							<input type="text" class="code large-text" name="mab[optin][sendreach][key]" id="mab-optin-sendreach-key" value="<?php echo $sendreach_key; ?>" />
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="mab-optin-sendreach-secret"><?php _e('SendReach App Secret', 'mab' ); ?></label></th>
+						<td>
+							<input type="text" class="code large-text" name="mab[optin][sendreach][secret]" id="mab-optin-sendreach-secret" value="<?php echo $sendreach_secret; ?>" /><br />
+							<a href="http://setup.sendreach.com/setup/3rd-party-integration-app-key-secret/" target="_blank"><?php _e('How to get your SendReach App key and secret.', 'mab' ); ?></a>
 						</td>
 					</tr>
 				</tbody>
