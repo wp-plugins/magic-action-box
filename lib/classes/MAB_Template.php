@@ -15,10 +15,19 @@ class MAB_Template{
 	private static $_current_template_style_dir = '';
 	private static $_current_template_style_url = '';
 	private static $_current_actionbox_obj = null;
+
+	protected $classes = array(); // css class
+	protected $htmlData = array(); // html data i.e. data-color="red"
+	protected $inlineStyles = array(); // inline styles
 	
 	public function getTemplate(){
 		$actionBoxObj = $this->_actionbox_obj;
 		
+		/**
+		 * NOTES:
+		 * self::setCurrentTemplateVars() isn't currently used anywhere.
+		 * Not really sure why I created this though :P
+		 */
 		self::setCurrentTemplateVars( $actionBoxObj );
 		
 		$type = $actionBoxObj->getActionBoxType();
@@ -132,9 +141,20 @@ class MAB_Template{
 			global $MabButton;
 			$MabButton->writeConfiguredButtonsStylesheet( $MabButton->getConfiguredButtons(), '' );
 		}
-		//load buttons stylesheet
-		wp_enqueue_style( 'mab-custom-buttons-css', mab_get_custom_buttons_stylesheet_url() );
 		
+		// load buttons stylesheet.		
+		// we do this way to ensure that mab-custom-buttons-css stylesheet will always be the last
+		// to load. this is especially important when two action boxes use custom buttons.
+		if(wp_style_is('mab-custom-buttons-css', 'queue')){ 
+			//dequeue the style so we can enqueue it to footer 
+			wp_dequeue_style('mab-custom-buttons-css'); 
+		} 
+
+		$buttons_stylesheet = mab_get_custom_buttons_stylesheet_path();
+		if( file_exists($buttons_stylesheet)){
+			wp_enqueue_style( 'mab-custom-buttons-css', mab_get_custom_buttons_stylesheet_url(), array(), filemtime($buttons_stylesheet) );
+		}
+
 		/** LOAD MISC **/
 	}
 	
@@ -142,9 +162,70 @@ class MAB_Template{
 	 * Get Class Array
 	 * @return array classes in array
 	 */
-	function getClassArray($class=''){
+	function getClassArray(){
+		$actionBoxType = $this->_actionbox_obj->getActionBoxType();
+		
+		// remove duplicates. @see http://stackoverflow.com/a/5036538
+		$classes = array_keys(array_flip($this->classes));
+
+		return apply_filters( 'mab_actionbox_class', $classes, $actionBoxType, $this->_actionbox_obj );
+	}
+	
+	function getClass(){
+		// Separates classes with a single space, collates classes for .magic-action-box
+		return 'class="' . implode( ' ', $this->getClassArray() ) . '"';
+	}
+
+	/**
+	 * Adds css classes to $this->classes
+	 * @param  string|array $class css class as space separated string or array
+	 */
+	function addClass($class){
+		
+		if(empty($class)) return false;
+
+		// convert $class to an array if it's not yet one
+		if(!is_array($class))
+			$class = preg_split('#\s+#', $class);
+
+		$class = array_map('esc_attr', $class);
+
+		$this->classes = array_merge($this->classes, $class);
+
+		return true;
+	}
+
+	/**
+	 * Remove a value (css class) from $this->classes
+	 * If no parameter is passed then $this->classes will be cleared
+	 * @param string|array $toremove css can pass in multiple classes as space
+	 *                               separated string or array
+	 * @return  array returns the contents of $this->classes
+	 */
+	function removeClass($toremove=null){
+		// make empty array
+		if(is_null($toremove)){
+			$this->classes = array();
+			return true;
+		}
+
+		if(!is_array($toremove)){
+			$toremove = preg_split('#\s+#', $toremove);
+		}
+
+		$this->classes = array_diff($this->classes, $toremove);
+
+		return true;
+	}
+
+	/**
+	 * Initialize css classes
+	 * @return [type] [description]
+	 */
+	protected function initCssClass(){
 		$actionBoxObj = $this->_actionbox_obj;
 
+		// set up initial css classes
 		$classes = array();
 		
 		$classes[] = 'magic-action-box';
@@ -166,33 +247,168 @@ class MAB_Template{
 		if( $selectedStyle == 'mabstyle-user' ){
 			$classes[] = 'userstyle-' . $meta['userstyle'];
 		}
+
+		//button style
+		$buttonStyle = isset($meta['button-key']) ? $meta['button-key'] : 'default';
+		$classes[] = 'use-mab-button-' . $buttonStyle;
 		
 		//fields layout
 		if( isset( $meta['optin']['fields-layout'] ) ){
 			$classes[] = 'mab-fields-layout-' . $meta['optin']['fields-layout'];
+		} else {
+			$classes[] = 'mab-fields-layout-default';
+		}
+
+		// label position
+		if( isset($meta['optin']['label-position'])){
+			$classes[] = 'mab-label-position-' . $meta['optin']['label-position'];
+		}
+
+		// width: auto; on submit button
+		if( !empty($meta['optin']['auto-width-submit'])){
+			$classes[] = 'mab-auto-width-submit';
+		}
+
+		//centered fields?
+		if( !empty($meta['optin']['center-fields'])){
+			$classes[] = 'mab-center-fields';
+		}
+
+		// responsive?
+		if( !empty($meta['responsive'])){
+			$classes[] = 'mab-responsive';
+		}
+
+		// horizontal?
+		if( !empty($meta['layout'])){
+			$classes[] = 'mab-layout-' . $meta['layout'];
+		}
+
+		// centered content
+		if( !empty($meta['center-content'])){
+			$classes[] = 'mab-center-content';
 		}
 		
 		//TODO: aside placement class
-
-		/* from WP's implementation of get_body_class() */
-		if ( ! empty( $class ) ) {
-			if ( !is_array( $class ) )
-				$class = preg_split( '#\s+#', $class );
-			$classes = array_merge( $classes, $class );
-		} else {
-			// Ensure that we always coerce class to being an array.
-			$class = array();
-		}
 		
-		$classes = array_map( 'esc_attr', $classes );
-	
-		return apply_filters( 'mab_actionbox_class', $classes, $class, $actionBoxType, $this );
+		$this->classes = array_map( 'esc_attr', $classes );
+	}
+
+	/**
+	 * For adding HTML data attribute
+	 */
+	function setHtmlData($name ,$value){
+		if(empty($name)) return false;
+		
+		// lower case string
+		$name = strtolower($name);
+
+		// make alphanumeric
+		$name = preg_replace("/[^a-z0-9_\s-]/", "", $name);
+
+		// convert white space to dash
+		$name = preg_replace("/[\s]/", "-", $name);
+
+		$this->htmlData[$name] = esc_attr($value);
+
+		return true;
+	}
+
+	/**
+	 * Get HTML data attribute value
+	 */
+	function getHtmlData($name = ''){
+
+		// assume we want everthing
+		if(empty($name)) return $this->htmlData;
+
+		if(!isset($this->htmlData[$name])) return '';
+		
+		return $this->htmlData[$name];
+	}
+
+
+	/**
+	 * For use in html data
+	 */
+	public function htmlData(){
+		$data = $this->getHtmlData();
+		$out = '';
+
+		if(empty($data)) return $out;
+
+		foreach($data as $name => $value){
+			$val = esc_attr($value);
+			$out .= sprintf('data-%1$s="%2$s" ', $name, $val);
+		}
+
+		return $out;
+	}
+
+
+	public function getInlineStyle($name = ''){
+
+		// assume we want everthing
+		if(empty($name)) return $this->inlineStyles;
+
+		if(!isset($this->inlineStyles[$name])) return '';
+		
+		return $this->inlineStyles[$name];
+	}
+
+
+	public function setInlineStyle($name, $value){
+		if(empty($name)) return false;
+		// lower case string
+		$name = strtolower($name);
+
+		// make alphanumeric
+		$name = preg_replace("/[^a-z0-9\s-]/", "", $name);
+
+		// convert white space to dash
+		$name = preg_replace("/[\s]/", "-", $name);
+
+		$this->inlineStyles[$name] = esc_attr($value);
+
+		return true;
+	}
+
+	/**
+	 * For adding style="xxx;" to .magic-action-box div
+	 */
+	public function inlineStyles(){
+		$inline = $this->getInlineStyle();
+		$out = '';
+		$style = '';
+
+		if(empty($inline)) return $out;
+
+		foreach($inline as $name => $value){
+			$style .= sprintf('%1$s: %2$s; ', $name, $value);
+		}
+
+		if(empty($style)) return $out;
+
+		$out = sprintf('style="%1$s"', $style);
+		return $out;
+	}
+
+
+	protected function initInlineStyles(){
+		$actionBoxObj = $this->_actionbox_obj;
+
+		$meta = $actionBoxObj->getMeta();
+
+		$styles = array();
+
+		if(!empty($meta['width'])){
+			$styles['width'] = esc_attr($meta['width']);
+		}
+
+		$this->inlineStyles = $styles;
+		return;
 	}
 	
-	function getClass( $class = '' ){
-		// Separates classes with a single space, collates classes for .magic-action-box
-		return 'class="' . implode( ' ', $this->getClassArray( $class ) ) . '"';
-	}
 	
 	function getTemplateFile(){
 		return $this->_template_file;
@@ -358,14 +574,18 @@ class MAB_Template{
 
 		//set up template paths
 		$this->setTemplatePaths();
+
+		// set up css classes
+		$this->initCssClass();
+
+		// set up inline style
+		$this->initInlineStyles();
+
+		return;
 	}
 	
 	function __construct( $actionBoxObj = null ){
 		$this->init( $actionBoxObj );
-	}
-	
-	function MAB_Template( $actionBoxObj = null ){
-		$this->__construct($actionBoxObj);
 	}
 
 	
@@ -379,6 +599,8 @@ class MAB_Template{
 		$data['meta'] = $meta;
 		$data['mab-html-id'] = $actionBoxObj->getHtmlId();
 		$data['class'] = $actionBoxObj->getTemplateObj()->getClass();
+		$data['html-data'] = $actionBoxObj->getTemplateObj()->htmlData();
+		$data['inline-style'] = $actionBoxObj->getTemplateObj()->inlineStyles();
 		$actionBoxType = $actionBoxObj->getActionBoxType();
 		$data['action-box-type'] = $actionBoxType;
 		$data['action-box-obj'] = $actionBoxObj;
@@ -415,7 +637,9 @@ class MAB_Template{
 		$data['mab-html-id'] = $actionBoxObj->getHtmlId();
 		
 		$data['class'] = $actionBoxObj->getTemplateObj()->getClass();
-		
+		$data['html-data'] = $actionBoxObj->getTemplateObj()->htmlData();
+		$data['inline-style'] = $actionBoxObj->getTemplateObj()->inlineStyles();
+
 		$mainTemplate = $actionBoxObj->getTemplateObj()->getTemplateFile();
 		$actionBox = ProsulumMabCommon::getView( $mainTemplate, $data, '' );
 		return $actionBox;
@@ -453,7 +677,9 @@ class MAB_Template{
 		$data['action-box-type'] = $actionBoxObj->getActionBoxType();
 		$data['mab-html-id'] = $actionBoxObj->getHtmlId();
 		$data['class'] = $actionBoxObj->getTemplateObj()->getClass();
-		
+		$data['html-data'] = $actionBoxObj->getTemplateObj()->htmlData();
+		$data['inline-style'] = $actionBoxObj->getTemplateObj()->inlineStyles();
+
 		$mainTemplate = $actionBoxObj->getTemplateObj()->getTemplateFile();
 		$actionBox = ProsulumMabCommon::getView( $mainTemplate, $data, '' );
 
@@ -493,7 +719,10 @@ class MAB_Template{
 		$data['action-box-type'] = $actionBoxObj->getActionBoxType();
 		
 		$data['class'] = $actionBoxObj->getTemplateObj()->getClass();
-		
+
+		$data['html-data'] = $actionBoxObj->getTemplateObj()->htmlData();
+		$data['inline-style'] = $actionBoxObj->getTemplateObj()->inlineStyles();
+
 		$mainTemplate = $actionBoxObj->getTemplateObj()->getTemplateFile();
 		
 		$actionBox = ProsulumMabCommon::getView( $mainTemplate, $data, '' );
@@ -549,6 +778,16 @@ class MAB_Template{
 					break;
 				
 				$filename = $viewDir . 'constant-contact.php';
+				$form = ProsulumMabCommon::getView( $filename, $meta );
+				break;
+
+			case 'sendreach':
+				$settings = $MabBase->get_settings();
+				//break if sendreach is not allowed
+				if( !$settings['optin']['allowed']['sendreach'] )
+					break;
+
+				$filename = $viewDir . 'sendreach.php';
 				$form = ProsulumMabCommon::getView( $filename, $meta );
 				break;
 				

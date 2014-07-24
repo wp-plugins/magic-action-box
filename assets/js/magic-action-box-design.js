@@ -1,5 +1,33 @@
 jQuery(document).ready(function(){
 	
+	/**
+	 * Image select stuff
+	 */
+	jQuery('.mab-image-select .mab-image-select-trigger').click(function(){
+		var pID = jQuery('#post_ID').val();
+		var trigger = jQuery(this);
+
+		//Change "insert into post" to "Use this image"
+		setInterval(function() {jQuery('#TB_iframeContent').contents().find('.savesend .button').addClass('button-primary').val('Use This Image');}, 1500);
+		
+		//hide "Save All Changes" button
+		setInterval(function(){ jQuery('#TB_iframeContent').contents().find('#file-form #save').hide();}, 1500 );
+		
+		//hide "From URL" tab
+		setInterval(function(){ jQuery('#TB_iframeContent').contents().find('#tab-type_url').hide();}, 500 );
+
+		tb_show("", "media-upload.php?&TB_iframe=true&type=image"); 
+
+		window.send_to_editor = function(html){
+			var imgurl = jQuery('img',html).attr('src');
+			trigger.siblings('.mab-image-select-target').val( imgurl );
+			trigger.siblings('.mab-image-select-preview').attr('src', imgurl);
+			tb_remove();
+		}
+
+		return false;
+	});
+
 	/** TO REPLACE 
 	 * Convert the block of code below to a function
 	======================================================**/

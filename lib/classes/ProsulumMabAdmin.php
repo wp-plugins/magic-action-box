@@ -3,7 +3,7 @@ class ProsulumMabAdmin{
 	
 	var $_data_RegisteredActionBoxes = array();
 	
-	var $_optin_Keys = array('aweber' => 'Aweber', 'mailchimp' => 'MailChimp', 'manual' => 'Other (Copy & Paste)');
+	var $_optin_Providers = array();
 	var $_optin_AweberApplicationId = '60e2f3cd';
 	var $_optin_AweberAuthenticationUrl = 'https://auth.aweber.com/1.0/oauth/authorize_app/';
 	var $_optin_AweberFormActionUrl = 'http://www.aweber.com/scripts/addlead.pl';
@@ -11,14 +11,12 @@ class ProsulumMabAdmin{
 	var $_optin_ConstantContactKey = '07671de3-6060-4ef8-b431-f1f48f8de026';
 	var $_optin_MailChimpListsTransient = 'mab_mailchimp_lists_transient';
 
+	var $_optin_SendReachListsTransient = 'mab_sendreach_lists_transient';
+
 	var $_option_SettingsTransient = '_mab_settings_transient';
 	var $_option_CurrentVersion = '_mab_current_version';
 	
 	var $_regex_Form = '/(<form\b[^>]*>)(.*?)(<\/form>)/ims';
-	
-	function ProsulumMabAdmin(){
-		return $this->__construct();
-	}
 
 	function __construct(){
 		$this->add_actions();
@@ -70,6 +68,8 @@ class ProsulumMabAdmin{
 			update_option($this->_option_CurrentVersion, MAB_VERSION);
 		}
 
+		$this->initializeOptinProviders();
+
 		do_action('mab_admin_init');
 	}
 	
@@ -94,15 +94,20 @@ class ProsulumMabAdmin{
 	}
 	
 	function addAdminInterface(){
-		global $MabButton;
+		global $MabButton, $MabBase;
 		
 		$hooks = array( 'post-new.php', 'post.php' );
 		
 		## MAIN SETTINGS
-		$hooks[] = add_menu_page( __('Magic Action Box Settings', 'mab'), __('Magic Action Box Settings', 'mab'), 'manage_options', 'mab-main', array( &$this, 'displaySettingsPage' ), MAB_ASSETS_URL . 'images/cube.png', '66.5' );
+		$hooks[] = add_menu_page( __('Magic Action Box', 'mab'), __('Magic Action Box', 'mab'), 'manage_options', 'mab-main', array( &$this, 'displaySettingsPage' ), MAB_ASSETS_URL . 'images/cube.png', '66.5' );
 		## MAIN SETTINGS
 		$hooks[] = add_submenu_page( 'mab-main', __('Main Settings', 'mab' ), __('Main Settings', 'mab' ), 'manage_options', 'mab-main', array( &$this, 'displaySettingsPage' ) );
+
+		## ACTION BOXES
+		$hooks[] = add_submenu_page( 'mab-main', __('Action Boxes','mab'), __('Action Boxes','mab'), 'manage_options', 'edit.php?post_type=' . $MabBase->get_post_type() );
 		
+		$hooks[] = add_submenu_page( 'mab-main', __('New Action Box','mab'), __('New Action Box','mab'), 'manage_options', 'post-new.php?post_type=' . $MabBase->get_post_type() );
+
 		## ACTION BOX SETTINGS
 		//$hooks[] = add_submenu_page( 'mab-main', __('Action Box Settings', 'mab' ), __('Action Box Settings', 'mab' ), 'manage_options', 'mab-actionbox-settings', array( &$this, 'displayActionBoxSettingsPage' ) );
 		
@@ -125,7 +130,7 @@ class ProsulumMabAdmin{
 		}
 		
 		$hooks[] = add_submenu_page( 'mab-main', $buttonTitle , $buttonTitle , 'manage_options', 'mab-button-settings', array( &$this, 'displayButtonSettingsPage' ) );
-		
+
 		$hooks[] = add_submenu_page( 'mab-main', __('Support', MAB_DOMAIN ), __('Support &amp; Links', MAB_DOMAIN), 'manage_options', 'mab-support', array( &$this, 'displaySupportPage' ) );
 		
 		$mab_hooks = apply_filters( 'mab_add_submenu_filter', $hooks );
@@ -141,8 +146,8 @@ class ProsulumMabAdmin{
 		global $menu;
 		
 		$menu['66.3'] = array( '', 'read', 'separator-mab', '' , 'wp-menu-separator' );
-		$menu['66.4'] = $menu[777];
-		unset( $menu[777] );
+		//$menu['66.4'] = $menu[777];
+		//unset( $menu[777] );
 		$menu['66.9'] = array( '', 'read', 'separator-mab', '' , 'wp-menu-separator' );
 	}
 	
@@ -197,7 +202,7 @@ class ProsulumMabAdmin{
 		//get all categories and store in array
 		$categoriesObj = get_categories( array( 'hide_empty' => 0 ) );
 		foreach( $categoriesObj as $cat ){
-			$categories[ $cat->cat_ID ] = $cat->cat_name;
+			$categories[ $cat->cat_ID ] = $cat;
 		}
 		
 		//add other variables as keys to the data array
@@ -620,13 +625,60 @@ class ProsulumMabAdmin{
 			$settings['optin']['allowed']['mailchimp'] = $old_settings['optin']['allowed']['mailchimp'];
 			$settings['optin']['mailchimp-lists'] = $old_settings['optin']['mailchimp-lists'];
 		}
+
+		// process SendReach
+		$sendReachSettingsChanged = false;
+		$processSendReach = false;
+		if( !empty($settings['optin']['sendreach']['key']) && !empty($settings['optin']['sendreach']['secret'])){
+			// sendreach is filled out
+
+			if(empty($old_settings['optin']['sendreach'])){
+				// no previous sendreach settings
+				$processSendReach = true;
+
+			} else {
+				// check if there is change between old and current settings
+
+				foreach($settings['optin']['sendreach'] as $k => $v){
+					if($settings['optin']['sendreach'][$k] != $old_settings['optin']['sendreach'][$k]){
+						$processSendReach = true;
+					}
+				}
+			}
+		} else {
+			// sendreach is not filled out or one of the required fields
+			// is missing
+			if( !empty($settings['optin']['sendreach']['key']) || !empty($settings['optin']['sendreach']['secret']) ){
+				$errors[] = __('SendReach app key and secret are both required fields.');
+			}
+			$settings['optin']['sendreach']['key'] = '';
+			$settings['optin']['sendreach']['secret'] = '';
+			$settings['optin']['allowed']['sendreach'] = 0;
+		}
+
+		if($processSendReach){
+
+			$srKey = trim($settings['optin']['sendreach']['key']);
+			$srSecret = trim($settings['optin']['sendreach']['secret']);
+			$sendReachCheck = $this->validateSendReachApi($srKey, $srSecret);
+
+			if(true === $sendReachCheck){
+				$settings['optin']['sendreach']['key'] = $srKey;
+				$settings['optin']['sendreach']['secret'] = $srSecret;
+				$settings['optin']['allowed']['sendreach'] = 1;
+			} else {
+				$errors[] = $sendReachCheck['error'];
+				$settings['optin']['sendreach']['key'] = '';
+				$settings['optin']['sendreach']['secret'] = '';
+				$settings['optin']['allowed']['sendreach'] = 0;
+			}
+		}
 		
 		//process manual opt in form. Created for consistency.
 		$settings['optin']['allowed']['manual'] = 1;
 
 
 		/* TODO: Process Global ActionBox Setting */
-		
 
 		//save settings
 		$this->saveSettings($settings);
@@ -738,6 +790,15 @@ class ProsulumMabAdmin{
 			} elseif ( $type == 'sales-box' ){
 				$mab['main-button-attributes'] = esc_attr( $mab['main-button-attributes'] );
 			}
+
+			if(isset($mab['optin'])){
+				if(isset($mab['optin']['manual']['code'])){
+					$mab['optin']['manual']['code'] = htmlspecialchars_decode($mab['optin']['manual']['code']);
+				}
+				if(isset($mab['optin']['manual']['processed'])){
+					$mab['optin']['manual']['processed'] = htmlspecialchars_decode($mab['optin']['manual']['processed']);
+				}				
+			}
 			
 			$mab = apply_filters( 'mab_update_action_box_meta', $mab, $postId, $data );
 
@@ -779,7 +840,7 @@ class ProsulumMabAdmin{
 		
 		//TODO: do nonce check
 		
-		if( is_array( $data['postmeta'] ) ){
+		if( !empty($data['postmeta']) && is_array( $data['postmeta'] ) ){
 			$postmeta = $data['postmeta'];
 			
 			$MabBase->update_mab_meta( $post_id, $postmeta, 'post' );
@@ -878,7 +939,59 @@ class ProsulumMabAdmin{
 	/**
 	 * OPTIN PROVIDERS
 	 * ================================================ */
-	
+
+	function initializeOptinProviders(){
+		$_optin_Keys = array(
+			array(
+				'id' => 'aweber', 
+				'name' => 'Aweber', 
+				'auto_allow' => false),
+			array(
+				'id' => 'mailchimp', 
+				'name' => 'MailChimp', 
+				'auto_allow' => false),
+			array(
+				'id' => 'sendreach',
+				'name' => 'SendReach',
+				'auto_allow' => false),
+			array(
+				'id' => 'manual', 
+				'name' => 'Other (Copy & Paste)',
+				'auto_allow' => true)
+		);
+
+		$this->_optin_Providers = apply_filters('mab_set_initial_optin_providers', $_optin_Keys);
+	}
+
+	/**
+	 * Register an optin provider
+	 * @param  string $id  unique name
+	 * @param  string $name human friendly name
+	 * @param  bool   $auto_allow if FALSE, this provider will only be
+	 *                            shown if it is allowed in settings
+	 * @return bool FALSE if $id exists or missing $id parameter, 
+	 *              otherwise returns TRUE
+	 */
+	function registerOptinProvider($id, $name ='', $auto_allow = false){
+		if(empty($id)) return false;
+
+		// check if $id already exists
+		foreach($this->_optin_Providers as $k => $prov){
+			if($prov['id'] == $id) return false;
+		}
+
+		if(empty($name))
+			$name = $id;
+
+		$this->_optin_Providers[] = array(
+			'id' => $id,
+			'name' => $name,
+			'auto_allow' => $auto_allow
+			);
+
+		return true;
+	}
+
 	/**
 	 * Returns list of allowed optin providers in an array
 	 * @return array 
@@ -889,10 +1002,18 @@ class ProsulumMabAdmin{
 		$settings = ProsulumMabCommon::getSettings();
 		$allowed = array();
 		
-		foreach( $this->_optin_Keys as $key => $provider ){
-			//add optin providers where value is not 0 or empty or null
-			if( !empty( $settings['optin']['allowed'][$key] ) ){
-				$allowed[] = array('id' => $key, 'name' => $provider );
+		foreach( $this->_optin_Providers as $k => $provider ){
+			if($provider['auto_allow']){
+
+				$allowed[] = array('id' => $provider['id'], 'name' => $provider['name'] );
+
+			} else {
+
+				//add optin providers where value is not 0 or empty or null
+				if( !empty( $settings['optin']['allowed'][$provider['id']] ) ){
+					$allowed[] = array('id' => $provider['id'], 'name' => $provider['name'] );
+				}
+
 			}
 		}
 		
@@ -1016,7 +1137,7 @@ class ProsulumMabAdmin{
 		//*/
 		
 		foreach( $lists as $this_list ){
-			$return[] = array( 'id' => $this_list->name, 'name' => $this_list->name );
+			$return[] = array( 'id' => $this_list->unique_list_id, 'name' => $this_list->name );
 		}
 		
 		set_transient( $this->_optin_AweberListsTransient, $return, 24*60*60 ); //set for one day.
@@ -1109,6 +1230,78 @@ class ProsulumMabAdmin{
 	function validateMailChimpAPIKey( $key ) {
 		global $MabBase;
 		return $MabBase->validate_mailchimp_key( $key );
+	}
+
+
+	/**
+	 * SendReach API
+	 * =================================
+	 */
+	
+
+	function initializeSendReachApi(){
+		require_once( MAB_LIB_DIR . 'integration/sendreach/api.php');
+	}
+
+	function validateSendReachApi($key, $secret){
+		$this->initializeSendReachApi();
+
+		$sendReach = new SendReachApi($key, $secret);
+
+		if(!$sendReach->validate()){
+			return array('error' => __('Invalid SendReach App Key or Secret.', 'mab'));
+		}
+
+		return true;
+	}
+
+	/**
+	 * Get SendReach email list
+	 * 
+	 * @param  boolean $forceUpdate will check WP transient cache if
+	 *                              FALSE
+	 * @return array               [description]
+	 */
+	function getSendReachLists($forceUpdate = false){
+
+		if( !$forceUpdate ){
+			//check from cache
+			$sendReachLists = get_transient( $this->_optin_SendReachListsTransient );
+		
+			if( $sendReachLists !== false ){
+				return $sendReachLists;
+			}
+		}
+
+		$lists = array();
+
+		$settings = $this->getSettings();
+
+		if(empty($settings['optin']['sendreach']['key']) || empty($settings['optin']['sendreach']['secret']) || empty($settings['optin']['allowed']['sendreach'])){
+			return $lists;
+		}
+
+		$key = $settings['optin']['sendreach']['key'];
+		$secret = $settings['optin']['sendreach']['secret'];
+
+		$this->initializeSendReachApi();
+
+		$sendReach = new SendReachApi($key, $secret);
+
+		$srLists = $sendReach->lists_view();
+
+		if($srLists->error){
+			// returns empty array
+			return $lists;
+		}
+
+		foreach($srLists->lists as $list){
+			$lists[] = array('id' => $list->id, 'name' => $list->list_name);
+		}
+		
+		set_transient( $this->_optin_SendReachListsTransient, $lists, 24*60*60 ); //set for one day.
+		
+		return $lists;
 	}
 	
 	/**
@@ -1221,6 +1414,9 @@ class ProsulumMabAdmin{
 			case 'mailchimp':
 				$lists = $this->getMailChimpLists( true ); //TRUE - don't get from cache
 				break;
+			case 'sendreach':
+				$lists = $this->getSendReachLists(true);
+				break;
 		}
 		
 		echo json_encode( $lists );
@@ -1231,13 +1427,14 @@ class ProsulumMabAdmin{
 	function ajaxProcessOptinCode(){
 		$regex_form = '/(<form\b[^>]*>)(.*?)(<\/form>)/ims';
 		//allowed fields <input>, <select>, <button>
-		$regex_input = '/(.*?)(<input\b[^>]*>|<select(?!<\/select>).*?<\/select>|<button(?!<\/button>).*?<\/button>)/ims';
+		$regex_input = '/(.*?)(<input\b[^>]*>|<select(?!<\/select>).*?<\/select>|<textarea(?!<\/textarea>).*?<\/textarea>|<button(?!<\/button>).*?<\/button>)/ims';
 		
 		$formComponents = array();
 		$data = stripslashes_deep( $_POST );
 		
 		$optinCode = $data['optinFormCode'];
 		$submitvalue = $data['submitValue'];
+		$submitImage = $data['submitImage'];
 		
 		//process the code
 		preg_match($regex_form, $optinCode, $formComponents);
@@ -1425,6 +1622,13 @@ class ProsulumMabAdmin{
 		$regex_src_alt = '/(alt=".*?")|src=".*?"/i';
 		$newtag = preg_replace( $regex_src_alt, '', $newtag );
 		
+		// if submitImage is available, then turn submit buttons into
+		// <input type="image">
+		if($input_type == 'submit' && !empty($data['submitImage'])){
+			// create new tag
+			$newtag = sprintf('<input type="image" class="%1$s mab-optin-submit-image" src="%2$s" alt="Submit">', $submitClass, $data['submitImage']);
+		}
+
 		$out = array(
 			'tag' => $newtag,
 			'type' => $tag_type,
@@ -1558,7 +1762,7 @@ class ProsulumMabAdmin{
 	
 	function possiblyEndOutputBuffering(){
 		global $pagenow, $MabBase;
-		
+		$data = array();
 		if($pagenow == 'post-new.php' && isset( $_GET['post_type'] ) && $_GET['post_type'] == $MabBase->get_post_type()) {
 			$result = ob_get_clean();
 			$filename = 'interceptions/post-new.php';	

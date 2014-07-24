@@ -3,13 +3,13 @@
  * Plugin Name: Magic Action Box
  * Plugin URI: http://magicactionbox.com
  * Description: Supercharge your blog posts!
- * Version: 2.10
+ * Version: 2.15
  * Author: Prosulum, LLC
  * Author URI: http://prosulum.com
  * License: GPLv2
  */
 
-define( 'MAB_VERSION', '2.10');
+define( 'MAB_VERSION', '2.15');
 //e.g. /var/www/example.com/wordpress/wp-content/plugins/after-post-action-box
 define( "MAB_DIR", plugin_dir_path( __FILE__ ) );
 //e.g. http://example.com/wordpress/wp-content/plugins/after-post-action-box
@@ -48,10 +48,6 @@ class ProsulumMabBase{
 	var $_optin_AweberLists = array();
 
 	private $_registered_action_box_types = array();
-	
-	function ProsulumMabBase(){
-		return $this->__construct();
-	}
 	
 	function __construct(){
 		$this->loadFiles();
@@ -98,7 +94,7 @@ class ProsulumMabBase{
 			'public' => false,
 			'publicly_queryable' => false,
 			'show_ui' => true,
-			'show_in_menu' => true,
+			'show_in_menu' => false,
 			'hierarchichal' => false,
 			'menu_position' => 777,
 			'capability_type' => 'post',
@@ -162,6 +158,8 @@ class ProsulumMabBase{
 	function loadAddOns(){
 		/** TODO: load addons automatically **/
 		require_once MAB_ADDONS_DIR . 'load-addons.php';
+		
+		do_action('mab_load_addons');
 
 		do_action('mab_addons_loaded');
 	}
@@ -203,9 +201,9 @@ class ProsulumMabBase{
 			$MabBase->register_post_type();
 		
 		//setup initial settings?
-		$settings = get_option( $MabBase->_metakey_Settings, array() );
+		$settings = get_option( $MabBase->_metakey_Settings );
 		if( !is_array( $settings ) )
-			$settings = array();
+			$settings = $MabBase->default_settings();
 			
 		if( !isset( $settings['optin']['allowed']['manual'] ) )
 			$settings['optin']['allowed']['manual'] = 1;
@@ -447,10 +445,10 @@ class ProsulumMabBase{
 		$settings = wp_cache_get( $this->_metakey_Settings );
 		
 		if( !$settings || !is_array( $settings ) ){
-			$settings = get_option( $this->_metakey_Settings, array() );
+			$settings = get_option( $this->_metakey_Settings );
 			
 			if( !is_array( $settings ) )
-				$settings = array();
+				$settings = $this->default_settings();
 				
 			if( !isset( $settings['optin']['allowed'] ) || !is_array( $settings['optin']['allowed'] ) )
 				$settings['optin']['allowed'] = array();
@@ -465,7 +463,40 @@ class ProsulumMabBase{
 			return;
 		
 		update_option( $this->_metakey_Settings, $settings );
-		//wp_cache_set( $this->_metakey_Settings, $settings, null, time() + 24*60*60 );//cache for 24 hours
+		wp_cache_set( $this->_metakey_Settings, $settings, null, time() + 24*60*60 );//cache for 24 hours
+	}
+
+	function default_settings(){
+		$default = array(
+			'others' => array(
+				'reorder-content-filters' => 0,
+				'minify-output' => 0
+				),
+			'optin' => array(
+				'aweber-authorization' => '',
+				'mailchimp-api' => '',
+				'allowed' => array(
+					'manual' => 1
+					)
+				),
+			'global-mab' => array(
+				'default' => array(
+					'actionbox' => '',
+					'placement' => 'bottom'
+					),
+				'page' => array(
+					'actionbox' => '',
+					'placement' => 'bottom'
+					),
+				'post' => array(
+					'actionbox' => '',
+					'placement' => 'bottom'
+					),
+				'category' => array()
+				)
+			);
+
+		return $default;
 	}
 	
 	function get_selected_style( $actionBoxId ){
@@ -558,6 +589,7 @@ class ProsulumMabBase{
 	}
 
 	function updated_plugin_notice(){
+
 		global $current_user, $post, $pagenow;
 		
 		$screen = get_current_screen();
@@ -575,15 +607,9 @@ class ProsulumMabBase{
 			if( !get_user_meta( $user_id, $nag_notice ) ){
 
 				echo '<div class="updated"><p>';
-
-				printf( __('New in Magic Action Box Pro:<br /><strong>Random Boxes</strong> - show a different action box on every page load. <br /><strong>Video Side Item</strong> - show videos instead of just images. <br /><a href="%2$s">Upgrade to Pro version now</a> | <a href="%1$s">Hide notice</a>', MAB_DOMAIN), add_query_arg( array('mab-hide-update-notice' => 'true' ) ), 'http://www.magicactionbox.com/pricing/?pk_campaign=LITE&pk_kwd=cf7promo' );
-
+				printf( __('Magic Action Box plugin has been updated to version 2.15 | <a href="%1$s">Close</a>', 'mab'), add_query_arg( array('mab-hide-update-notice' => 'true' ) ), $this->get_current_version(), admin_url('post-new.php?post_type=action-box') );
 				echo '</p></div>';
-				/*
-				echo '<div class="updated"><p>';
-				printf( __('Magic Action Box now has integrated support for the <a href="http://www.wysija.com/?aff=8" target="_blank" title="Wysija Newsletter plugin">Wysija Newsletter</a> plugin. You can now select it as a Mailing List provider in the Opt In form metabox section (used in Opt In and Share Box action box types). <a href="%3$s">Hide Notice</a>.','mab'), $this->get_current_version(), add_query_arg( array('page'=>'mab-main'), admin_url('admin.php') ), add_query_arg( array('mab-hide-update-notice' => 'true' ) ) );
-				echo '</p></div>';
-				*/
+
 				
 			}
 			
@@ -651,6 +677,7 @@ class ProsulumMabBase{
 		/** Scripts **/		
 		wp_register_script( 'mab-wpautop-fix', MAB_ASSETS_URL . 'js/wpautopfix.js', array( 'jquery' ) );
 		wp_register_script( 'mab-actionbox-helper', MAB_ASSETS_URL . 'js/actionbox-helper.js', array('jquery') );
+		wp_register_script( 'mab-responsive-videos', MAB_ASSETS_URL . 'js/responsive-videos.js', array('jquery'), MAB_VERSION, true);
 		
 		/** ADMIN Scripts **/
 		wp_register_script( 'mab-youtube-helpers', MAB_ASSETS_URL . 'js/youtube-helpers.js', array( 'jquery' ), MAB_VERSION );
@@ -659,9 +686,13 @@ class ProsulumMabBase{
 		
 		/** Styles **/
 		wp_register_style( 'mab-base-style', MAB_ASSETS_URL . 'css/magic-action-box-styles.css', array() );
+		wp_register_style( 'mab-extras', MAB_ASSETS_URL . 'css/mab-extras.css', array());
 		
 		/** ADMIN styles **/
 		wp_register_style( 'mab-admin-style', MAB_ASSETS_URL . 'css/magic-action-box-admin.css', array(), MAB_VERSION );
+
+		/** Languages **/
+		load_plugin_textdomain( 'mab', false,  dirname(MAB_BASENAME) . '/languages/' );
 	}
 
 }

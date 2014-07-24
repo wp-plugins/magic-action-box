@@ -69,6 +69,22 @@ jQuery(document).ready(function(){
 		
 		//show related dependent container
 		$div.show('fast');
+
+		$optionBoxes = $div.data('option-box');
+		if($optionBoxes){
+			$optionBoxesArr = $optionBoxes.split(',');
+			$hidableBoxes = jQuery('.mab-hidable');
+			$toShow = jQuery(); // we'll add elements to show here
+			jQuery.each($optionBoxesArr, function(index, className){
+				jQuery('.mab-option-'+className).addClass('mab-toshow');
+			});
+
+			$hidableBoxes.not(jQuery('.mab-toshow')).hide();
+			jQuery('.mab-toshow').show().removeClass('mab-toshow');
+		} else {
+			// hide all .mab-hidable
+			jQuery('.mab-hidable').hide();
+		}
 		
 		//Hide Field Labels options if "Manual" is selected as email provider
 		var $fieldLabels = jQuery('.mab-option-field-labels');
@@ -120,6 +136,7 @@ jQuery(document).ready(function(){
 	jQuery( '#mab-process-manual-optin-code' ).click( function(){
 		var $theCode = jQuery( '#mab-optin-manual-code' ).val();
 		var $submitValue = jQuery( '#mab-optin-submit-value' ).val();
+		var $submitImage = jQuery( '#mab-optin-submit-image' ).val();
 		
 		jQuery('#mab-optin-process-manual-feedback').css('visibility','visible');
 		
@@ -128,7 +145,8 @@ jQuery(document).ready(function(){
 			{
 				action: 'mab_optin_process_manual_code',
 				optinFormCode: $theCode,
-				submitValue: $submitValue
+				submitValue: $submitValue,
+				submitImage : $submitImage
 			},
 			function( data, status ){
 				jQuery('#mab-optin-process-manual-feedback').css('visibility','hidden');
