@@ -9,7 +9,7 @@
 
 <div class="mab-option-box">
 	<h4><label for="mab-optin-provider"><?php _e('Select Mailing List Provider','mab' ); ?></label></h4>
-	<p><?php _e('Magic Action Box has integrated support for Aweber, MailChimp and Wysija Newsletter only as of the moment. But, you may still use other mailing list providers by selecting <em>Others (Copy & Paste)</em> option. <strong>**Note:</strong> you can even use Aweber or MailChimp with the <em>Others (Copy & Paste)</em> option.','mab' ); ?></p>
+	<p><?php _e('Magic Action Box has integrated support for SendReach, Aweber, MailChimp and Wysija Newsletter only as of the moment. But, you may still use other mailing list providers by selecting <em>Others (Copy & Paste)</em> option. <strong>**Note:</strong> You can even use SendReach, Aweber or MailChimp with the <em>Others (Copy & Paste)</em> option.','mab' ); ?></p>
 	<select id="mab-optin-provider" class="large-text" name="mab[optin-provider]" >
 		<?php
 			$selected_provider = isset( $meta['optin-provider'] ) ? $meta['optin-provider'] : '';
