@@ -30,7 +30,7 @@ $actionBoxesSelect = $data['actionboxList'];
 
 <h3 id="mab-settings-tabs" class="nav-tab-wrapper mab-settings-header">
 	<a id="mab-general-tab" href="#mab-general" class="nav-tab">General</a>
-	<a id="mab-accounts-tab" href="#mab-accounts" class="nav-tab">Accounts</a>
+	<a id="mab-accounts-tab" href="#mab-accounts" class="nav-tab">Accounts &amp; Integration</a>
 	<a id="mab-default-tab" href="#mab-default" class="nav-tab">Default</a>
 	<a id="mab-pages-tab" href="#mab-pages" class="nav-tab">Pages</a>
 	<a id="mab-posts-tab" href="#mab-posts" class="nav-tab">Posts</a>
@@ -88,15 +88,15 @@ $actionBoxesSelect = $data['actionboxList'];
 	
 	<!-- ### ACCOUNTS ### -->
 	<div id="mab-accounts" class="group">
-		<h3>Accounts</h3>
+		<h3><?php _e('Accounts (Integration)'); ?></h3>
 		<div class="mab-tab-group-content">
 			<?php $optin = $data['optin']; ?>
-			<h3>Email Providers</h3>
-			<p>Action Box has built-in support for Aweber and MailChimp. Enter your information below to use this services.</p>
+			<h3><?php _e('Email Providers'); ?></h3>
+			<p><?php _e('Action Box has built-in support for SendReach, Aweber, MailChimp and MailPoet (Wysija). Enter your information below to use this services.'); ?></p>
+			<?php $create_url = admin_url('post-new.php?post_type=action-box'); ?>
+			<p class="mab-notice"><?php echo sprintf(__('You may still use other e-mail marketing services as long as you are able to generate the HTML code for the form from your provider. In fact, you can even use SendReach, Aweber or MailChimp without entering any the information below. Just follow the instructions provided when you <a href="%1$s">create an opt-in form type action box</a>.'), $create_url); ?></p>
 			
-			<p class="mab-notice">You may still use other e-mail marketing services as long as you are able to generate the HTML code for the form from your provider. In fact, you can even use Aweber or MailChimp without entering any the information below. Just follow the instructions provided when you <a href="<?php echo admin_url('post-new.php?post_type=action-box'); ?>">create an opt-in form type action box</a>.</p>
-			
-			<h4>Aweber</h4>
+			<h4><?php _e('Aweber', 'mab'); ?></h4>
 			<table class="form-table">
 				<tbody>
 					<tr>
