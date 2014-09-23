@@ -36,7 +36,7 @@ function mab_get_mapping(){
 			),
 		),
 		'.magic-action-box a' => array( ## LINKS
-			'background-color' => 'main_link_background',
+			'background' => 'main_link_background',
 
 			'background-color_select' => 'main_link_background_select',
 
@@ -51,7 +51,7 @@ function mab_get_mapping(){
 			)
 		),
 		'.magic-action-box a:hover' => array(
-			'background-color' => 'main_link_hover_background',
+			'background' => 'main_link_hover_background',
 
 			'background-color_select' => 'main_link_hover_background_select',
 
@@ -246,7 +246,63 @@ function mab_get_mapping(){
 			)
 		),
 		'.magic-action-box .mab-main-action-wrap .mab-field input' => array( ## INPUT
-			'background-color' => array(
+			'background' => array(
+				array('input_background_color','string'),
+				array( '!important', 'fixed_string')
+			),
+			'background-color_select' => 'input_background_color_select',
+			'border' => array(
+				array('input_border','px'),
+
+				array('input_border_style', 'string'),
+
+				array('input_border_color', 'string'),
+				array( '!important', 'fixed_string')
+
+			),
+			'-moz-border-radius' => array( array('input_border_radius','px') ),
+
+			'-khtml-border-radius' => array( array('input_border_radius','px') ),
+
+			'-webkit-border-radius' => array( array('input_border_radius','px') ),
+
+			'border-radius' => array( 
+				array('input_border_radius','px'),
+				array( '!important', 'fixed_string')
+			),
+			'color' => array(
+				array('input_font_color','string'),
+				array( '!important', 'fixed_string')
+			),
+			'font-family' => array(
+				array('input_font_family','string'),
+				array( '!important', 'fixed_string')
+			),
+			'font-size' => array(
+				array('input_font_size', 'px' ),
+				array( '!important', 'fixed_string')
+			),
+			'font-style' => array(
+				array('input_font_style','string'),
+
+
+				array( '!important', 'fixed_string')
+			),
+			'font-weight' => array(
+				array('input_font_weight','string'),
+				array( '!important', 'fixed_string')
+			),
+			'padding-top' => array( array( 'input_padding_top','px' ), array( '!important', 'fixed_string') ),
+			'padding-bottom' => array( array( 'input_padding_bottom','px' ), array( '!important', 'fixed_string') ),
+			'padding-right' => array( array( 'input_padding_right','px' ), array( '!important', 'fixed_string') ),
+			'padding-left' => array( array( 'input_padding_left','px' ), array( '!important', 'fixed_string') ),
+			'width' => array( 
+				array( 'input_width', 'px' ),
+				array( '!important', 'fixed_string')
+			)
+		),
+		'.magic-action-box .mab-main-action-wrap input' => array( ## INPUT
+			'background' => array(
 				array('input_background_color','string'),
 				array( '!important', 'fixed_string')
 			),
@@ -302,7 +358,7 @@ function mab_get_mapping(){
 			)
 		),
 		'.magic-action-box .mab-main-action-wrap .mab-field textarea' => array( ##TEXTAREA
-			'background-color' => array(
+			'background' => array(
 				array('input_background_color','string'),
 				array( '!important', 'fixed_string')
 			),
@@ -351,8 +407,126 @@ function mab_get_mapping(){
 				array( '!important', 'fixed_string')
 			)
 		),
+		'.magic-action-box .mab-main-action-wrap textarea' => array( ##TEXTAREA
+			'background' => array(
+				array('input_background_color','string'),
+				array( '!important', 'fixed_string')
+			),
+			'background-color_select' => 'input_background_color_select',
+			'border' => array(
+				array('input_border','px'),
+
+				array('input_border_style', 'string'),
+
+				array('input_border_color', 'string'),
+				array( '!important', 'fixed_string')
+
+			),
+			'-moz-border-radius' => array( array('input_border_radius','px') ),
+
+			'-khtml-border-radius' => array( array('input_border_radius','px') ),
+
+			'-webkit-border-radius' => array( array('input_border_radius','px') ),
+
+			'border-radius' => array( 
+				array('input_border_radius','px'),
+				array( '!important', 'fixed_string')
+			),
+			'color' => array(
+				array('input_font_color','string'),
+				array( '!important', 'fixed_string')
+			),
+			'font-family' => array(
+				array('input_font_family','string'),
+				array( '!important', 'fixed_string')
+			),
+			'font-size' => array(
+				array('input_font_size', 'px' ),
+				array( '!important', 'fixed_string')
+			),
+			'font-style' => array(
+				array('input_font_style','string'),
+				array( '!important', 'fixed_string')
+			),
+			'font-weight' => array(
+				array('input_font_weight','string'),
+				array( '!important', 'fixed_string')
+			),
+			'width' => array( 
+				array( 'input_width', 'px' ),
+				array( '!important', 'fixed_string')
+			)
+		),
+		'.magic-action-box .mab-main-action-wrap select' => array( ##SELECT
+			'background' => array(
+				array('input_background_color','string'),
+				array( '!important', 'fixed_string')
+			),
+			'background-color_select' => 'input_background_color_select',
+			'border' => array(
+				array('input_border','px'),
+
+				array('input_border_style', 'string'),
+
+				array('input_border_color', 'string'),
+				array( '!important', 'fixed_string')
+
+			),
+			'-moz-border-radius' => array( array('input_border_radius','px') ),
+
+			'-khtml-border-radius' => array( array('input_border_radius','px') ),
+
+			'-webkit-border-radius' => array( array('input_border_radius','px') ),
+
+			'border-radius' => array( 
+				array('input_border_radius','px'),
+				array( '!important', 'fixed_string')
+			),
+			'color' => array(
+				array('input_font_color','string'),
+				array( '!important', 'fixed_string')
+			),
+			'font-family' => array(
+				array('input_font_family','string'),
+				array( '!important', 'fixed_string')
+			),
+			'font-size' => array(
+				array('input_font_size', 'px' ),
+				array( '!important', 'fixed_string')
+			),
+			'font-style' => array(
+				array('input_font_style','string'),
+				array( '!important', 'fixed_string')
+			),
+			'font-weight' => array(
+				array('input_font_weight','string'),
+				array( '!important', 'fixed_string')
+			),
+			'width' => array( 
+				array( 'input_width', 'px' ),
+				array( '!important', 'fixed_string')
+			)
+		),
+		'.magic-action-box .mab-main-action-wrap select option' => array( ##SELECT
+
+			'color' => array(
+				array( 'inherit !important', 'fixed_string')
+			),
+			'font-family' => array(
+				array( 'inherit !important', 'fixed_string')
+			),
+			'font-size' => array(
+				array( 'inherit !important', 'fixed_string')
+			),
+			'font-style' => array(
+				array( 'inherit !important', 'fixed_string')
+			),
+			'font-weight' => array(
+				array( 'inherit !important', 'fixed_string')
+			)
+		),
 		'.magic-action-box .mab-main-action-wrap form input[type="submit"]' => array( ## FORM SUBMIT
-			'background-color' => array(
+			'background' => array(
 				array('button_background_color','string'),
 				array( '!important', 'fixed_string')
 			),
@@ -410,7 +584,7 @@ function mab_get_mapping(){
 			)
 		),
 		'.magic-action-box .mab-main-action-wrap form input.submit' => array(
-			'background-color' => array(
+			'background' => array(
 				array('button_background_color','string'),
 				array( '!important', 'fixed_string')
 			),
@@ -465,7 +639,7 @@ function mab_get_mapping(){
 			'text-transform' => 'button_text_transform'
 		),
 		'.magic-action-box .mab-main-action-wrap form input[type="submit"]:hover' => array(
-			'background-color' => array(
+			'background' => array(
 				array('button_background_hover_color','string'),
 				array('!important', 'fixed_string')
 			),
@@ -481,7 +655,7 @@ function mab_get_mapping(){
 			'text-shadow' => 'button_text_shadow'
 		),
 		'.magic-action-box .mab-main-action-wrap form input.submit:hover' => array(
-			'background-color' => array(
+			'background' => array(
 				array('button_background_hover_color','string'),
 				array('!important', 'fixed_string')
 			),
@@ -498,7 +672,7 @@ function mab_get_mapping(){
 			'text-shadow' => 'button_text_shadow'
 		),
 		'.magic-action-box .mab-aside' => array( ## ASIDE
-			'background-color' => 'aside_background_color',
+			'background' => 'aside_background_color',
 
 			'background-color_select' => 'aside_background_color_select',
 			'border' => array(
@@ -825,7 +999,6 @@ function mab_create_options($compare, $type) {
 		mab_setting_line(mab_add_size_setting('input_padding_left', 'Left Padding'));
 		mab_setting_line(mab_add_size_setting('input_border_radius', 'Rounded Corner Radius'));
 		mab_setting_line(mab_add_size_setting('input_width', 'Input Field Width'));
-		mab_setting_line(mab_add_size_setting('input_border_radius', 'Rounded Corner Radius'));
 		echo '</div>';
 		
 		### SUBMIT BUTTON

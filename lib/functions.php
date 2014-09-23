@@ -150,3 +150,17 @@ function mab_get_action_box_id_from_context( $context = 'default' ){
 	//return array( 'id' => $actionBoxId, 'placement' => $placement );
 	return $actionBoxId;
 }
+
+
+/**
+ * Returns the value of an array index from a key-value array. Will check if an array index is set. 
+ * By default, will return an empty string if not set.
+ *
+ * @param array $array array to get value from
+ * @param string $index key index
+ * @param string $empty_value value to return if array key is not set
+ * @return mixed value of array index
+ */
+function mab_array_index_value($array, $index, $empty_value = ''){
+	return isset($array[$index]) ? $array[$index] : $empty_value;
+}
