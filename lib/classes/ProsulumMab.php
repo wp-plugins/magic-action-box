@@ -89,7 +89,7 @@ class ProsulumMab{
 		
 		//Show Action box only on singular pages or when it is on blog index but set only to show
 		//one blog post.
-		if( is_singular() || ( is_home() && $wp_query->post_count == 1 ) ){
+		if( is_singular() && is_main_query() || ( is_home() && $wp_query->post_count == 1 ) ){
 			
 			$mab_priority = $this->_the_content_filter_priority; //default 10.
 			

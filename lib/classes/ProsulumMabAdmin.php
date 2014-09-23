@@ -850,6 +850,8 @@ class ProsulumMabAdmin{
 	function duplicateActionBox( $source_id ){
 		global $MabBase;
 		
+		do_action('mab_pre_duplicate_action_box', $source_id);
+
 		$source = get_post( $source_id );
 		if( is_null( $source ) || empty( $source ) || !is_object( $source ) ){
 			return false;
@@ -865,12 +867,20 @@ class ProsulumMabAdmin{
 		$duplicate->ID = '';
 		$duplicate->post_title .= __(' Copy', MAB_DOMAIN);
 		$duplicate_id = wp_insert_post( $duplicate );
+		$duplicate->ID = $duplicate_id;
 		
 		update_post_meta( $duplicate_id, $MabBase->get_meta_key( 'type' ), $MabBase->get_mab_meta( $source_id, 'type' ) );
-		update_post_meta( $duplicate_id, $MabBase->get_meta_key( '' ), $MabBase->get_mab_meta( $source_id ) );
+
+		// update meta data
+		$sourceMeta = $MabBase->get_mab_meta( $source_id );
+		$dupeMeta = apply_filters('mab_duplicate_action_box_meta', $sourceMeta, $duplicate, $source);
+
+		update_post_meta( $duplicate_id, $MabBase->get_meta_key( '' ), $dupeMeta );
 		
 		//TODO: add code for notices?
 		update_post_meta( $source_id, $MabBase->get_meta_key('duplicate'), $duplicate_id );
+
+		do_action('mab_duplicate_action_box', $duplicate, $source);
 		
 		return $duplicate_id;
 	}
@@ -1018,7 +1028,7 @@ class ProsulumMabAdmin{
 		}
 		
 		//add "wysija" newsletter
-		$allowed[] = array('id' => 'wysija', 'name' => 'Wysija Newsletter' );
+		$allowed[] = array('id' => 'wysija', 'name' => 'MailPoet (Wysija)' );
 		
 		//add "Manual" mailing list provider
 		//$allowed[] = array('id' => 'manual', 'name' => $this->_optin_Keys['manual'] );

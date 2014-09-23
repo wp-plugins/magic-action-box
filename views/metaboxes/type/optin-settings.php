@@ -34,7 +34,7 @@
 			$selected_list = !empty($meta['optin']['aweber']['list']) ? $meta['optin']['aweber']['list'] : '';
 			foreach( $lists as $list ):
 		?>
-			<option value="<?php echo $list['id']; ?>" <?php selected( $selected_list, $list['name'] ); ?> ><?php echo $list['name']; ?></option>
+			<option value="<?php echo $list['id']; ?>" <?php selected( $selected_list, $list['id'] ); ?> ><?php echo $list['name']; ?></option>
 		<?php endforeach; ?>
 		</select>
 		<?php //var_dump( $lists ); ?>
@@ -150,7 +150,7 @@
 			$selected_list = !empty($meta['optin']['sendreach']['list']) ? $meta['optin']['sendreach']['list'] : '';
 			foreach( $lists as $list ):		
 		?>
-			<option value="<?php echo $list['id']; ?>" <?php selected( $selected_list, $list['name'] ); ?> ><?php echo $list['name']; ?></option>
+			<option value="<?php echo $list['id']; ?>" <?php selected( $selected_list, $list['id'] ); ?> ><?php echo $list['name']; ?></option>
 		<?php endforeach; ?>
 		<?php endif; ?>
 		</select>
@@ -211,7 +211,7 @@
 		//Wysija plugin is not installed
 	?>
 		<div id="mab-wysija-settings" class="mab-dependent-container mab-optin-list-dependent-container" data-option-box="field-labels">
-			<p class="mab-notice">You need to install <a href="http://www.wysija.com/?aff=8" title="Wysija Newsletters" target="_blank">Wysija Newsletters plugin</a> in order to use this option as a Mailing List Provider (Don't worry, there is a lite version).</p>
+			<?php _e('<p class="mab-notice">You will need to install <a href="http://www.mailpoet.com/?aff=8" title="MailPoet Newsletters" target="_blank">MailPoet Newsletters plugin</a> in order to use this option as a Mailing List Provider (There is a lite version).</p>', 'mab'); ?>
 		</div>
 		<?php
 		else:

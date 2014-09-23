@@ -131,7 +131,7 @@ div.magic-action-box .mab-secondary-copy p:last-child, div.magic-action-box .mab
 	display: inline-block;
 	margin: 0 10px 0 0;
 	margin-bottom: 10px;
-	vertical-align: middle;
+	vertical-align: bottom;
 	/* for ie */
     *display: inline;
     zoom: 1;

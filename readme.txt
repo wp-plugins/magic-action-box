@@ -3,8 +3,8 @@ Contributors: prosulum, pogidude
 Developer: Prosulum
 Tags: opt in, call to action, aweber, email, email marketing, form, mailing list, marketing, newsletter, webform, mailchimp, constant contact
 Requires at least: 3.5
-Tested up to: 3.9.1
-Stable tag: 2.15
+Tested up to: 4.0
+Stable tag: 2.15.1
 
 Magic Action Box let's you display professional looking opt-in forms and feature boxes in your WordPress site.
 
@@ -99,6 +99,12 @@ Try checking the *Reorder post content filter priorities* checkbox found in WP A
 5. Action Box Settings Screen
 
 == Changelog ==
+= 2.15.1 =
+* [update] add vertical-align: bottom; to .mab-field elements
+* [fix] fix wrong key used in aweber list resulting in dropdown always showing the first item in list
+* [fix] fix wrong key used in sendreach list dropdown.
+* [add] add is_main_query() check to ProsulumMab::setupContentTypeActionBox()
+
 = 2.15 =
 * Add SendReach integration
 * use correct path in call to load_plugin_textdomain()

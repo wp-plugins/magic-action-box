@@ -3,13 +3,13 @@
  * Plugin Name: Magic Action Box
  * Plugin URI: http://magicactionbox.com
  * Description: Supercharge your blog posts!
- * Version: 2.15
+ * Version: 2.15.1
  * Author: Prosulum, LLC
  * Author URI: http://prosulum.com
  * License: GPLv2
  */
 
-define( 'MAB_VERSION', '2.15');
+define( 'MAB_VERSION', '2.15.1');
 //e.g. /var/www/example.com/wordpress/wp-content/plugins/after-post-action-box
 define( "MAB_DIR", plugin_dir_path( __FILE__ ) );
 //e.g. http://example.com/wordpress/wp-content/plugins/after-post-action-box
@@ -69,6 +69,8 @@ class ProsulumMabBase{
 		//Notices
 		add_action('admin_notices',array( $this, 'updated_plugin_notice') );
 		add_action('admin_init', array( $this, 'updated_plugin_notice_hide' ) );
+
+		add_action('wp_footer', array($this, 'version_to_footer'), 100);
 	}
 	
 	
@@ -693,6 +695,10 @@ class ProsulumMabBase{
 
 		/** Languages **/
 		load_plugin_textdomain( 'mab', false,  dirname(MAB_BASENAME) . '/languages/' );
+	}
+
+	function version_to_footer(){
+		echo '<!--mabv' . MAB_VERSION . '-->';
 	}
 
 }

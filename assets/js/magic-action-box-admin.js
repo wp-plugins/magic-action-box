@@ -135,8 +135,8 @@ jQuery(document).ready(function(){
 	//Process manual opt in form code into useable format
 	jQuery( '#mab-process-manual-optin-code' ).click( function(){
 		var $theCode = jQuery( '#mab-optin-manual-code' ).val();
-		var $submitValue = jQuery( '#mab-optin-submit-value' ).val();
-		var $submitImage = jQuery( '#mab-optin-submit-image' ).val();
+		var $submitValue = jQuery( '#mab-optin-manual-submit-value' ).val();
+		var $submitImage = jQuery( '#mab-optin-manual-submit-image' ).val();
 		
 		jQuery('#mab-optin-process-manual-feedback').css('visibility','visible');
 		
