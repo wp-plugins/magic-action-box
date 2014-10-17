@@ -809,7 +809,13 @@ class MAB_Template{
 				$wysijaView =& WYSIJA::get("widget_nl","view","front");
 				
 				/** Print wysija scripts **/
-				$wysijaView->addScripts();
+				//$wysijaView->addScripts();
+
+				wp_print_scripts('wysija-validator-lang');
+				wp_print_scripts('wysija-validator');
+				wp_print_scripts('wysija-front-subscribers');
+				wp_print_scripts('jquery-ui-datepicker');
+				wp_print_styles('validate-engine-css');
 				
 				/** TODO: generate fields using wysija's field generator **/
 				

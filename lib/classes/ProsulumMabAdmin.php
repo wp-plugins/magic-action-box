@@ -780,6 +780,11 @@ class ProsulumMabAdmin{
 					//append additional list data to mailchimp info 
 					//NOTE 12/09/11: this section no longer needed?
 					$listData = $this->getMailChimpListSingle( $mab['optin']['mailchimp']['list'] );
+
+					// Added line, from https://coderwall.com/p/goabcq
+					// @referred by https://wordpress.org/support/topic/mailchimp-subscribe-url-causes-warnings-on-secure-https-sites?replies=2#post-6115249
+					$listData['subscribe_url_long'] = preg_replace('#^[^:/.]*[:/]+#i', '//', $listData['subscribe_url_long']);
+
 					$mab['optin']['mailchimp']['form-action-url'] = str_replace('subscribe', 'subscribe/post', $listData['subscribe_url_long']);
 					
 				} elseif( $emailProvider == 'aweber' ){
