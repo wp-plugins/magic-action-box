@@ -77,7 +77,7 @@ $aside_type = in_array( $aside_meta['type'], array('image','video','none')) ? $a
 	<h4>Placement</h4>
 	<p>Where do you want the side item in relation to the other elements in the action box?</p>
 
-	<?php $placement = $aside_meta['placement']; ?>
+	<?php $placement = isset($aside_meta['placement']) ? $aside_meta['placement'] : 'left'; ?>
 	<ul id="mab-aside-placement-choices" class="mab-placement-choices">
 		<li>
 			<label for="mab-aside-placement-left">

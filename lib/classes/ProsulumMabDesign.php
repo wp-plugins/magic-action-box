@@ -3,10 +3,6 @@
 class ProsulumMabDesign{
 	
 	var $_option_StyleSettings = '_mab_style_settings';
-
-	function ProsulumMabDesign(){
-		$this->__construct();
-	}
 	
 	function __construct(){
 	}
