@@ -220,7 +220,7 @@
 		$wysijaLists = $modelList->get(array('name','list_id'),array('is_enabled'=>1));
 		$wysija = !empty( $optinMeta['wysija'] ) ? $optinMeta['wysija'] : array();
 		?>
-		<div id="mab-wysija-settings" class="mab-dependent-container mab-optin-list-dependent-container">
+		<div id="mab-wysija-settings" class="mab-dependent-container mab-optin-list-dependent-container" data-option-box="field-labels">
 			<div class="mab-option-box">
 				<h4><?php _e('Select List:','mab' ); ?></h4>
 				<p><?php _e('Select which newsletter list a user will be subscribed to.','mab' ); ?></p>
