@@ -3,7 +3,6 @@
 define( 'MAB_RBOX_TYPE', 'rbox' );
 define( 'MAB_RBOX_DOMAIN', MAB_DOMAIN );
 
-
 /** Initialize our addon **/
 add_action( 'mab_init', 'mab_rbox_init' );
 
