@@ -396,6 +396,7 @@ class ProsulumMab{
 		//wp_enqueue_script( 'mab-wpautop-fix' );
 		wp_enqueue_script('mab-actionbox-helper');
 		wp_enqueue_script('mab-responsive-videos');
+		//wp_enqueue_script('mab-placeholder'); // seems to have an issue with jquery validator in mailpoet. it shows the error boxes in the fields during page load
 		/** Styles **/
 	}
 

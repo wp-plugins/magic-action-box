@@ -811,11 +811,11 @@ class MAB_Template{
 				/** Print wysija scripts **/
 				//$wysijaView->addScripts();
 
-				wp_print_scripts('wysija-validator-lang');
-				wp_print_scripts('wysija-validator');
-				wp_print_scripts('wysija-front-subscribers');
-				wp_print_scripts('jquery-ui-datepicker');
-				wp_print_styles('validate-engine-css');
+				wp_enqueue_script('wysija-validator-lang');
+				wp_enqueue_script('wysija-validator');
+				wp_enqueue_script('wysija-front-subscribers');
+				wp_enqueue_script('jquery-ui-datepicker');
+				wp_enqueue_style('validate-engine-css');
 				
 				/** TODO: generate fields using wysija's field generator **/
 				

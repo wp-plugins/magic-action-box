@@ -26,7 +26,7 @@ $formIdReal = 'mab-wysija-' . $data['mab-html-id'];
 		<?php if( !empty( $fieldlabels['fname']) ) : ?>
 		<label for="<?php echo $formIdReal; ?>-firstname"><?php echo $fieldlabels['fname']; ?></label>
 		<?php endif; ?>
-		<input id="<?php echo $formIdReal; ?>-firstname" class="wysija-firstname validate[required]" type="text" name="wysija[user][firstname]" placeholder="<?php echo $infieldlabels['fname']; ?>" />
+		<input id="<?php echo $formIdReal; ?>-firstname" class="wysija-firstname" type="text" name="wysija[user][firstname]" placeholder="<?php echo $infieldlabels['fname']; ?>" />
 	</div>
 	<?php endif; ?>
 	
@@ -35,7 +35,7 @@ $formIdReal = 'mab-wysija-' . $data['mab-html-id'];
 		<?php if( !empty( $fieldlabels['lname']) ) : ?>
 		<label for="<?php echo $formIdReal; ?>-lastname"><?php echo $fieldlabels['lname']; ?></label>
 		<?php endif; ?>
-		<input id="<?php echo $formIdReal; ?>-lastname" class="wysija-lastname validate[required]" type="text" name="wysija[user][lastname]" placeholder="<?php echo $infieldlabels['lname']; ?>" />
+		<input id="<?php echo $formIdReal; ?>-lastname" class="wysija-lastname" type="text" name="wysija[user][lastname]" placeholder="<?php echo $infieldlabels['lname']; ?>" />
 	</div>
 	<?php endif; ?>
 	

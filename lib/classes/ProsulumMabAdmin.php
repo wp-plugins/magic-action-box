@@ -770,12 +770,17 @@ class ProsulumMabAdmin{
 			
 			$type = $this->getActionBoxType( $postId );
 			
-			//do stuff for optin action box type
-			if( $type === 'optin' ){
-				
+			// do stuff for salesbox
+			if ( $type == 'sales-box' ){
+				$mab['main-button-attributes'] = esc_attr( $mab['main-button-attributes'] );
+			}
+
+			//do stuff for action boxes with optin i.e. optin, sharebox
+			if(!empty($mab['optin'])){
+
 				//get selected email provider
 				$emailProvider = $mab['optin-provider'];
-				
+
 				if( $emailProvider == 'mailchimp' ){
 					//append additional list data to mailchimp info 
 					//NOTE 12/09/11: this section no longer needed?
@@ -792,18 +797,16 @@ class ProsulumMabAdmin{
 					$mab['optin']['aweber']['form-action-url'] = $this->getAweberActionUrl();
 				
 				}
-			} elseif ( $type == 'sales-box' ){
-				$mab['main-button-attributes'] = esc_attr( $mab['main-button-attributes'] );
-			}
 
-			if(isset($mab['optin'])){
 				if(isset($mab['optin']['manual']['code'])){
 					$mab['optin']['manual']['code'] = htmlspecialchars_decode($mab['optin']['manual']['code']);
 				}
 				if(isset($mab['optin']['manual']['processed'])){
 					$mab['optin']['manual']['processed'] = htmlspecialchars_decode($mab['optin']['manual']['processed']);
-				}				
+				}	
+
 			}
+
 			
 			$mab = apply_filters( 'mab_update_action_box_meta', $mab, $postId, $data );
 
