@@ -82,7 +82,7 @@
 	
 	<!-- #MAILCHIMP -->
 	<?php if( isset( $allowed_providers['mailchimp'] ) ) : ?>
-	<div id="mab-mailchimp-settings" class="mab-dependent-container mab-optin-list-dependent-container" data-option-box="field-labels">
+	<div id="mab-mailchimp-settings" class="mab-dependent-container mab-optin-list-dependent-container" data-option-box="field-labels,displayed-fields">
 		<p class="mab-notice"><?php _e('You selected to use an integrated opt-in form. This form displays two input fields to take the visitor\'s name and e-mail address. If you wish to use other input field arrangements, <em>(i.e. use only one field for e-mail address)</em>, then select <em>Other (Copy & Paste)</em> in the <label for="mab-optin-provider"><strong>Mailing List Provider</strong></label> select box.', 'mab'); ?></p>
 		<h4><label for="mab-optin-mailchimp-list"><?php _e('List','mab'); ?></label></h4>
 		<p><?php _e('Select list to subscribe users to. Click on the Update List button below if you just recently added/removed a list from MailChimp.', 'mab' ); ?></p>
@@ -116,6 +116,15 @@
 		</p>
 		<br />
 		*/ ?>
+		<h4><?php _e('Track Signup Location', 'mab'); ?></h4>
+		<p><?php _e(sprintf('Track which subscribers signed up through this form by setting a unique identifier for this form. Read our <a href="%s" target="_blank">MailChimp tracking guide</a> to learn how to do it.', 'http://www.magicactionbox.com/how-to-track-subscriber-signup-source-with-mailchimp/')); ?>
+		</p>
+		<p><label for="mab-optin-mailchimp-tag"><?php _e('Field Tag (Merge Tag)', 'mab'); ?></label></p> <input type="text" name="mab[optin][mailchimp][field-tag]" value="<?php echo empty($meta['optin']['mailchimp']['field-tag']) ? '' : esc_html($meta['optin']['mailchimp']['field-tag']); ?>" id="mab-optin-mailchimp-tag"> <em>example: SIGNUP</em>
+		
+		<p><label for="mab-optin-mailchimp-tcode"><?php _e('Form Identifier (Tracking Code)', 'mab'); ?></label></p><input type="text" name="mab[optin][mailchimp][tracking-code]" value="<?php echo empty($meta['optin']['mailchimp']['tracking-code']) ? '' : esc_html($meta['optin']['mailchimp']['tracking-code']); ?>" id="mab-optin-mailchimp-tcode"> <em>example: sidebar_form</em> 
+		<br>
+		<br>
+
 		<h4><label for="mab-optin-mailchimp-submit-value"><?php _e( 'Text for submit button','mab' ); ?></label></h4>
 		<p><?php _e('You can specify the text for your submit button (ex: "Subscribe" or "Get it now") Leave this blank to use default value. <strong>Default value:</strong> Submit.', 'mab'); ?>
 		</p>
