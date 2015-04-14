@@ -296,6 +296,9 @@ div.magic-action-box .mab-secondary-copy p:last-child, div.magic-action-box .mab
 	width: 100%;
 }
 
+/** Alert */
+.mab-alert{ background: lightyellow; border: 1px solid #e6db55; border-radius: 2px; color: #4F4901; display: block; margin: 8px 0; padding: 8px; text-shadow: none; }
+
 /** Wysija **/
 .mab-wysija-msg{ margin: 10px 0; }
 .mab-wysija-msg .allmsgs blink{ padding-left: 24px; background: transparent url('images/loading.gif') no-repeat left center; display: block;}
@@ -304,8 +307,6 @@ div.magic-action-box .mab-secondary-copy p:last-child, div.magic-action-box .mab
 .mab-wysija-msg .allmsgs .updated{ background: lightYellow; border: 1px solid #E6DB55; border-radius: 3px; color: #000; display: block; margin: 10px 0; padding: 8px; text-shadow: none; }
 .mab-wysija-msg .allmsgs .xdetailed-errors,
 .mab-wysija-msg .allmsgs .error{ background: #FFEBE8; border: 1px solid #c00; border-radius: 3px; color: #000; display: block; margin: 10px 0; padding: 8; text-shadow: none; }
-
-
 
 
 /** Responsive **/

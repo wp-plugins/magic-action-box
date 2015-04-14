@@ -1,9 +1,6 @@
 jQuery(document).ready(function(){
 	
-	/**
-	 * Image select stuff
-	 */
-	jQuery('.mab-image-select .mab-image-select-trigger').click(function(){
+	var mab_image_selector = function(){
 		var pID = jQuery('#post_ID').val();
 		var trigger = jQuery(this);
 
@@ -26,7 +23,12 @@ jQuery(document).ready(function(){
 		}
 
 		return false;
-	});
+	};
+
+	/**
+	 * Image select stuff
+	 */
+	jQuery(document).on('click', '.mab-image-select .mab-image-select-trigger', mab_image_selector);
 
 	/** TO REPLACE 
 	 * Convert the block of code below to a function

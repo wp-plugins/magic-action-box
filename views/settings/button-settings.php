@@ -13,7 +13,7 @@
 	<div id="mab-design-settings-reset" class="updated fade"><p><strong><?php _e( 'Button Reset.', 'mab' ); ?></strong></p></div>
 <?php endif; ?>
 
-<?php global $MabButton;
+<?php $MabButton = MAB('button');
 $button = $data['button'];
 $key = $data['key'];
 $action = $data['action'];

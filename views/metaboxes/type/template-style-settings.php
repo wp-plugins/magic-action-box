@@ -5,7 +5,7 @@
  */
 ?>
 <?php 
-global $MabDesign;
+$MabDesign = MAB('design');
 $preconfiguredStyles = $data['styles']; 
 $userStyles = $MabDesign->getStyleSettings(); 
 $selected_style = isset( $meta['style'] ) ? $meta['style'] : null;

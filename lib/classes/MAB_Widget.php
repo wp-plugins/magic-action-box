@@ -60,7 +60,7 @@ class MAB_Widget extends WP_Widget{
 			<label for="<?php echo $this->get_field_id('actionbox-id'); ?>"><?php _e('Action box to display:',MAB_DOMAIN);?></label>
 			<select name="<?php echo $this->get_field_name('actionbox-id'); ?>" class="widefat">
 				<?php
-				global $MabBase;
+				$MabBase = MAB();
 				/** Get available actionboxes **/
 				$mab = get_posts( array( 'numberposts' => -1, 'orderby' => 'title date', 'post_type' =>$MabBase->get_post_type()) );
 				foreach( $mab as $box ):

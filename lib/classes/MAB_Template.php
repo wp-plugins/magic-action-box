@@ -1,6 +1,6 @@
 <?php
 
-class MAB_Template{
+class MAB_Template extends MAB_Base{
 	private $_actionbox_obj = null;
 	private $_template_dir = '';
 	private $_template_url = '';
@@ -21,8 +21,11 @@ class MAB_Template{
 	protected $inlineStyles = array(); // inline styles
 	
 	public function getTemplate(){
+		
 		$actionBoxObj = $this->_actionbox_obj;
 		
+		if( !$actionBoxObj->isConfigured() ) return '';
+
 		/**
 		 * NOTES:
 		 * self::setCurrentTemplateVars() isn't currently used anywhere.
@@ -138,7 +141,7 @@ class MAB_Template{
 		/** LOAD BUTTONS CSS **/
 		/* create custom buttons stylesheet if its not there */
 		if( !file_exists( mab_get_custom_buttons_stylesheet_path() ) ){
-			global $MabButton;
+			$MabButton = MAB('admin');
 			$MabButton->writeConfiguredButtonsStylesheet( $MabButton->getConfiguredButtons(), '' );
 		}
 		
@@ -435,7 +438,7 @@ class MAB_Template{
 	 * @return string absolute path to template file
 	 */
 	function getDefaultTemplateFile( $type = '' ){
-		global $MabBase;
+		$MabBase = MAB();
 
 		$filename = '';
 		$viewDir = $this->getDefaultTemplateDir( $type );
@@ -590,7 +593,7 @@ class MAB_Template{
 
 	
 	public static function getActionBoxDefaultCallback( $actionBoxObj ){
-		global $MabBase;
+		$MabBase = MAB();
 		$data = array();
 
 		$meta = $actionBoxObj->getMeta();
@@ -617,7 +620,7 @@ class MAB_Template{
 	 * @return string HTML
 	 */
 	public static function getActionBoxShareBox( $actionBoxObj ){
-		global $MabBase;
+		$MabBase = MAB();
 		$data = array();
 		
 		$meta = $actionBoxObj->getMeta();
@@ -666,7 +669,7 @@ class MAB_Template{
 	 * @return string HTML
 	 */
 	public static function getActionBoxSalesBox( $actionBoxObj ){
-		global $MabBase;
+		$MabBase = MAB();
 		
 		$data = array();
 		
@@ -693,7 +696,7 @@ class MAB_Template{
 	 * @return string HTML
 	 */
 	public static function getActionBoxOptin( $actionBoxObj ){
-		global $MabBase;
+		$MabBase = MAB();
 
 		$meta = $actionBoxObj->getMeta();
 		$meta['ID'] = $actionBoxObj->getId();
@@ -738,7 +741,7 @@ class MAB_Template{
 	 * @return html
 	 */
 	public static function getOptInForm( $actionBoxObj = null ){
-		global $MabBase;
+		$MabBase = MAB();
 		
 		if( empty( $actionBoxObj ) || !$actionBoxObj->isConfigured() ) return '';
 		
@@ -746,99 +749,17 @@ class MAB_Template{
 		
 		$viewDir = 'optinforms/';
 		$form = '';
+		$provider = $meta['optin-provider'];
 		
-		//get provider
-		switch( $meta['optin-provider'] ){
-			case 'aweber':
-				$settings = $MabBase->get_settings();
-				//break if aweber is not allowed
-				if( $settings['optin']['allowed']['aweber'] == 0 )
-					break;
-				
-				$filename = $viewDir . 'aweber.php';
-				$form = ProsulumMabCommon::getView( $filename, $meta );
-				
-				break;
-				
-			case 'mailchimp':
-				$settings = $MabBase->get_settings();
-				//break if mailchimp is not allowed
-				if( $settings['optin']['allowed']['mailchimp'] == 0 )
-					break;
-				
-				//$meta['mc-account'] = $settings['optin']['mailchimp-account-info'];
-				$filename = $viewDir . 'mailchimp.php';
-				$form = ProsulumMabCommon::getView( $filename, $meta );
-				break;
-				
-			case 'constant-contact':
-				$settings = $MabBase->get_settings();
-				//break if constant contact is not allowed
-				if( $settings['optin']['allowed']['constant-contact'] == 0 )
-					break;
-				
-				$filename = $viewDir . 'constant-contact.php';
-				$form = ProsulumMabCommon::getView( $filename, $meta );
-				break;
-
-			case 'sendreach':
-				$settings = $MabBase->get_settings();
-				//break if sendreach is not allowed
-				if( !$settings['optin']['allowed']['sendreach'] )
-					break;
-
-				$filename = $viewDir . 'sendreach.php';
-				$form = ProsulumMabCommon::getView( $filename, $meta );
-				break;
-				
-			case 'manual':
-				$settings = $MabBase->get_settings();
-				//break if manual is not allowed
-				if( $settings['optin']['allowed']['manual'] == 0 )
-					break;
-				
-				$filename = $viewDir . 'manual.php';
-				$form = ProsulumMabCommon::getView( $filename, $meta );
-				
-				break;
-				
-			case 'wysija':
-				//make sure Wysija plugin is activated
-				if( !class_exists( 'WYSIJA' ) ) break;
-				
-				$wysijaView =& WYSIJA::get("widget_nl","view","front");
-				
-				/** Print wysija scripts **/
-				//$wysijaView->addScripts();
-
-				wp_enqueue_script('wysija-validator-lang');
-				wp_enqueue_script('wysija-validator');
-				wp_enqueue_script('wysija-front-subscribers');
-				wp_enqueue_script('jquery-ui-datepicker');
-				wp_enqueue_style('validate-engine-css');
-				
-				/** TODO: generate fields using wysija's field generator **/
-				
-				$meta['subscriber-nonce'] = $wysijaView->secure(array('action' => 'save', 'controller' => 'subscribers'),false,false);
-				$meta['mab-html-id'] = $actionBoxObj->getHtmlId();
-				
-				$filename = $viewDir . 'wysija.php';
-				$form = ProsulumMabCommon::getView( $filename, $meta );
-				
-				break;
-				
-			default:
-				break;
-		}
-		
-		return apply_filters('mab_optin_form_output', $form, $meta['optin-provider'], $actionBoxObj );
+		$form = apply_filters("mab_{$provider}_optin_form_output", $form, $actionBoxObj);
+		return apply_filters('mab_optin_form_output', $form, $provider, $actionBoxObj );
 	}
 	
 	/**
 	 * to be deprecated @2.8.7
 	 */
 	public static function convertOptinKeys( $settings ){
-		global $MabBase;
+		$MabBase = MAB();
 		$settingsChanged = false;
 		$new = array();
 		$meta = $settings;
