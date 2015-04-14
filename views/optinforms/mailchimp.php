@@ -60,5 +60,9 @@ if(!empty($optinMeta['enabled-fields'])){
 	<?php if(!empty($optinMeta['mailchimp']['field-tag']) && !empty($optinMeta['mailchimp']['tracking-code'])): ?>
 		<input type="hidden" name="<?php esc_html_e($optinMeta['mailchimp']['field-tag']); ?>" value="<?php esc_html_e($optinMeta['mailchimp']['tracking-code']); ?>">
 	<?php endif; ?>
+
+	<?php if(!empty($optinMeta['mailchimp']['group'])): ?>
+		<input type="hidden" name="<?php echo $optinMeta['mailchimp']['group']; ?>" value="1">
+	<?php endif; ?>
 	<div class="clear"></div>
 </form>

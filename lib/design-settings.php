@@ -457,6 +457,21 @@ function mab_get_mapping(){
 				array( '!important', 'fixed_string')
 			)
 		),
+		'.magic-action-box ::-webkit-input-placeholder' => array(
+			'color' => array(array('inherit', 'fixed_string'))
+		),
+		'.magic-action-box :-moz-placeholder' => array(
+			'color' => array(array('inherit', 'fixed_string'))
+		),
+		'.magic-action-box ::-moz-placeholder' => array(
+			'color' => array(array('inherit', 'fixed_string'))
+		),
+		'.magic-action-box :-ms-input-placeholder' => array(
+			'color' => array(array('inherit', 'fixed_string'))
+		),
+		'.magic-action-box ::input-placeholder' => array(
+			'color' => array(array('inherit', 'fixed_string'))
+		),
 		'.magic-action-box .mab-main-action-wrap select' => array( ##SELECT
 			'background' => array(
 				array('input_background_color','string'),
@@ -739,21 +754,45 @@ function mab_create_options($compare, $type) {
 			break;
 		case "family":
 			//font-family sets
-			$options = array(
-			array('Arial', 'Arial, Helvetica, sans-serif'),
-			array('Arial Black', "'Arial Black', Gadget, sans-serif"),
-			array('Century Gothic', "'Century Gothic', sans-serif"),
-			array('Courier New', "'Courier New', Courier, monospace"),
-			array('Georgia', 'Georgia, serif'),
-			array('Lucida Console', "'Lucida Console', Monaco, monospace"),
-			array('Lucida Sans Unicode', "'Lucida Sans Unicode', 'Lucida Grande', sans-serif"),
-			array('Palatino Linotype', "'Palatino Linotype', 'Book Antiqua', Palatino, serif"),
-			array('Tahoma', 'Tahoma, Geneva, sans-serif'),
-			array('Times New Roman', "'Times New Roman', serif"),
-			array('Trebuchet MS', "'Trebuchet MS', Helvetica, sans-serif"),
-			array('Verdana', 'Verdana, Geneva, sans-serif')
-			);
-			$options = apply_filters('mab_font_family_options', $options);
+			static $fonts = array();
+
+			if(empty($fonts)){
+				$fonts = array(
+				array('Arial', 'Arial, Helvetica, sans-serif'),
+				array('Arial Black', "'Arial Black', Gadget, sans-serif"),
+				array('Century Gothic', "'Century Gothic', sans-serif"),
+				array('Courier New', "'Courier New', Courier, monospace"),
+				array('Georgia', 'Georgia, serif'),
+				array('Lucida Console', "'Lucida Console', Monaco, monospace"),
+				array('Lucida Sans Unicode', "'Lucida Sans Unicode', 'Lucida Grande', sans-serif"),
+				array('Palatino Linotype', "'Palatino Linotype', 'Book Antiqua', Palatino, serif"),
+				array('Tahoma', 'Tahoma, Geneva, sans-serif'),
+				array('Times New Roman', "'Times New Roman', serif"),
+				array('Trebuchet MS', "'Trebuchet MS', Helvetica, sans-serif"),
+				array('Verdana', 'Verdana, Geneva, sans-serif')
+				);
+				$MabBase = MAB();
+				$settingsApi = MAB('settings');
+				$settings = $settingsApi->getAll();
+				if(!empty($settings['fonts'])){
+					$t_fonts = explode("\n", str_replace("\r", "", $settings['fonts']));
+
+					foreach($t_fonts as $f){
+						$line = explode(':', $f);
+
+						if(count($line) > 1){
+							// used delimiter. first element is the font
+							// name. second is the actual font family
+							// value
+							$fonts[] = array($line[0],$line[1]);
+						} else {
+							$fonts[] = array($line[0],$line[0]);
+						}
+					}
+				}
+			}
+
+			$options = apply_filters('mab_font_family_options', $fonts);
 			sort($options);
 			array_unshift($options, array('Inherit', 'inherit')); // Adds Inherit option as first option.
 			break;
@@ -989,7 +1028,7 @@ function mab_create_options($compare, $type) {
 		mab_add_heading( 'Input Boxes' );
 		mab_setting_line(mab_add_background_color_setting('input_background_color', 'Background'));
 		mab_setting_line(mab_add_border_setting('input_border', 'Border'));
-		mab_setting_line(mab_add_color_setting('input_font_color', 'Color'));
+		mab_setting_line(mab_add_color_setting('input_font_color', 'Text Color'));
 		mab_setting_line(mab_add_select_setting('input_font_family', 'Font', 'family'));
 		mab_setting_line(mab_add_size_setting('input_font_size', 'Font Size'));
 		mab_setting_line(mab_add_select_setting('input_font_style', 'Font Style', 'style'));
@@ -1008,8 +1047,8 @@ function mab_create_options($compare, $type) {
 		mab_setting_line(mab_add_background_color_setting('button_background_hover_color', 'Background Hover'));
 		mab_setting_line(mab_add_border_setting('button_border', 'Border'));
 		mab_setting_line(mab_add_color_setting('button_border_hover_color', 'Border Hover Color'));
-		mab_setting_line(mab_add_color_setting('button_font_color', 'Color'));
-		mab_setting_line(mab_add_color_setting('button_font_hover_color', 'Color Hover'));
+		mab_setting_line(mab_add_color_setting('button_font_color', 'Text Color'));
+		mab_setting_line(mab_add_color_setting('button_font_hover_color', 'Text Color Hover'));
 		mab_setting_line(mab_add_text_setting('button_text_shadow', 'Text Shadow' ));
 		mab_setting_line(mab_add_text_setting('button_text_shadow_hover', 'Text Shadow Hover' ));
 		mab_setting_line(mab_add_note(__('Enter <code>[x-offset]px [y-offset]px [shadow size]px [color]</code> to add Text Shadow. Example: <code>1px 1px 0 #000000</code>', 'mab' )));

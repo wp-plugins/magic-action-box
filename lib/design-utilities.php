@@ -22,7 +22,7 @@
  * @version 0.9.8
  */
 function mab_get_fresh_design_option( $opt, $key = null ) {
-	global $MabDesign;
+	$MabDesign = MAB('design');
 	$setting = $MabDesign->getConfiguredStyle( $key );
 	if( isset( $setting[$opt] ) )
 		return $setting[$opt];

@@ -1,9 +1,10 @@
 <div class="themes-php">
-	<div class="wrap">
+	<div class="wrap mab-style-editor">
 		<?php screen_icon('edit-comments'); ?>
 <h2 class="nav-tab-wrapper">
 	<a id="mab-designs-tab" href="#mab-styles" class="nav-tab">Styles</a>
 	<a id="mab-buttons-tab" href="#mab-buttons" class="nav-tab">Buttons</a>
+	<a id="mab-fonts-tab" href="#mab-fonts" class="nav-tab">Custom Fonts</a>
 </h2>
 <!-- END HEADER -->
 
@@ -33,6 +34,7 @@ if( isset( $_GET['deleted'] ) && 'true' == $_GET['deleted'] ):
 <?php
 $buttons = $data['buttons'];
 $styles = $data['styles'];
+$fonts = $data['fonts'];
 ?>
 
 <div id="mab-styles" class="group">
@@ -109,6 +111,26 @@ $styles = $data['styles'];
 	</table>
 </div><!-- #mab-buttons -->
 
+
+<div id="mab-fonts" class="group">
+	<?php if(!empty($_GET['mab-fonts-updated'])): ?>
+	<div class="updated fade"><p><?php _e( 'Fonts saved.', 'mab' ); ?></p></div>
+	<?php endif; ?>
+
+	<p><?php _e('Specify fonts you would like to be available when creating your own styles. One font family per line.', 'mab'); ?></p>
+	<p><?php _e('You may also specify the name to use in the dropdown by doing: "NAME:FONT-FAMILY"', 'mab'); ?></p>
+	<p><em><?php _e('Example:', 'mab'); ?></em><br>
+	Roboto<br>
+	Oswald<br>
+	Metro:Metrophobic, arial, serif<br>
+	Open Sans:Open sans condensed
+	</p>
+	<form method="post" action="<?php echo add_query_arg( array() ); ?>">
+		<?php wp_nonce_field( 'save-mab-fonts-nonce','save-mab-fonts-nonce' ); ?>
+		<h3><input name="mab-save-fonts" type="submit" class="button button-primary" value="<?php _e('Save', 'mab'); ?>"></h3>
+		<textarea class="code large-text" rows="10" style="max-width: 500px;" name="mab[fonts]"><?php echo esc_textarea($fonts); ?></textarea>
+	</form>
+</div><!-- #mab-fonts -->
 <!-- FOOTER -->
 	</div><!-- .wrap -->
 </div><!-- .themes-php -->
