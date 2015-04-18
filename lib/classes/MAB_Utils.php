@@ -10,7 +10,7 @@
 /**
  * @since 2.8.6
  */
-class MAB_Utils{
+class MAB_Utils extends MAB_Base{
 	private static $_action_box_types = array();
 	
 	/**
@@ -63,8 +63,8 @@ class MAB_Utils{
 	 * @return array Magic Action Box settings
 	 */
 	public static function getSettings(){
-		global $MabBase;
-		return $MabBase->get_settings();
+		$settings = MAB('settings');
+		return $settings->getAll();
 	}
 	
 	/**
@@ -73,7 +73,7 @@ class MAB_Utils{
 	 * @return array|bool - return array of data for action box depending specified through $type or all action boxes if no parameter is passed. Will return FALSE if specified $type is not found
 	 */
 	public static function getActionBoxTypes( $type = null ){
-		global $MabBase;
+		$MabBase = MAB();
 
 		$boxTypes = $MabBase->get_registered_action_box_types();
 		
@@ -90,6 +90,7 @@ class MAB_Utils{
 			return $boxTypes;
 		}
 	}
+
 	
 	/**
 	 * Get Action Box Styles
@@ -164,17 +165,6 @@ class MAB_Utils{
 		}
 	}
 	
-	public static function log( $message, $format = false ){
-		if( is_array( $message ) || is_object( $message ) ){
-			if( $format ){
-				error_log( print_r( $message, true ) );
-			} else {
-				error_log( serialize( $message ) );
-			}
-		} else {
-			error_log( $message );
-		}
-	}
 	
 	/**
 	 * Strip Whitespace

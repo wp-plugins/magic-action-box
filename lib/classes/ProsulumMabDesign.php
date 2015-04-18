@@ -141,7 +141,8 @@ class ProsulumMabDesign{
 	 * TODO: Convert this for use with Settings-type options?
 	 */
 	function getSettings( $postId = '' ){
-		global $post, $MabBase;
+		global $post;
+		$MabBase = MAB();
 		$is_settings_type = false;
 		
 		if( !is_object( $post ) ){
@@ -173,7 +174,7 @@ class ProsulumMabDesign{
 	 * Saves design settings for action_box custom post type. This is saved in the POSTMETA table.
 	 */
 	function updateSettings( $postId, $meta, $metaKey = '' ){
-		global $MabBase;
+		$MabBase = MAB();
 		$MabBase->update_mab_meta( $postId, $meta, 'design' );
 	}
 	
@@ -182,7 +183,7 @@ class ProsulumMabDesign{
 	 * @return array saved style settings or a default setting
 	 */
 	function getStyleSettings(){
-		global $MabBase;
+		$MabBase = MAB();
 		
 		//TODO: get from cache?
 		$settings = get_option( $this->_option_StyleSettings );
@@ -287,6 +288,3 @@ class ProsulumMabDesign{
 	}
 	
 }
-
-global $MabDesign;
-$MabDesign = new ProsulumMabDesign();

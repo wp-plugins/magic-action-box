@@ -4,7 +4,7 @@ Developer: Prosulum
 Tags: opt in, call to action, aweber, email, email marketing, form, mailing list, marketing, newsletter, webform, mailchimp, constant contact
 Requires at least: 3.5
 Tested up to: 4.1
-Stable tag: 2.15.5
+Stable tag: 2.16.1
 
 Magic Action Box let's you display professional looking opt-in forms and feature boxes in your WordPress site.
 
@@ -99,6 +99,24 @@ Try checking the *Reorder post content filter priorities* checkbox found in WP A
 5. Action Box Settings Screen
 
 == Changelog ==
+= 2.16.1 =
+*2015-04-16*
+* [fix] undefined variables in wysija optin form settings 
+* [enhance] basic css stylesheet
+
+= 2.16 =
+*2015-04-13*
+* [add] way to set mailchimp group to mailchimp opt in form
+* [update] aweber and mailchimp API library used
+* [add] integration with Postmatic
+* [add] hooks when showing optin settings to make it easier to integrate more email providers
+* Refactor classes and plugin structure. 
+* [add] MAB API endpoint (beta)
+* [add] [mab_load_assets] shortcode
+* [add] way to add custom fonts. Found in Magic Action Box -> Styles & Buttons -> Custom Fonts
+* [fix] do not print css declaration blocks that have empty values
+
+
 = 2.15.5 =
 * add tracking code fields to MailChimp
 * add options to enable/disable First and Last name fields for integrated opt-in forms

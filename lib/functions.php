@@ -1,6 +1,88 @@
 <?php
 
 /**
+ * Return a MAB API variable, or NULL if it doesn't exist
+ *
+ * Like the fuel() function, except that ommitting $name returns the current MabStats instance rather than the fuel.
+ * The distinction may not matter in most cases.
+ *
+ * @param string $name If ommitted, returns a MabStats_Fuel object with references to all the fuel.
+ * @return mixed MAB_Fuel value if available, NULL if not. 
+ *
+ */
+function MAB($name = 'MAB') {
+	return MAB_Base::getFuel($name); 
+}
+
+/**
+ * Get an action box
+ * @param int $actionBoxId - Post ID of action box
+ * @param bool $loadAssets - whether to load action box assets or not
+ * @param bool $forceShow - default FALSE. USed only if $actionBoxId is not set. 
+                            If TRUE will show the action box even if the post
+ * it is being shown in has not set the action box to be shown "Manually"
+ * @param bool $fallbackToDefaults set to TRUE to let action box show default action box if any
+ * @return string - HTML of action box. Or empty string
+ */
+function mab_get_actionbox( $actionBoxId = null, $loadAssets = true, $forceShow = false, $fallbackToDefaults = false ){
+	global $post, $Mab;
+	$MabBase = MAB();
+	$actionBox = '';
+	
+	if( is_null( $actionBoxId ) || $actionBoxId === '' ){
+		/** Get action box used for a post - if it is specified **/
+		
+		//get postmeta. NOTE: This is not postmeta from Action Box but
+		//from a regular post/CPT where Action Box is to be shown
+		$postmeta = $MabBase->get_mab_meta( $post->ID, 'post' );
+
+		$post_action_box = isset($postmeta['post-action-box']) ? $postmeta['post-action-box'] : '';
+		$post_action_box_placement = isset($postmeta['post-action-box-placement']) ? $postmeta['post-action-box-placement'] : '';
+		
+		//return nothing if action box is disabled or if placement is not set to 'manual'
+		if( 'none' == $post_action_box ){
+			/** Action box is "Disabled" **/
+			return '';
+
+		//if action box is not set or is set to "default"
+		} elseif( !isset( $post_action_box ) || $post_action_box === '' || $post_action_box == 'default' ){
+			if( $fallbackToDefaults && ($forceShow || $post_action_box_placement == 'manual' ) ){
+				//get post type
+				$post_type = get_post_type( $post );
+				$post_type = ( $post_type == 'page' ) ? 'page' : 'single';
+				$post_action_box = mab_get_action_box_id_from_context($post_type);
+			} else {
+				return '';
+			}
+		} elseif( !$forceShow && $post_action_box_placement != 'manual' ){
+			/** Action box must be set to show "manually" **/
+			return '';
+		}
+		
+		$actionBoxId = $post_action_box;
+	}
+	
+	$actionBoxObj = new MAB_ActionBox( $actionBoxId );
+	
+	$actionBox = $actionBoxObj->getActionBox(null, $loadAssets); //also loads assets
+	
+	return $actionBox;
+}
+
+/**
+ * Loads an action box css and js assets. Uses wp_enqueue_* api
+ * @param  int $mabid ID of the action box
+ * @return void
+ */
+function mab_load_actionbox_assets($mabid){
+	if(empty($mabid)) return;
+
+	$actionBox = new MAB_ActionBox($mabid);
+	$actionBox->loadAssets();
+}
+
+
+/**
  * Register action box
  * 
  * Form the array $box like this:
@@ -14,7 +96,7 @@
  * @return none
  */
 function mab_register_action_box( $box ){
-	global $MabBase;
+	$MabBase = MAB();
 	$MabBase->register_action_box_type( $box );
 }
 
@@ -23,7 +105,7 @@ function mab_register_action_box( $box ){
  * @return int|bool Post ID of Action Box or FALSE if actionbox is not specified for a context
  */
 function mab_get_action_box_id_from_context( $context = 'default' ){
-	global $MabBase;
+	$MabBase = MAB();
 	
 	$settings = MAB_Utils::getSettings();
 	$globalMab = $settings['global-mab'];
@@ -163,4 +245,54 @@ function mab_get_action_box_id_from_context( $context = 'default' ){
  */
 function mab_array_index_value($array, $index, $empty_value = ''){
 	return isset($array[$index]) ? $array[$index] : $empty_value;
+}
+
+
+
+/**
+ * Return a button
+ */
+function mab_button($args){
+	$defaults = array(
+		'id' => '',
+		'text' => 'Button Text',
+		'url' => '',
+		'class' => '',
+		'target' => '',
+		'title' => '',
+		'name' => '',
+		'new_window' => false
+		);
+
+	$args = wp_parse_args($args, $defaults);
+
+	//stop if we have no id
+	if( $args['id'] === '' || is_null($args['id']) )
+		return '';
+
+	//add our button key to class
+	$args['class'] .= ' mab-button-' . intval($args['id']);
+
+	if(empty($args['target']) && $args['new_window']){
+		$args['target'] = '_blank';
+	}
+
+	if(empty($args['url'])){
+		//we will output a submit button
+		$template = '<input type="submit" value="%s" name="%s" class="%s" />';
+		$button = sprintf($template, $args['text'], $args['name'], $args['class']);
+	} else {
+		//we will output an <a> button
+		$template = '<a href="%s" class="%s" title="%s" target="%s">%s</a>';
+		$button = sprintf($template, $args['url'], $args['class'], $args['title'], $args['target'], $args['text']);
+	}
+
+	return $button;
+}
+
+/**
+ * Wrapper for MAB_MetaBoxes::optionBox()
+ */
+function mab_option_box($name = '', $data = array()){
+	return MAB_MetaBoxes::optionBox($name, $data);
 }

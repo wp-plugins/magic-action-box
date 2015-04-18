@@ -18,7 +18,7 @@
  * @version 0.9.7.3
  */
 function mab_get_stylesheet_location($type) {
-	global $MabBase;
+	$MabBase = MAB();
 	$dir = ('url' == $type) ? $MabBase->get_css_url() : $MabBase->get_css_directory();
 	return apply_filters('mab_get_stylesheet_location', $dir );
 }
@@ -256,26 +256,35 @@ function mab_prepare_settings_stylesheet($key, $section = 'all', $css_lead_selec
 							if( '' == $image )
 								continue;
 						}
-						$line = "\t" . $property . ':';
+						$line = "\t" . $property . ': ';
+						$temp_line = '';
 						if ( is_array( $value ) ) {
 							foreach ( $value as $composite_value ) {
-								$line .= ' ';
 								$val = $composite_value[0];
 								$type = $composite_value[1];
 								if ( 'fixed_string' == $type ) {
-									$line .= $val;
+									$temp_line .= $val;
 								} elseif ('string' == $type) {
-									$line .=  mab_get_fresh_design_option( $val, $key );
+									$temp_line .=  mab_get_fresh_design_option( $val, $key );
 								} else {
 									$cache_val = mab_get_fresh_design_option( $val, $key );
-									$line .= $cache_val;
+									$temp_line .= $cache_val;
 									//$line .= ( (int)$cache_val > 0 ) ? $type : null;
-									$line .= ( (int) $cache_val == 0 ) ? null : $type;
+									$temp_line .= ( (int) $cache_val == 0 ) ? null : $type;
 								}
+								$temp_line .= ' ';
 							}
+
 						} else {
-					        		$line .= ' ' . mab_get_fresh_design_option( $value, $key );
-					        	}
+					        $temp_line = mab_get_fresh_design_option( $value, $key );
+					    }
+
+						$temp_line = trim($temp_line);
+						if($temp_line == '!important' || empty($temp_line)){
+							// don't add this declaration
+							continue;
+						}
+					    $line .= $temp_line;
 
 						$output[] = $line . ";";
 					}
@@ -298,7 +307,7 @@ function mab_prepare_settings_stylesheet($key, $section = 'all', $css_lead_selec
  * Creates CSS for actionboxes
  */
 function mab_prepare_actionbox_stylesheet( $postId, $section = 'all' ){
-	global $MabBase;
+	$MabBase = MAB();;
 	$output= array();
 	
 	$styleSettings = $MabBase->get_mab_meta( $postId, 'design' );

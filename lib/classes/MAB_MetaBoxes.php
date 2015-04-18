@@ -2,7 +2,7 @@
 /**
  * Meta boxes for the Action Box post type
  **/
-class ProsulumMabMetaBoxes{
+class MAB_MetaBoxes{
 	private $_post = null;
 	
 	function __construct( $post ){
@@ -17,7 +17,7 @@ class ProsulumMabMetaBoxes{
 	}
 
 	function initMetaboxes(){
-		global $MabBase;
+		$MabBase = MAB();
 		$post = $this->_post;
 
 		//get post type name
@@ -57,7 +57,7 @@ class ProsulumMabMetaBoxes{
 	 * @return none
 	 */
 	function loadActionBoxGeneralMetaboxes( $type ){
-		global $MabBase;
+		$MabBase = MAB();
 		$post_type = $MabBase->get_post_type();
 		add_meta_box( 'mab-actionbox-settings', __('Action Box: General Settings', 'mab' ), array( $this, 'actionBoxSettings' ), $post_type, 'normal', 'high' );
 	}
@@ -68,7 +68,7 @@ class ProsulumMabMetaBoxes{
 	 * @return none
 	 */
 	function loadActionBoxSpecificMetaboxes( $type ){
-		global $MabBase;
+		$MabBase = MAB();
 
 		//get post type name
 		$post_type = $MabBase->get_post_type();
@@ -87,12 +87,36 @@ class ProsulumMabMetaBoxes{
 	}
 
 	/**
+	 * Default Option Boxes
+	 *
+	 * This function is intended to be used "inside" other metabox templates.
+	 *
+	 * Example:
+	 * 
+	 * $meta = $MabBase->get_mab_meta($postId);
+	 * MAB_MetaBoxes::optionBox('field-labels', $meta);
+	 * 
+	 * @param  $name the filename of the option box file template
+	 * @param  $data data array for the option box template.
+	 * @return  html
+	 */
+	public static function optionBox($name = '', $data = array()){
+
+		$name = sanitize_file_name($name);
+		
+		if(empty($name)) return '';
+
+		$filename = "metaboxes/option-boxes/{$name}.php";
+		return MAB_Utils::getView($filename, $data);
+	}
+
+	/**
 	 * Loads Custom CSS Metabox
 	 * 
 	 * @return none
 	 */
 	function loadCustomCssSettingsBox(){
-		global $MabBase;
+		$MabBase = MAB();
 
 		//get post type name
 		$post_type = $MabBase->get_post_type();
@@ -122,7 +146,7 @@ class ProsulumMabMetaBoxes{
 	
 	/*  Custom CSS Settings */
 	function customCssBox( $post ){
-		global $MabBase;
+		$MabBase = MAB();
 		$meta = $MabBase->get_mab_meta( $post->ID, 'design' );
 		$data['custom_css'] = isset( $meta['mab_custom_css'] ) ? $meta['mab_custom_css'] : '';
 		$filename = 'metaboxes/metabox-customcss.php';
@@ -133,7 +157,8 @@ class ProsulumMabMetaBoxes{
 	/** ALL ACTION BOXES **/
 	/* General Settings */
 	function actionBoxSettings( $post ){
-		global $MabBase, $MabAdmin;
+		$MabAdmin = MAB('admin');
+		$MabBase = MAB();
 
 		$data['meta'] = $MabBase->get_mab_meta( $post->ID );
 		$data['assets-url'] = MAB_ASSETS_URL;
@@ -148,8 +173,8 @@ class ProsulumMabMetaBoxes{
 	
 	/* Content */
 	function actionBoxContent( $post ){
-		global $MabBase, $MabAdmin;
-
+		$MabAdmin = MAB('admin');
+		$MabBase = MAB();
 		$data['meta'] = $MabBase->get_mab_meta( $post->ID );
 		$data['assets-url'] = MAB_ASSETS_URL;
 		$filename = 'metaboxes/type/actionbox-content.php';
@@ -159,8 +184,8 @@ class ProsulumMabMetaBoxes{
 	
 	/* Aside */
 	function actionBoxAside( $post ){
-		global $MabBase, $MabAdmin;
-
+		$MabAdmin = MAB('admin');
+		$MabBase = MAB();
 		$data['meta'] = $MabBase->get_mab_meta( $post->ID );
 		$data['assets-url'] = MAB_ASSETS_URL;		
 		$filename = 'metaboxes/type/actionbox-aside.php';
@@ -170,8 +195,8 @@ class ProsulumMabMetaBoxes{
 	
 	/** OPT IN SPECIFIC **/
 	function optIn( $post ){
-		global $MabBase, $MabAdmin;
-
+		$MabAdmin = MAB('admin');
+		$MabBase = MAB();
 		$data['meta'] = $MabBase->get_mab_meta( $post->ID );
 		$data['assets-url'] = MAB_ASSETS_URL;
 		$filename = 'metaboxes/type/optin.php';
@@ -180,14 +205,22 @@ class ProsulumMabMetaBoxes{
 	}
 	
 	function optInSettings( $post ){
-		global $MabBase, $MabAdmin, $MabButton;
-
+		$MabAdmin = MAB('admin');
+		$MabBase = MAB();
+		$MabButton = MAB('button');
 		$data['meta'] = $MabBase->get_mab_meta( $post->ID );
+
 		$data['assets-url'] = MAB_ASSETS_URL;
 		
 		//get allowed optin providers
-		$data['optin-providers'] = $MabAdmin->getAllowedOptinProviders();
+		$data['optin-providers'] = MAB_OptinProviders::getAllAllowed();
 		
+		if(!empty($data['meta']['optin-provider'])){
+			$data['optin-provider-html'] = MAB_MetaBoxes::getOptinSettingsHtml($data['meta']['optin-provider'], $post->ID); 
+		} else {
+			$data['optin-provider-html'] = MAB_MetaBoxes::getOptinSettingsHtml('manual', $post->ID); 
+		}
+
 		//get available action box styles
 		$data['styles'] = MAB_Utils::getStyles();
 
@@ -198,6 +231,36 @@ class ProsulumMabMetaBoxes{
 		$box = MAB_Utils::getView( $filename, $data );
 		echo $box;
 	}
+
+	public static function getOptinSettingsHtml($provider, $postId =null){
+
+		$html = apply_filters("mab_get_{$provider}_settings_html", '', $provider, $postId );
+		return apply_filters('mab_get_optin_settings_html', $html, $provider, $postId );
+	}
+
+	public static function getDefaultOptinSettingsHtml($html, $provider, $postId){
+		$MabAdmin = MAB('admin');
+		$MabBase = MAB();
+		$MabButton = MAB('button');
+		
+		if(!empty($postId))
+			$data['meta'] = $MabBase->get_mab_meta( $postId );
+		else
+			$data['meta'] = array();
+
+		//get buttons
+		$data['buttons'] = $MabButton->getConfiguredButtons();
+
+		if($provider == 'mailchimp' && !empty($data['meta']['optin']['mailchimp'])){
+			$listId = !empty($data['meta']['optin']['mailchimp']['list']) ? $data['meta']['optin']['mailchimp']['list'] : '';
+
+			$data['mcGroups'] = $MabAdmin->getMailChimpGroups($listId);
+		}
+		
+		$filename = "metaboxes/optin-providers/{$provider}.php";
+		$box = MAB_Utils::getView( $filename, $data );
+		return $box;
+	}
 	
 	function optinFormDesignSettings( $post ){
 		mab_form_design_settings( $post );
@@ -206,7 +269,7 @@ class ProsulumMabMetaBoxes{
 	/** OTHER CUSTOM POST TYPES METABOX **/
 	//put metabox in selected content types
 	static function postActionBox( $post ){
-		global $MabBase;
+		$MabBase = MAB();
 		
 		$data['meta'] = $MabBase->get_mab_meta( $post->ID, 'post' );
 		$data['assets-url'] = MAB_ASSETS_URL;

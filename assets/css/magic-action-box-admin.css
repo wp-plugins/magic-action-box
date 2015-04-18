@@ -389,6 +389,7 @@ ul#mab-style-preview li .mab-style-description strong{
 	float: right;
 }
 
+.mab-style-editor .group{ clear: both; }
 
 /** Main Settings Page **/
 

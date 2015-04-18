@@ -1,4 +1,5 @@
 <?php
+	$MabBase = MAB();
 	$meta = $data['meta'];
 	$assets_url = $data['assets-url'];
 	
@@ -11,7 +12,6 @@
 		<option value="none" <?php selected( $selected_action_box, 'none' ); ?> >Disable</option>
 		<option value="default" <?php selected( $selected_action_box, 'default' ); ?> >Use Default</option>
 		<?php //Get action boxes available
-			global $MabBase;
 			$action_boxes_obj = get_posts( array( 'numberposts' => -1, 'orderby' => 'title date', 'post_type' => $MabBase->get_post_type() ) );
 			foreach( $action_boxes_obj as $action_box ):
 		?>
