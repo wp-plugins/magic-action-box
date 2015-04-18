@@ -25,6 +25,8 @@ class ProsulumMabBase extends MAB_Base{
 		$this->MAB('button', new ProsulumMabButton, true);
 		$this->MAB('settings', new MAB_Settings, true);
 		$this->MAB('ajax', new MAB_Ajax, true);
+		// experimental
+		$this->MAB('api', new MAB_API, true);
 
 		$this->loadFiles();
 
@@ -172,7 +174,7 @@ class ProsulumMabBase extends MAB_Base{
 		if( !is_object( $MabBase ) ){
 			$MabBase = new ProsulumMabBase();
 		}
-		
+
 		//check for post type
 		if( !post_type_exists( $MabBase->_post_type ) )
 			$MabBase->register_post_type();
@@ -181,7 +183,7 @@ class ProsulumMabBase extends MAB_Base{
 		$settingsApi = MAB('settings');
 		$settingsApi->defaultSettingsIfNew();
 		
-		flush_rewrite_rules( false );
+		flush_rewrite_rules();
 		
 	}
 

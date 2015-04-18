@@ -83,14 +83,14 @@
 	overflow: hidden;
 }
 
-.mabstyle-default.magic-action-box form .mab-field{
+.mabstyle-default.magic-action-box form{
 }
 
-.mabstyle-default.magic-action-box form .mab-field label{
+.mabstyle-default.magic-action-box form label{
 	font-size: 90% !important;
 }
 
-.mabstyle-default.magic-action-box form .mab-field input, .mabstyle-default.magic-action-box form .mab-field textarea, .mabstyle-default.magic-action-box form .mab-field select{
+.mabstyle-default.magic-action-box form input, .mabstyle-default.magic-action-box form textarea, .mabstyle-default.magic-action-box form select{
 	background: #fff !important;
 	border: 1px solid #999 !important;
 	border-radius: 2px !important;
@@ -98,7 +98,7 @@
 	color: #555 !important;
 }
 
-.mabstyle-default.magic-action-box form .mab-field input:focus, .mabstyle-default.magic-action-box form .mab-field textarea:focus, .mabstyle-default.magic-action-box form .mab-field select:focus{
+.mabstyle-default.magic-action-box form input:focus, .mabstyle-default.magic-action-box form textarea:focus, .mabstyle-default.magic-action-box form select:focus{
 	border-color: #888 !important;
 	box-shadow: 0 0 2px #c7c7c7 !important;
 	color: #444 !important;

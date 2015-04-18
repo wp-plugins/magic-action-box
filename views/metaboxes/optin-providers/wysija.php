@@ -1,5 +1,6 @@
 <?php
 	$meta = !empty( $data['meta'] ) ? $data['meta'] : array();
+	$optinMeta = !empty( $meta['optin'] ) ? $meta['optin'] : array();
 ?><!-- #WYSIJA --><?php 
 /* check if wysija plugin is installed **/
 if( !class_exists( 'WYSIJA' ) ):
@@ -74,7 +75,8 @@ if( !class_exists( 'WYSIJA' ) ):
 		<div class="mab-option-box">
 			<h4><label for="mab-wysija-success-message"><?php _e('Success Message:','mab'); ?></label></h4>
 			<?php
-			$message = isset( $wysija['success-message'] ) ? wp_kses_post($wysija['success-message']) : 'You\'ve successfully subscribed. Check your inbox now to confirm your subscription.'; ?>
+			$message = isset( $wysija['success-message'] ) ? wp_kses_post($wysija['success-message']) : 'You\'ve successfully subscribed. Check your inbox now to confirm your subscription.'; 
+			?>
 			<textarea id="mab-wysija-success-message" class="large-text" name="mab[optin][wysija][success-message]"><?php echo $message; ?></textarea>
 		</div>
 

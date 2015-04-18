@@ -98,5 +98,3 @@ class MAB_API extends MAB_Base{
 		exit;
 	}
 }
-
-new MAB_API();
