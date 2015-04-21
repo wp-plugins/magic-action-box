@@ -623,9 +623,9 @@ class ProsulumMabAdmin extends MAB_Base{
 				$settings['optin']['aweber-authorization'] = '';
 			}
 		} else {
-			$settings['optin']['aweber-account-info'] = $old_settings['optin']['aweber-account-info'];
-			$settings['optin']['allowed']['aweber'] = $old_settings['optin']['allowed']['aweber'];
-			$settings['optin']['aweber-lists'] = $old_settings['optin']['aweber-lists'];
+			$settings['optin']['aweber-account-info'] = !empty($old_settings['optin']['aweber-account-info']) ? $old_settings['optin']['aweber-account-info'] : '';
+			$settings['optin']['allowed']['aweber'] = !empty($old_settings['optin']['allowed']['aweber']) ? $old_settings['optin']['allowed']['aweber'] : 0;
+			$settings['optin']['aweber-lists'] = !empty($old_settings['optin']['aweber-lists']) ? $old_settings['optin']['aweber-lists'] : array();
 		}
 		
 		//process mailchimp
@@ -646,8 +646,8 @@ class ProsulumMabAdmin extends MAB_Base{
 				$settings['optin']['mailchimp-api'] = '';
 			}
 		} else {
-			$settings['optin']['allowed']['mailchimp'] = $old_settings['optin']['allowed']['mailchimp'];
-			$settings['optin']['mailchimp-lists'] = $old_settings['optin']['mailchimp-lists'];
+			$settings['optin']['allowed']['mailchimp'] = !empty($old_settings['optin']['allowed']['mailchimp']) ? $old_settings['optin']['allowed']['mailchimp'] : 0;
+			$settings['optin']['mailchimp-lists'] = !empty($old_settings['optin']['mailchimp-lists']) ? $old_settings['optin']['mailchimp-lists'] : array();
 		}
 
 		// process SendReach
@@ -885,8 +885,8 @@ class ProsulumMabAdmin extends MAB_Base{
 		
 		//TODO: do nonce check
 		
-		if( !empty($data['postmeta']) && is_array( $data['postmeta'] ) ){
-			$postmeta = $data['postmeta'];
+		if( !empty($data['mabpostmeta']) && is_array( $data['mabpostmeta'] ) ){
+			$postmeta = $data['mabpostmeta'];
 			
 			$MabBase->update_mab_meta( $post_id, $postmeta, 'post' );
 		}

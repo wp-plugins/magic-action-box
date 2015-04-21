@@ -7,7 +7,7 @@
 <div class="mab-option-box">
 	<h4><label for="mab-post-action-box"><?php _e('Select Action Box','mab' ); ?></label></h4>
 	<p><?php _e( sprintf('Select an Action Box to display. <a href="http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=selectDefaultBox" target="_blank">With Pro version</a>, you can also specify the default Action Box to use in the <a href="%1s">Main Settings page</a>.', admin_url('admin.php?page=mab-main') ),'mab' ); ?></p>
-	<select id="mab-post-action-box" class="large-text" name="postmeta[post-action-box]" >
+	<select id="mab-post-action-box" class="large-text" name="mabpostmeta[post-action-box]" >
 		<?php $selected_action_box = isset( $meta['post-action-box'] ) ? $meta['post-action-box'] : 'default'; ?>
 		<option value="none" <?php selected( $selected_action_box, 'none' ); ?> >Disable</option>
 		<option value="default" <?php selected( $selected_action_box, 'default' ); ?> >Use Default</option>
@@ -30,7 +30,7 @@
 				<img alt="Action Box after the post" src="<?php echo $assets_url; ?>images/actionbox-bottom.png" />
 				<br />
 				<?php $placement = !empty( $meta['post-action-box-placement'] ) ? $meta['post-action-box-placement'] : 'bottom'; ?>
-				<input id="mab-post-action-box-placement-bottom" value="bottom" type="radio" <?php checked( in_array( $placement, array( 'bottom', '') ), true ); ?> name="postmeta[post-action-box-placement]" />
+				<input id="mab-post-action-box-placement-bottom" value="bottom" type="radio" <?php checked( in_array( $placement, array( 'bottom', '') ), true ); ?> name="mabpostmeta[post-action-box-placement]" />
 				After Content
 			</label>
 		</li>
@@ -38,7 +38,7 @@
 			<label for="mab-post-action-box-placement-top">
 				<img alt="Action Box before the post" src="<?php echo $assets_url; ?>images/actionbox-top.png" />
 				<br />
-				<input id="mab-post-action-box-placement-top" value="top" type="radio" <?php checked( $placement, 'top'); ?> name="postmeta[post-action-box-placement]" />
+				<input id="mab-post-action-box-placement-top" value="top" type="radio" <?php checked( $placement, 'top'); ?> name="mabpostmeta[post-action-box-placement]" />
 				Before Content
 			</label>
 		</li>
