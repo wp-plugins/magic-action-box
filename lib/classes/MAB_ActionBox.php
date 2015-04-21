@@ -1,6 +1,6 @@
 <?php
 
-class MAB_ActionBox{
+class MAB_ActionBox extends MAB_Base{
 	private $_is_configured = false;
 	private $_id = null;
 	private $_type = null;
@@ -41,13 +41,11 @@ class MAB_ActionBox{
 	}
 	
 	function getTemplate(){
-		if( !$this->isConfigured() ) return '';
 		return $this->_template_obj->getTemplate();
 	}
 	
 	function loadAssets(){
 		if( !$this->isConfigured() ) return;
-		
 		return $this->_template_obj->loadAssets();
 	}
 	
@@ -78,7 +76,7 @@ class MAB_ActionBox{
 	 * @return TRUE if the action box was configured, FALSE otherwise
 	 */
 	function init( $id = null ){
-		global $MabBase;
+		$MabBase = MAB();
 		//stop early if $id is empty
 		if( $id === '' || is_null( $id ) ) return false;
 		

@@ -11,8 +11,12 @@ if( isset( $meta['aside'] )){
 		$image_url = !empty( $aside['image']['url'] ) ? $aside['image']['url'] : '';
 		$width = !empty( $aside['width'] ) ? 'width="' . $aside['width'] . '"' : '';
 		$height = !empty( $aside['height'] ) ? 'height="' . $aside['height'] . '"' : '';
+		$inline_width = !empty($aside['width']) ? 'width: ' . $aside['width'] . 'px;' : '';
+		$inline_height = !empty($aside['height']) ? 'height: ' . $aside['height'] . 'px;' : '';
 
-		$aside_content = !empty( $image_url ) ? sprintf( '<img src="%s" alt="Opt In Image" %s %s />', $image_url, $width, $height ) : '';
+		$image_inline_style = sprintf('style="%s %s"', $inline_height, $inline_width);
+
+		$aside_content = !empty( $image_url ) ? sprintf( '<img src="%s" alt="Opt In Image" %s %s %s />', $image_url, $width, $height, $image_inline_style ) : '';
 
 	}
 } else {

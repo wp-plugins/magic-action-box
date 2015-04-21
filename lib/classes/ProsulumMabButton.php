@@ -249,5 +249,4 @@ class ProsulumMabButton{
 	
 }
 
-global $MabButton;
-$MabButton = new ProsulumMabButton();
+

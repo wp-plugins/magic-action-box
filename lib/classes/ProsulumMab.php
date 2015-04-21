@@ -1,6 +1,6 @@
 <?php
 
-class ProsulumMab{
+class ProsulumMab extends MAB_Base{
 	
 	private $_defaultActionBoxId = '';
 	private $_defaultActionBoxPlacement = 'bottom';
@@ -26,8 +26,8 @@ class ProsulumMab{
 		//add_filter( 'mab_optinform_output', array( &$this, 'outputOptInFormHTML' ), 10, 3 );
 		//add_filter('the_content', array( &$this, 'showActionBox' ) );
 		
-		global $MabBase;
-		$settings = $MabBase->get_settings();
+		$MabBase = MAB();
+		$settings = MAB('settings')->getAll();
 		
 		add_filter( 'mab_get_template', array( 'ProsulumMab', 'defaultGetTemplateFilter' ), 10, 3 );
 		
@@ -37,8 +37,8 @@ class ProsulumMab{
 	}
 	
 	function setUpDefaults(){
-		global $MabBase, $wp_query;
-		
+		global $wp_query;
+		$MabBase = MAB();
 		$post = $wp_query->get_queried_object();
 		
 		if( $MabBase->is_allowed_content_type( $post->post_type ) ){
@@ -66,20 +66,25 @@ class ProsulumMab{
 	}
 	
 	function setupContentTypeActionBox(){
-		global $MabBase, $wp_query;
-		
-		/** 
-		 * Get query var "page" as some page templates may use this on custom queries and calling
-		 * get_queried_object() method seems to override this i.e. optimize press on Blog Template
-		 **/
-		$paged = get_query_var('paged');
+		global $wp_query;
+		$MabBase = MAB();
+		$is_paged = is_paged();
 
-		/**
-		 * If on static front page, need to check 'page'
-		 * @source https://codex.wordpress.org/Pagination#static_front_page
-		 */
-		if( empty($paged) )
-			$paged = get_query_var('page');
+		if($is_paged){
+			/** 
+			 * Get query var "page" as some page templates may use this on custom queries and calling
+			 * get_queried_object() method seems to override this i.e. optimize press on Blog Template
+			 **/
+			$paged = get_query_var('paged');
+
+			/**
+			 * If on static front page, need to check 'page'
+			 * @source https://codex.wordpress.org/Pagination#static_front_page
+			 */
+			if( empty($paged) )
+				$paged = get_query_var('page');
+
+		}
 
 		$post = $wp_query->get_queried_object();
 		
@@ -95,7 +100,7 @@ class ProsulumMab{
 			
 			//TODO: have option to disable removal of filter
 			// Disable WordPress native formatters
-			$settings = $MabBase->get_settings();
+			$settings = $this->MAB('settings')->getAll();
 			
 			if( !empty( $settings['others']['reorder-content-filters'] ) ){
 				remove_filter( 'the_content', 'wpautop' );
@@ -119,16 +124,18 @@ class ProsulumMab{
 			}
 		}
 
-		/**
-		 * Set the 'paged' parameter as it may have been overwritten by call to
-		 * get_queried_object() above
-		 */
-		set_query_var('paged',$paged);
+		if($is_paged){
+			/**
+			 * Set the 'paged' parameter as it may have been overwritten by call to
+			 * get_queried_object() above
+			 */
+			set_query_var('paged',$paged);
+		}
 	}
 	
 	function showActionBox( $content ){
-		global $post, $MabBase;
-		
+		global $post;
+		$MabBase = MAB();
 		if( !$MabBase->is_allowed_content_type( $post->post_type ) ){
 			return $content;
 		}
@@ -221,7 +228,7 @@ class ProsulumMab{
 	 * @return int|bool Post ID of Action Box or FALSE if actionbox is not specified for a context
 	 */
 	function getActionBoxDefaultsFromContext( $context = 'default' ){
-		global $MabBase;
+		$MabBase = MAB();
 		
 		$settings = $this->getSettings();
 		$globalMab = isset($settings['global-mab']) ? $settings['global-mab'] : array();
@@ -350,7 +357,7 @@ class ProsulumMab{
 	}
 	
 	function getActionBoxStyle( $actionBoxId ){
-		global $MabBase;
+		$MabBase = MAB();
 		return $MabBase->get_selected_style( $actionBoxId );
 	}
 	
@@ -359,7 +366,8 @@ class ProsulumMab{
 	 * @return int|string ID of action box used OR "default" OR "none" OR empty string if not yet set
 	 */
 	function getIdOfActionBoxUsed( $postId = '' ){
-		global $post, $MabBase;
+		global $post;
+		$MabBase = MAB();
 		if( $postId == '' ){
 			$postId = $post->ID;
 		}
@@ -413,8 +421,7 @@ class ProsulumMab{
 	}
 	
 	function getSettings(){
-		global $MabBase;
-		return $MabBase->get_settings();
+		return $this->MAB('settings')->getAll();
 	}
 	
 	/**

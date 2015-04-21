@@ -1,9 +1,11 @@
 <?php
-if(!class_exists('AWeberAPIBase')) {
-
 require_once('exceptions.php');
 require_once('oauth_adapter.php');
 require_once('oauth_application.php');
+require_once('aweber_response.php');
+require_once('aweber_collection.php');
+require_once('aweber_entry_data_array.php');
+require_once('aweber_entry.php');
 
 /**
  * AWeberServiceProvider
@@ -38,6 +40,10 @@ class AWeberServiceProvider implements OAuthServiceProvider {
 
     public function getBaseUri() {
         return $this->baseUri;
+    }
+
+    public function removeBaseUri($url) {
+        return str_replace($this->getBaseUri(), '', $url);
     }
 
     public function getAccessTokenUrl() {
@@ -75,10 +81,10 @@ class AWeberAPIBase {
      */
     static protected $_collectionMap = array(
         'account'              => array('lists', 'integrations'),
-        'broadcast_campaign'   => array('links', 'messages'),
-        'followup_campaign'    => array('links', 'messages'),
+        'broadcast_campaign'   => array('links', 'messages', 'stats'),
+        'followup_campaign'    => array('links', 'messages', 'stats'),
         'link'                 => array('clicks'),
-        'list'                 => array('campaigns', 'subscribers',
+        'list'                 => array('campaigns', 'custom_fields', 'subscribers',
                                         'web_forms', 'web_form_split_tests'),
         'web_form'             => array(),
         'web_form_split_test'  => array('components'),
@@ -95,12 +101,8 @@ class AWeberAPIBase {
      * @return AWeberEntry or AWeberCollection
      */
     public function loadFromUrl($url) {
-        try {
-            $data = $this->adapter->request('GET', $url);
-            return $this->readResponse($data, $url);
-        } catch (AWeberException $e) {
-            return null;
-        }
+        $data = $this->adapter->request('GET', $url);
+        return $this->readResponse($data, $url);
     }
 
     protected function _cleanUrl($url) {
@@ -120,7 +122,7 @@ class AWeberAPIBase {
         $this->adapter->parseAsError($response);
         if (!empty($response['id'])) {
             return new AWeberEntry($response, $url, $this->adapter);
-        } else if (isset($response['entries'])) {
+        } else if (array_key_exists('entries', $response)) {
             return new AWeberCollection($response, $url, $this->adapter);
         }
         return false;
@@ -174,7 +176,7 @@ class AWeberAPI extends AWeberAPIBase {
     }
 
     protected static function _parseAWeberID($string) {
-        $values = split('\|', $string);
+        $values = explode('|', $string);
         if (count($values) < 5) {
             return null;
         }
@@ -287,8 +289,4 @@ class AWeberAPI extends AWeberAPIBase {
     }
 }
 
-require_once('aweber_response.php');
-require_once('aweber_collection.php');
-require_once('aweber_entry_data_array.php');
-require_once('aweber_entry.php');
-}
+?>
