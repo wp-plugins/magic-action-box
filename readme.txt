@@ -3,8 +3,8 @@ Contributors: prosulum, pogidude
 Developer: Prosulum
 Tags: opt in, call to action, aweber, email, email marketing, form, mailing list, marketing, newsletter, webform, mailchimp, constant contact
 Requires at least: 3.5
-Tested up to: 4.2
-Stable tag: 2.16.3
+Tested up to: 4.2.1
+Stable tag: 2.16.4
 
 Magic Action Box let's you display professional looking opt-in forms and feature boxes in your WordPress site.
 
@@ -99,6 +99,10 @@ Try checking the *Reorder post content filter priorities* checkbox found in WP A
 5. Action Box Settings Screen
 
 == Changelog ==
+= 2.16.4 =
+*2015-05-02*
+* fix postmatic name field required checkbox not saving
+
 = 2.16.3 =
 *2015-04-22*
 * [fix] change name field value of postmeta - from 'postmeta' to 'mabpostmeta' to avoid namespace issues

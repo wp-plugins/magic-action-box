@@ -21,7 +21,7 @@ if(!empty($optinMeta['enabled-fields'])){
 
 $fnameReq = '';
 if(!empty($optinMeta['required-fields'])){
-	$fnameReq = in_array('fname',$optinMeta['enabled-fields']) ? 'required' : '';
+	$fnameReq = in_array('fname',$optinMeta['required-fields']) ? 'required' : '';
 }
 
 ?>

@@ -41,7 +41,7 @@ if(!class_exists('Prompt_Api')):
 		<?php
 		$reqFields = isset( $meta['optin']['required-fields'] ) && is_array( $meta['optin']['required-fields'] ) ? $meta['optin']['required-fields'] : array(); 
 		?>
-		<label for="mab-required-field-name"><input type="checkbox" id="mab-required-field-name" name="mab[optin][required-fields][]" value="name" <?php checked( true, in_array( 'fname', $reqFields ) ); ?> ><?php _e('Make this field required', 'mab'); ?></label>
+		<label for="mab-required-field-name"><input type="checkbox" id="mab-required-field-name" name="mab[optin][required-fields][]" value="fname" <?php checked( true, in_array( 'fname', $reqFields ) ); ?> ><?php _e('Make this field required', 'mab'); ?></label>
 		
 		<div class="clear"></div>
 	</div>
