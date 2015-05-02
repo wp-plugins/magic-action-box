@@ -1,5 +1,5 @@
 <?php
-	global $MabAdmin;
+	$MabAdmin = MAB('admin');
 	$meta = !empty( $data['meta'] ) ? $data['meta'] : array();
 	$assets_url = $data['assets-url'];
 ?>

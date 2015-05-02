@@ -33,7 +33,7 @@ jQuery(document).ready(function(){
 	/**
 	 * Button preview for CSS3 button design dropdown
 	 */
-	jQuery( '#mab-button-select' ).bind('keyup keydown change', function(event){
+	jQuery( '.inside' ).on('keyup keydown change', '#mab-button-select', function(event){
 		var $this = jQuery( this );
 		var $key = $this.val();
 		var $example = jQuery( '#mab-example-button' );
@@ -46,7 +46,7 @@ jQuery(document).ready(function(){
 	/**
 	 * Button preview for CSS3 Button text
 	 */
-	jQuery( '#mab-button-text' ).bind('blur keyup', function(event){
+	jQuery( '.inside' ).on('blur keyup', '#mab-button-text', function(event){
 		var $button = jQuery( '#mab-example-button' );
 		var $this = jQuery( this );
 		$button.text( $this.val() );
@@ -59,49 +59,37 @@ jQuery(document).ready(function(){
 	jQuery( '#mab-optin-provider' ).bind('keyup keydown change', function(event){
 		
 		//get selected value
-		var $this = jQuery( this );
-		var val = $this.val();
-		
-		var $div = jQuery( '#mab-' + val + '-settings' );
-		
-		//hide all dependent containers
-		jQuery( '.mab-optin-list-dependent-container' ).hide();
-		
-		//show related dependent container
-		$div.show('fast');
+		var selectField = jQuery( this );
+		var provider = selectField.val();
+		var spinner = selectField.siblings('.ajax-feedback');
+		var providerBox = jQuery('#provider-box');
+		var postid = document.getElementById("post_ID").value;
 
-		$optionBoxes = $div.data('option-box');
-		if($optionBoxes){
-			$optionBoxesArr = $optionBoxes.split(',');
-			$hidableBoxes = jQuery('.mab-hidable');
-			$toShow = jQuery(); // we'll add elements to show here
-			jQuery.each($optionBoxesArr, function(index, className){
-				jQuery('.mab-option-'+className).addClass('mab-toshow');
-			});
+		spinner.css('visibility', 'visible');
 
-			$hidableBoxes.not(jQuery('.mab-toshow')).hide();
-			jQuery('.mab-toshow').show().removeClass('mab-toshow');
-		} else {
-			// hide all .mab-hidable
-			jQuery('.mab-hidable').hide();
-		}
-		
-		//Hide Field Labels options if "Manual" is selected as email provider
-		var $fieldLabels = jQuery('.mab-option-field-labels');
-		if( val == 'manual'){
-			$fieldLabels.hide();
-			$fieldLabels.addClass('hide');
-		} else {
-			if( $fieldLabels.hasClass('hide') ){
-				$fieldLabels.removeClass('hide');
-				$fieldLabels.show('fast');
-			}
-		}
+		jQuery.get(
+			ajaxurl,
+			{
+				action : 'mab_get_optin_settings_html',
+				provider : provider,
+				postid : postid
+			},
+			function( data, status){
+				//console.log(data);
+				providerBox.html(data);
+				spinner.css('visibility', 'hidden');
+				if(provider == 'mailchimp'){
+					// we trigger this to get mc groups
+					jQuery('#mab-optin-mailchimp-list').change();
+				}
+			},
+			'html'
+		);
 
-	}).change();
+	});
 	
 	//Force Update Optin Lists from Email Provider servers
-	jQuery( '.mab-optin-get-list').click( function(){
+	jQuery( '#provider-box').on('click', '.mab-optin-get-list', function(){
 	
 		var $provider = jQuery( '#mab-optin-provider' );
 		var $list = jQuery( this ).siblings( '.mab-optin-list' );
@@ -125,15 +113,75 @@ jQuery(document).ready(function(){
 					$list.append( $item );
 				});
 				$feedback.css('visibility','hidden');
+
+				if(val == 'mailchimp'){
+					// we trigger this to get mc groups
+					jQuery('#mab-optin-mailchimp-list').change();
+				}
 			},
 			'json'
 		);
 
 		return false;
 	});
+
+	// update mailchimp group section when mailchimp list updates
+	jQuery( '#provider-box' ).on('change', '#mab-optin-mailchimp-list', function(e){
+
+		var mcGroup = jQuery('#mab-mc-group select');
+		var mcList = jQuery(this);
+
+		jQuery.post(
+			ajaxurl,
+			{
+				action: 'mab_mailchimp_groups',
+				listId: mcList.val()
+			},
+			function( data, status ){
+
+				var selectedGroup = mcGroup.data('selectedgroup');
+
+				if( data.length > 0 ){
+					//mcGroup.empty();
+					mcGroup.html('<option value="">None</option>');
+					jQuery.each( data, function( i, grouping ){
+
+						var optGroup = jQuery('<optgroup label="' + grouping.name + '"></optgroup>');
+
+						if(grouping.hasOwnProperty('groups') && grouping.groups.length > 0){
+							jQuery.each(grouping.groups, function( j, group ){
+								var val = 'group[' + grouping.id + '][' + group.bit + ']';
+								
+								var selected = '';
+
+								if(val == selectedGroup){
+									selected = 'selected="selected"';
+								}
+
+								optGroup.append(jQuery('<option value="' + val + '"' + selected + '>' + group.name + '</option>'));
+							});
+						}
+
+						mcGroup.append(optGroup);
+
+					});
+					
+					mcGroup.siblings('.mab-notice').hide();
+					mcGroup.show();
+				} else {
+					mcGroup.siblings('.mab-notice').show();
+					mcGroup.hide();
+				}
+
+			},
+			'json'
+			
+		);
+
+	});
 	
 	//Process manual opt in form code into useable format
-	jQuery( '#mab-process-manual-optin-code' ).click( function(){
+	jQuery( '#provider-box' ).on('click', '#mab-process-manual-optin-code', function(){
 		var $theCode = jQuery( '#mab-optin-manual-code' ).val();
 		var $submitValue = jQuery( '#mab-optin-manual-submit-value' ).val();
 		var $submitImage = jQuery( '#mab-optin-manual-submit-image' ).val();

@@ -1,9 +1,9 @@
 <?php
-class ProsulumMabAdmin{
+class ProsulumMabAdmin extends MAB_Base{
 	
 	var $_data_RegisteredActionBoxes = array();
 	
-	var $_optin_Providers = array();
+	protected static $_optin_Providers = array();
 	var $_optin_AweberApplicationId = '60e2f3cd';
 	var $_optin_AweberAuthenticationUrl = 'https://auth.aweber.com/1.0/oauth/authorize_app/';
 	var $_optin_AweberFormActionUrl = 'http://www.aweber.com/scripts/addlead.pl';
@@ -35,8 +35,10 @@ class ProsulumMabAdmin{
 		add_action( 'save_post', array( &$this, 'saveActionBoxMeta' ), 10, 2 );
 		add_action( 'manage_posts_custom_column', array( &$this, 'outputLandingPageTypeColumn' ), 10, 2 );
 		
+		add_action( 'wp_ajax_mab_mailchimp_groups', array( $this, 'ajaxOptinGetMailChimpGroups' ) );
 		add_action( 'wp_ajax_mab_optin_get_lists', array( &$this, 'ajaxOptinGetLists' ) );
 		add_action( 'wp_ajax_mab_optin_process_manual_code', array( &$this, 'ajaxProcessOptinCode' ) );
+		add_action( 'wp_ajax_mab_get_optin_settings_html', array( __CLASS__, 'ajaxGetOptinProviderSettings' ));
 		
 		//add Magic Action Box metabox to post content types
 		add_action( 'add_meta_boxes', array( &$this, 'addMetaBoxToOtherContentTypes') );
@@ -56,9 +58,10 @@ class ProsulumMabAdmin{
 	}
 	
 	function add_filters(){
-		global $MabBase, $MabButton;
+		$MabBase = MAB();
+		$MabButton = MAB('button');
 		add_filter( 'manage_edit-' . $MabBase->get_post_type() . '_columns', array( &$this, 'addColumnHeaderForpageType' ) );
-		add_filter( 'pre_update_option_' . $MabButton->_option_ButtonSettings, array( &$this, 'writeConfiguredButtonsStylesheet' ), 10, 2 );
+		add_filter( 'pre_update_option_' . $MabButton->_option_ButtonSettings, array( &$this, 'writeConfiguredButtonsStylesheet' ), 10, 2 ); 
 	}
 	
 	function initialize(){
@@ -67,8 +70,6 @@ class ProsulumMabAdmin{
 			
 			update_option($this->_option_CurrentVersion, MAB_VERSION);
 		}
-
-		$this->initializeOptinProviders();
 
 		do_action('mab_admin_init');
 	}
@@ -94,7 +95,9 @@ class ProsulumMabAdmin{
 	}
 	
 	function addAdminInterface(){
-		global $MabButton, $MabBase;
+		$MabBase = MAB();
+
+		$MabButton = MAB('button');
 		
 		$hooks = array( 'post-new.php', 'post.php' );
 		
@@ -166,7 +169,7 @@ class ProsulumMabAdmin{
 	}
 	
 	function outputLandingPageTypeColumn( $column, $postId ){
-		global $MabBase;
+		$MabBase = MAB();
 		
 		if( $column == 'action-box-type' ){
 			echo esc_html( $MabBase->get_actionbox_type( $postId ) );
@@ -179,20 +182,23 @@ class ProsulumMabAdmin{
 	 * SETTINGS
 	 * =============================================== */
 	function getSettings(){
-		global $MabBase;
-		return $MabBase->get_settings();
+		$settings = MAB('settings');
+		return $settings->getAll();
 	}
 	
 	function saveSettings( $settings ){
-		global $MabBase;
-		$MabBase->update_settings( $settings );
+		$settingsApi = MAB('settings');
+		$settingsApi->save($settings);
 	}
 	
 	//DISPLAY SETTINGS CALLBACKS
 	function displaySettingsPage(){
-		global $MabBase;
+		$MabBase = MAB();
 		
 		$data = $this->getSettings();
+
+		//get all created action boxes
+		$actionBoxesObj = get_posts( array( 'numberposts' => -1, 'post_type' => $MabBase->get_post_type(), 'orderby' => 'title', 'order' =>'ASC' ) );
 		
 		//create actio box content type array
 		$actionBoxes = array();
@@ -226,11 +232,13 @@ class ProsulumMabAdmin{
 	}
 	
 	function displayActionBoxSettingsPage(){
-		global $MabBase;
+		$MabBase = MAB();
 	}
 	
 	function displayButtonSettingsPage(){
-		global $MabBase, $MabButton;
+		$MabBase = MAB();
+
+		$MabButton = MAB('button');
 		
 		$filename = $this->getSettingsViewTemplate( 'button-settings' );
 		//$buttons = $MabButton->getSettings();
@@ -257,7 +265,9 @@ class ProsulumMabAdmin{
 	}
 	
 	function displayStyleSettingsPage(){
-		global $MabBase, $MabDesign, $mabStyleKey;
+		global $mabStyleKey;
+		$MabBase = MAB();
+		$MabDesign = MAB('design');
 		
 		$data = array();
 		$key = isset( $_GET['mab-style-key'] ) ? absint( $_GET['mab-style-key'] ) : null;
@@ -285,8 +295,10 @@ class ProsulumMabAdmin{
 	}
 	
 	function displayDesignsPage(){
-		global $MabBase, $MabButton, $MabDesign;
-		
+		$MabBase = MAB();
+		$MabDesign = MAB('design');
+		$MabButton = MAB('button');
+
 		$filename = $this->getSettingsViewTemplate( 'design' );
 		
 		$data = array();
@@ -295,6 +307,9 @@ class ProsulumMabAdmin{
 		$data['buttons'] = $MabButton->getSettings();
 		//prepare configured styles
 		$data['styles'] = $MabDesign->getStyleSettings();
+
+		$settings = $this->getSettings();
+		$data['fonts'] = isset($settings['fonts']) ? $settings['fonts'] : '';
 		
 		$output = ProsulumMabCommon::getView( $filename, $data );
 		echo $output;
@@ -338,18 +353,19 @@ class ProsulumMabAdmin{
 	
 	/* Add Metabox to other content types (Posts, Pages) */
 	function addMetaBoxToOtherContentTypes(){
-		global $MabBase;
+		$MabBase = MAB();
 		
 		$content_types = $MabBase->get_allowed_content_types();
 		
 		foreach( $content_types as $content_type ){
-			add_meta_box( 'mab-post-action-box', __('Magic Action Box', 'mab' ), 'ProsulumMabMetaboxes::postActionBox', $content_type, 'normal', 'high' ); 
+			add_meta_box( 'mab-post-action-box', __('Magic Action Box', 'mab' ), 'MAB_MetaBoxes::postActionBox', $content_type, 'normal', 'high' ); 
 		}
 	}
 	
 	/* Save Action Box Meta */
 	function saveActionBoxMeta( $postId, $postObj ){
-		global $MabBase, $post;
+		global $post;
+		$MabBase = MAB();
 		
 		$wp_is_post_autosave = wp_is_post_autosave( $post );
 		$wp_is_post_revision = wp_is_post_revision( $post );
@@ -409,34 +425,34 @@ class ProsulumMabAdmin{
 	 * Buttons Utility
 	 */
 	function isValidButtonKey( $key ){
-		global $MabButton;
+		$MabButton = MAB('button');
 		$settings = $MabButton->getSettings();
 		return isset( $settings[$key] );
 	}
 	
 	function saveConfiguredButton( $buttonSettings, $key ){
-		global $MabButton;
+		$MabButton = MAB('button');
 		$key = $MabButton->updateSettings( $buttonSettings, $key );
 		return $key;
 	}
 
 	function duplicateButton( $key ){
-		global $MabButton;
+		$MabButton = MAB('button');
 		return $MabButton->duplicateButton( $key );
 	}
 	
 	function deleteConfiguredButton( $key ){
-		global $MabButton;
+		$MabButton = MAB('button');
 		return $MabButton->deleteConfiguredButton( $key );
 	}
 	
 	function writeConfiguredButtonsStylesheet( $newValue, $oldValue ){
-		global $MabButton;
+		$MabButton = MAB('button');
 		return $MabButton->writeConfiguredButtonsStylesheet( $newValue, $oldValue );
 	}
 	
 	function createPreconfiguredButtons(){
-		global $MabButton;
+		$MabButton = MAB('button');
 		$MabButton->createPreconfiguredButtons();
 	}
 	
@@ -444,20 +460,20 @@ class ProsulumMabAdmin{
 	 * STyles Utility
 	 */
 	function isValidStyleKey( $key ){
-		global $MabDesign;
+		$MabDesign = MAB('design');
 		$settings = $MabDesign->getStyleSettings();
 		return isset( $settings[$key] );
 	}
 	function deleteConfiguredStyle( $key = null ){
-		global $MabDesign;
+		$MabDesign = MAB('design');
 		return $MabDesign->deleteConfiguredStyle( $key );
 	}
 	function getConfiguredStyle( $key = null ){
-		global $MabDesign;
+		$MabDesign = MAB('design');
 		return $MabDesign->getConfiguredStyle( $key );
 	}
 	function saveConfiguredStyle( $settings, $key ){
-		global $MabDesign;
+		$MabDesign = MAB('design');
 		$key = $MabDesign->updateStyleSettings( $settings, $key );
 		return $key;
 	}
@@ -515,6 +531,13 @@ class ProsulumMabAdmin{
 			exit();
 		}
 		
+		//process fonts
+		if( isset($_POST['mab-save-fonts']) && wp_verify_nonce( $_POST['save-mab-fonts-nonce'], 'save-mab-fonts-nonce')){
+			$fontResult = $this->processFontSettings();
+			wp_redirect( admin_url('admin.php?page=mab-design&mab-fonts-updated=true'));
+			exit();
+		}
+
 		//process buttons
 		if( ( isset( $_POST['save-button-settings'] ) || isset( $_POST['button-settings']['reset'] ) ) && wp_verify_nonce( $_POST['save-mab-button-settings-nonce'], 'save-mab-button-settings-nonce' ) ){
 			$buttonMessage = $this->processButtonSettings();
@@ -600,9 +623,9 @@ class ProsulumMabAdmin{
 				$settings['optin']['aweber-authorization'] = '';
 			}
 		} else {
-			$settings['optin']['aweber-account-info'] = $old_settings['optin']['aweber-account-info'];
-			$settings['optin']['allowed']['aweber'] = $old_settings['optin']['allowed']['aweber'];
-			$settings['optin']['aweber-lists'] = $old_settings['optin']['aweber-lists'];
+			$settings['optin']['aweber-account-info'] = !empty($old_settings['optin']['aweber-account-info']) ? $old_settings['optin']['aweber-account-info'] : '';
+			$settings['optin']['allowed']['aweber'] = !empty($old_settings['optin']['allowed']['aweber']) ? $old_settings['optin']['allowed']['aweber'] : 0;
+			$settings['optin']['aweber-lists'] = !empty($old_settings['optin']['aweber-lists']) ? $old_settings['optin']['aweber-lists'] : array();
 		}
 		
 		//process mailchimp
@@ -610,6 +633,7 @@ class ProsulumMabAdmin{
 		if($settings['optin']['mailchimp-api'] != $old_settings['optin']['mailchimp-api']) {
 			$mailChimpSettingsChanged = true;
 			$mcApiKey = $settings['optin']['mailchimp-api'];
+
 			$mailchimpCheck = $this->validateMailChimpAPIKey( $mcApiKey );
 			
 			if( true === $mailchimpCheck ) {
@@ -622,8 +646,8 @@ class ProsulumMabAdmin{
 				$settings['optin']['mailchimp-api'] = '';
 			}
 		} else {
-			$settings['optin']['allowed']['mailchimp'] = $old_settings['optin']['allowed']['mailchimp'];
-			$settings['optin']['mailchimp-lists'] = $old_settings['optin']['mailchimp-lists'];
+			$settings['optin']['allowed']['mailchimp'] = !empty($old_settings['optin']['allowed']['mailchimp']) ? $old_settings['optin']['allowed']['mailchimp'] : 0;
+			$settings['optin']['mailchimp-lists'] = !empty($old_settings['optin']['mailchimp-lists']) ? $old_settings['optin']['mailchimp-lists'] : array();
 		}
 
 		// process SendReach
@@ -700,7 +724,7 @@ class ProsulumMabAdmin{
 	}
 	
 	function processStyleSettings(){
-		global $MabDesign;
+		$MabDesign = MAB('design');
 		
 		$data = stripslashes_deep( $_POST );
 		$settings = $data['mab-design'];
@@ -719,7 +743,7 @@ class ProsulumMabAdmin{
 	}
 	
 	function processButtonSettings(){
-		global $MabButton;
+		$MabButton = MAB('button');
 		
 		$keyMessage = '';
 		
@@ -746,9 +770,22 @@ class ProsulumMabAdmin{
 		return $keyMessage . $message;
 
 	}
+
+	function processFontSettings(){
+		if(empty($_POST['mab']['fonts'])){
+			return;
+		}
+
+		$data = wp_kses($_POST['mab']['fonts'], array());
+
+		$settings = $this->getSettings();
+		$settings['fonts'] = $data;
+
+		$this->saveSettings($settings);
+	}
 	 
 	function processActionBoxTypeSpecificMeta( $postId, $post ){
-		global $MabBase;
+		$MabBase = MAB();
 		
 		if( !$MabBase->is_mab_post_type( $post->post_type ) ){
 			return;
@@ -816,7 +853,7 @@ class ProsulumMabAdmin{
 	}
 	
 	function processActionBoxDesignMeta( $postId, $post ){
-		global $MabBase;
+		$MabBase = MAB();
 		
 		if( !$MabBase->is_mab_post_type( $post->post_type ) ){
 			return;
@@ -839,7 +876,7 @@ class ProsulumMabAdmin{
 	}
 	
 	function processActionBoxMetaForOtherContentTypes( $post_id, $post ){
-		global $MabBase;
+		$MabBase = MAB();
 		
 		if( !$MabBase->is_allowed_content_type( $post->post_type ) )
 			return;
@@ -848,15 +885,15 @@ class ProsulumMabAdmin{
 		
 		//TODO: do nonce check
 		
-		if( !empty($data['postmeta']) && is_array( $data['postmeta'] ) ){
-			$postmeta = $data['postmeta'];
+		if( !empty($data['mabpostmeta']) && is_array( $data['mabpostmeta'] ) ){
+			$postmeta = $data['mabpostmeta'];
 			
 			$MabBase->update_mab_meta( $post_id, $postmeta, 'post' );
 		}
 	}
 	
 	function duplicateActionBox( $source_id ){
-		global $MabBase;
+		$MabBase = MAB();
 		
 		do_action('mab_pre_duplicate_action_box', $source_id);
 
@@ -894,7 +931,8 @@ class ProsulumMabAdmin{
 	}
 	
 	function notifyOfDuplicate(){
-		global $post, $MabBase;
+		global $post;
+		$MabBase = MAB();
 		$duplicate_id = $MabBase->get_mab_meta( $post->ID, 'duplicate' );
 		$filename = 'misc/duplicate-notice.php';
 		$message = MAB_Utils::getView( $filename, array('duplicate-id' => $duplicate_id ) );
@@ -903,7 +941,8 @@ class ProsulumMabAdmin{
 	}
 	
 	function processDuplicateDisplay(){
-		global $pagenow, $post, $MabBase;
+		global $pagenow, $post;
+		$MabBase = MAB();
 		if($pagenow == 'post.php' && $post->post_type == $MabBase->get_post_type()) {
 			$duplicated = get_post_meta($post->ID, $MabBase->get_meta_key('duplicate'), true);
 			if($duplicated) {
@@ -920,7 +959,7 @@ class ProsulumMabAdmin{
 	}
 	
 	function setActionBoxType( $postId, $type ){
-		global $MabBase;
+		$MabBase = MAB();
 		$actionBoxPost = get_post( $postId );
 		if( empty( $postId) || empty( $actionBoxPost ) || !$MabBase->is_mab_post_type( $actionBoxPost->post_type ) ){
 			return;
@@ -934,7 +973,7 @@ class ProsulumMabAdmin{
 	}
 	
 	function getActionBoxType( $postId ){
-		global $MabBase;
+		$MabBase = MAB();
 		$post = get_post( $postId );
 		
 		//check if this is a valid post type
@@ -954,103 +993,14 @@ class ProsulumMabAdmin{
 		}
 	}
 	
-	/**
-	 * OPTIN PROVIDERS
-	 * ================================================ */
-
-	function initializeOptinProviders(){
-		$_optin_Keys = array(
-			array(
-				'id' => 'aweber', 
-				'name' => 'Aweber', 
-				'auto_allow' => false),
-			array(
-				'id' => 'mailchimp', 
-				'name' => 'MailChimp', 
-				'auto_allow' => false),
-			array(
-				'id' => 'sendreach',
-				'name' => 'SendReach',
-				'auto_allow' => false),
-			array(
-				'id' => 'manual', 
-				'name' => 'Other (Copy & Paste)',
-				'auto_allow' => true)
-		);
-
-		$this->_optin_Providers = apply_filters('mab_set_initial_optin_providers', $_optin_Keys);
-	}
-
-	/**
-	 * Register an optin provider
-	 * @param  string $id  unique name
-	 * @param  string $name human friendly name
-	 * @param  bool   $auto_allow if FALSE, this provider will only be
-	 *                            shown if it is allowed in settings
-	 * @return bool FALSE if $id exists or missing $id parameter, 
-	 *              otherwise returns TRUE
-	 */
-	function registerOptinProvider($id, $name ='', $auto_allow = false){
-		if(empty($id)) return false;
-
-		// check if $id already exists
-		foreach($this->_optin_Providers as $k => $prov){
-			if($prov['id'] == $id) return false;
-		}
-
-		if(empty($name))
-			$name = $id;
-
-		$this->_optin_Providers[] = array(
-			'id' => $id,
-			'name' => $name,
-			'auto_allow' => $auto_allow
-			);
-
-		return true;
-	}
-
-	/**
-	 * Returns list of allowed optin providers in an array
-	 * @return array 
-	 */
-	function getAllowedOptinProviders(){
-		/** TODO: add a registerOptinProviders() function **/
-		
-		$settings = ProsulumMabCommon::getSettings();
-		$allowed = array();
-		
-		foreach( $this->_optin_Providers as $k => $provider ){
-			if($provider['auto_allow']){
-
-				$allowed[] = array('id' => $provider['id'], 'name' => $provider['name'] );
-
-			} else {
-
-				//add optin providers where value is not 0 or empty or null
-				if( !empty( $settings['optin']['allowed'][$provider['id']] ) ){
-					$allowed[] = array('id' => $provider['id'], 'name' => $provider['name'] );
-				}
-
-			}
-		}
-		
-		//add "wysija" newsletter
-		$allowed[] = array('id' => 'wysija', 'name' => 'MailPoet (Wysija)' );
-		
-		//add "Manual" mailing list provider
-		//$allowed[] = array('id' => 'manual', 'name' => $this->_optin_Keys['manual'] );
-
-		return $allowed;
-		
-	}
 	
 	/**
 	 * Aweber
 	 */
 	 
 	function initializeAweberApi(){
-		require_once( MAB_LIB_DIR . 'aweber_api/aweber_api.php' );
+		require_once MAB_LIB_DIR . 'integration/aweber/aweber_api.php';
+		//require_once( MAB_LIB_DIR . 'aweber_api/aweber_api.php' );
 	}
 	
 	function validateAweberAuthorizationCode($code) {
@@ -1172,7 +1122,7 @@ class ProsulumMabAdmin{
 	 * MailChimp
 	 */
 	function getMailChimpAccountInfo( $apikey = '' ){
-		global $MabBase;
+		$MabBase = MAB();
 		$details = $MabBase->get_mailchimp_account_details( $apikey );
 		return $details;
 	}
@@ -1189,19 +1139,16 @@ class ProsulumMabAdmin{
 			}
 		}
 		
-		/*
-		$mailChimpLists = get_transient( $this->_optin_MailChimpListsTransient );
-		
-		if( !($mailChimpLists === false) && ($forceUpdate === false) ){
-			return $mailChimpLists;
-		}
-		*/
-		
-		require_once( MAB_LIB_DIR . 'mailchimp_api/MCAPI.class.php' );
+		require_once MAB_LIB_DIR . 'integration/mailchimp/Mailchimp.php';
 
 		$settings = $this->getSettings();
-		$mailchimp = new MCAPI($settings['optin']['mailchimp-api']);
-		$data = $mailchimp->lists(array(), 0, 100);
+		$mailchimp = new Mailchimp($settings['optin']['mailchimp-api']);
+		try{
+			$data = $mailchimp->lists->getList(array(), 0, 100);
+		} catch(Exception $e) {
+			$this->log($e->getMessage(), 'debug');
+			$data = array();
+		}
 
 		$lists = array();
 		if(is_array($data) && is_array($data['data'])) {
@@ -1209,7 +1156,7 @@ class ProsulumMabAdmin{
 				$lists[] = array('id' => $item['id'], 'name' => $item['name'], 'data' => $item );
 			}
 		}
-		
+
 		set_transient( $this->_optin_MailChimpListsTransient, $lists, 24*60*60 ); //set for one day.
 		
 		return $lists;
@@ -1218,12 +1165,16 @@ class ProsulumMabAdmin{
 	
 	function getMailChimpListSingle( $listId ){
 		
-		require_once( MAB_LIB_DIR . 'mailchimp_api/MCAPI.class.php' );
-
-		
 		$settings = $this->getSettings();
-		$mailchimp = new MCAPI($settings['optin']['mailchimp-api']);
-		$data = $mailchimp->lists( array( 'list_id' => $listId ) );
+		require_once MAB_LIB_DIR . 'integration/mailchimp/Mailchimp.php';
+		$mailchimp = new Mailchimp($settings['optin']['mailchimp-api']);
+
+		try {
+			$data = $mailchimp->lists->getList( array( 'list_id' => $listId ) );
+		} catch(Exception $e){
+			$this->log($e->getMessage(), 'debug');
+			$data = array();
+		}
 		
 		//return empty string if no data
 		if( empty( $data ) )
@@ -1235,18 +1186,36 @@ class ProsulumMabAdmin{
 		return $data;
 	}
 
+	function getMailChimpGroups($listId){
+
+		if(empty($listId)) return array();
+
+		$settings = $this->getSettings();
+		require_once MAB_LIB_DIR . 'integration/mailchimp/Mailchimp.php';
+		$mailchimp = new Mailchimp($settings['optin']['mailchimp-api']);
+
+		try {
+			$groups = $mailchimp->lists->interestGroupings( $listId );
+		} catch(Exception $e){
+			$this->log($e->getMessage(), 'debug');
+			return array();
+		}
+
+		return $groups;
+	}
+
 	function getMailChimpMergeVars( $id ) {
-		global $MabBase;
+		$MabBase = MAB();
 		return $MabBase->get_mailchimp_merge_vars( $id );
 	}
 
 	function signupUserForMailChimp( $vars, $list ) {
-		global $MabBase;
+		$MabBase = MAB();
 		return $MabBase->signup_user_mailchimp( $vars, $list );
 	}
 
 	function validateMailChimpAPIKey( $key ) {
-		global $MabBase;
+		$MabBase = MAB();
 		return $MabBase->validate_mailchimp_key( $key );
 	}
 
@@ -1420,6 +1389,30 @@ class ProsulumMabAdmin{
 	 * FUNCTIONAL CALLBACKS
 	 * ================================ */
 	
+	public static function ajaxGetOptinProviderSettings(){
+		$data = stripslashes_deep( $_REQUEST );
+
+		$provider = sanitize_text_field($data['provider']);
+
+		if(empty($provider)){
+			echo "No settings found for selected opt-in provider [$provider].";
+			exit();
+		}
+
+		$optinProviders = MAB_OptinProviders::getAllAllowed();
+
+		if(empty($optinProviders[$provider])){
+			echo "No settings found for selected opt-in provider [$provider].";
+			exit();
+		}
+
+		$postId = intval($data['postid']);
+
+		echo MAB_MetaBoxes::getOptinSettingsHtml($provider, $postId);
+		exit();
+
+	}
+
 	//Opt In AJAX
 	function ajaxOptinGetLists(){
 		$data = stripslashes_deep( $_POST );
@@ -1438,6 +1431,19 @@ class ProsulumMabAdmin{
 		}
 		
 		echo json_encode( $lists );
+		exit();
+	}
+
+	function ajaxOptinGetMailChimpGroups(){
+		if(empty($_POST['listId'])){
+			echo json_encode(array());
+			exit();
+		}
+
+		$list_id = $_POST['listId'];
+
+		$groups = $this->getMailChimpGroups($list_id);
+		echo json_encode($groups);
 		exit();
 	}
 	
@@ -1709,8 +1715,8 @@ class ProsulumMabAdmin{
 	 * CSS, JAVASCRIPT, THICKBOX
 	 * ================================ */	
 	function enqueueStylesForAdminPages(){
-		global $MabBase, $pagenow, $post;
-		
+		global $pagenow, $post;
+		$MabBase = MAB();
 		$is_mab_post_type = true;
 		if( !is_object( $post ) ){
 			$is_mab_post_type = false;
@@ -1726,7 +1732,7 @@ class ProsulumMabAdmin{
 		} elseif( $is_mab_post_type || $pagenow == 'admin.php' ){
 			/* create custom buttons stylesheet if its not there */
 			if( !file_exists( mab_get_custom_buttons_stylesheet_path() ) ){
-				global $MabButton;
+				$MabButton = MAB('button');
 				$MabButton->writeConfiguredButtonsStylesheet( $MabButton->getConfiguredButtons(), '' );
 			}
 			//load buttons stylesheet
@@ -1739,8 +1745,8 @@ class ProsulumMabAdmin{
 	}
 	
 	function enqueueScriptsForAdminPages(){
-		global $MabBase, $pagenow, $post;
-
+		global $pagenow, $post;
+		$MabBase = MAB();
 		$is_mab_post_type = true;
 		if( !is_object( $post ) ){
 			$is_mab_post_type = false;
@@ -1762,25 +1768,27 @@ class ProsulumMabAdmin{
 	}
 	
 	function createStyleSheet( $key, $section = 'all' ){
-		global $MabBase;
+		$MabBase = MAB();
 		$MabBase->create_stylesheet( $key, $section );
 	}
 	
 	function createActionBoxStylesheet( $postId, $section = 'all' ){
-		global $MabBase;
+		$MabBase = MAB();
 		$MabBase->create_actionbox_stylesheet( $postId, $section );
 	}
 	
 	function possiblyStartOutputBuffering(){
-		global $pagenow, $MabBase;
+		global $pagenow;
+		$MabBase = MAB();
 		if($pagenow == 'post-new.php' && isset( $_GET['post_type'] )  && $_GET['post_type'] == $MabBase->get_post_type() ) {
 			ob_start();
 		}
 	}
 	
 	function possiblyEndOutputBuffering(){
-		global $pagenow, $MabBase;
-		$data = array();
+		global $pagenow;
+		$MabBase = MAB();
+
 		if($pagenow == 'post-new.php' && isset( $_GET['post_type'] ) && $_GET['post_type'] == $MabBase->get_post_type()) {
 			$result = ob_get_clean();
 			$filename = 'interceptions/post-new.php';	

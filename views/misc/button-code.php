@@ -1,5 +1,5 @@
 <?php 
-	global $MabBase;
+	$MabBase = MAB();
 	$button = $data['button'];
 	$key = $data['key'];
 	

@@ -22,11 +22,11 @@ function mab_gforms_register_action_box_type( $disabled = false ){
 /**
  * Add our own meta box
  * 
- * @param  obj $meta_boxes_obj the passed ProsulumMabMetaBoxes object
+ * @param  obj $meta_boxes_obj the passed MAB_MetaBoxes object
  * @return none
  */
 function mab_gforms_add_meta_boxes( $meta_boxes_obj ){
-	global $MabBase;
+	$MabBase = MAB();
 	$post_type = $MabBase->get_post_type();
 
 	add_meta_box( 'mab-gforms-settings', __('Action Box: Gravity Forms Options', MAB_DOMAIN ), 'mab_gforms_meta_box', $post_type, 'normal', 'high' );
@@ -40,7 +40,7 @@ function mab_gforms_add_meta_boxes( $meta_boxes_obj ){
  * @return html
  */
 function mab_gforms_meta_box( $post ){
-	global $MabBase;
+	$MabBase = MAB();
 
 	$data['meta'] = $MabBase->get_mab_meta( $post->ID );
 	$type = $MabBase->get_action_box_type( $post->ID );

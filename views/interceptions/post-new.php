@@ -1,5 +1,6 @@
 <?php
-global $MabAdmin;
+$MabAdmin = MAB('admin');
+$MabBase = MAB('MAB');
 ?>
 <div class="wrap">
 	<?php screen_icon(); ?>
@@ -12,7 +13,7 @@ global $MabAdmin;
 	</p>
 	<ul class="mab-type-choice">
 		<?php
-		global $post, $MabBase;
+		global $post;
 		$types = $MabBase->get_registered_action_box_types('all');
 		foreach($types as $type => $info) {
 			$enabled = !empty( $info['status'] ) && $info['status'] == 'enabled' ? true : false;
