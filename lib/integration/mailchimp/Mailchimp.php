@@ -1,5 +1,6 @@
 <?php
 
+if(!class_exists('Mailchimp')){
 require_once 'Mailchimp/Folders.php';
 require_once 'Mailchimp/Templates.php';
 require_once 'Mailchimp/Users.php';
@@ -261,3 +262,4 @@ class Mailchimp {
 }
 
 
+}//endif

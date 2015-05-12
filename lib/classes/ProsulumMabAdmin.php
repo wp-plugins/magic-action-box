@@ -844,7 +844,7 @@ class ProsulumMabAdmin extends MAB_Base{
 
 			}
 
-			
+			$mab = apply_filters( "mab_update_action_box_{$type}_meta", $mab, $postId, $data);
 			$mab = apply_filters( 'mab_update_action_box_meta', $mab, $postId, $data );
 
 			$MabBase->update_mab_meta( $postId, $mab );

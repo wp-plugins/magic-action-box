@@ -167,25 +167,6 @@ class ProsulumMabBase extends MAB_Base{
 		$MabMetaBoxes = new MAB_MetaBoxes( $post );
 		$MabMetaBoxes->initMetaboxes();
 	}
-	
-	function activate(){
-		$MabBase = MAB();
-		
-		if( !is_object( $MabBase ) ){
-			$MabBase = new ProsulumMabBase();
-		}
-
-		//check for post type
-		if( !post_type_exists( $MabBase->_post_type ) )
-			$MabBase->register_post_type();
-		
-		//setup initial settings?
-		$settingsApi = MAB('settings');
-		$settingsApi->defaultSettingsIfNew();
-		
-		flush_rewrite_rules();
-		
-	}
 
 	/**
 	 * Initialize action box types array
@@ -480,11 +461,12 @@ class ProsulumMabBase extends MAB_Base{
 
 		try{
 			$mailchimp = new Mailchimp($key);
-			if( !$mailchimp->helper->ping() )
-				return array( 'error' => __( 'Invalid MailChimp API key.', 'mab' ) );
+			$res = $mailchimp->helper->ping();
+			if( !$res )
+				return array( 'error' => __( 'Invalid MailChimp API key - ' . $res, 'mab' ) );
 
 		} catch(Exception $e){
-			return array( 'error' => __( 'Invalid MailChimp API key.', 'mab' ) );
+			return array( 'error' => __( 'Invalid MailChimp API key: ' . $e->getMessage(), 'mab' ) );
 		}
 
 		return true;
@@ -521,7 +503,7 @@ class ProsulumMabBase extends MAB_Base{
 			if( !get_option( $nag_notice ) ){
 			
 				echo '<div class="updated"><p>';
-				printf( __('Magic Action Box plugin has been updated to version 2.15 | <a href="%1$s">Close</a>', 'mab'), add_query_arg( array('mab-hide-update-notice' => 'true' ) ), $this->get_current_version(), admin_url('post-new.php?post_type=action-box') );
+				printf( __('Magic Action Box plugin has been updated to version %s | <a href="%s">Close</a>', 'mab'), MAB_VERSION, add_query_arg( array('mab-hide-update-notice' => 'true' ) ), $this->get_current_version(), admin_url('post-new.php?post_type=action-box') );
 				echo '</p></div>';
 				/*
 				echo '<div class="updated"><p>';

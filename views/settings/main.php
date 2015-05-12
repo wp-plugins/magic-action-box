@@ -55,15 +55,15 @@ $actionBoxesSelect = $data['actionboxList'];
 						</td>
 					</tr>
 					<tr>
-						<th scope="row"><?php _e('Reorder post content filter priorities','mab' ); ?></th>
+						<th scope="row"><?php _e('Force action box to display first','mab' ); ?></th>
 						<td>
 							<p>
 							<label for="mab-reorder-thecontent-filters">
 								<input type="checkbox" id="mab-reorder-thecontent-filters" value="1" name="mab[others][reorder-content-filters]" <?php checked( 1, $others['reorder-content-filters'] ); ?> />
-								Force action box to display first
+								<?php _e('Enable', 'mab'); ?>
 							</label>
 							</p>
-							<span class="description"><?php _e('Check this box if other plugins (i.e. social sharing) are showing up above the action box and you want to show the action box first. BUT, please note that doing so may conflict with other plugins. When that happens, you may deactivate this option.', 'mab' ); ?></span>
+							<span class="description"><?php _e('Check this box if other plugins (i.e. social sharing) are showing up above the action box and you want to show the action box first. BUT, please note that doing so may conflict with other plugins. When that happens, you may deactivate this option. <em>And oh, enabling this option does not guarantee it will work.</em>', 'mab' ); ?></span>
 							<?php //var_dump( $others['reorder-content-filters'] ); ?>
 						</td>
 					</tr>
