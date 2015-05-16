@@ -141,7 +141,7 @@ class MAB_Template extends MAB_Base{
 		/** LOAD BUTTONS CSS **/
 		/* create custom buttons stylesheet if its not there */
 		if( !file_exists( mab_get_custom_buttons_stylesheet_path() ) ){
-			$MabButton = MAB('admin');
+			$MabButton = MAB('button');
 			$MabButton->writeConfiguredButtonsStylesheet( $MabButton->getConfiguredButtons(), '' );
 		}
 		
