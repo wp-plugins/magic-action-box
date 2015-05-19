@@ -1,5 +1,20 @@
 <?php
+/**
+ * These are callback functions triggered by the filter:
+ * 'mab_process_{$provider}_optin_submit' via ajax submit.
+ *
+ * This filter is located at MAB_Ajax::processOptin()
+ *
+ * To return a message i.e. success or error, use MAB_Ajax::addMessage()
+ */
 
+/**
+ * Process Postmatic submit
+ * @param $result
+ * @param $data
+ *
+ * @return bool
+ */
 function mab_process_postmatic_optin_submit($result, $data){
 	if(!class_exists('Prompt_Api') || empty($data['postmatic-action'])){
 		// postmatic plugin not installed or activated
@@ -56,4 +71,58 @@ function mab_process_postmatic_optin_submit($result, $data){
 	}
 
 	return $result;
+}
+
+
+/**
+ * Process Constant Contact form submit
+ * @param $result
+ * @param $data - form post data
+ */
+function mab_process_constantcontact_optin_submit($result, $data){
+
+	if(empty($data['email']) || !is_email($data['email'])){
+		MAB_Ajax::addMessage('Invalid email address.');
+		return false;
+	}
+
+	if(empty($data['list'])){
+		MAB_Ajax::addMessage('Email list is not set.');
+		return false;
+	}
+
+	$email = $data['email'];
+	$list = $data['list'];
+	$vars = array();
+	if(!empty($data['fname']))
+		$vars['firstname'] = $data['fname'];
+
+	if(!empty($data['lname']))
+		$vars['lastname'] = $data['lname'];
+
+	$result = MAB('admin')->signupConstantContact($list, $email, $vars);
+
+	if(is_array($result)){
+		foreach($result as $error){
+			MAB_Ajax::addMessage(print_r($error,true));
+		}
+		return false;
+	}
+
+	$actionBox = MAB_ActionBox::get($data['mabid']);
+	if(!$actionBox){
+		MAB_Ajax::addMessage('Action box does not exist.');
+		return false;
+	}
+
+	$meta = $actionBox->getMeta();
+	if(!empty($meta['optin']['success-message'])){
+		MAB_Ajax::addMessage(wp_kses_post($meta['optin']['success-message']));
+	}
+
+	if(!empty($meta['optin']['redirect'])){
+		return array('redirect' => esc_url($meta['optin']['redirect']));
+	}
+
+	return true;
 }

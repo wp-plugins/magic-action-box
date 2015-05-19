@@ -15,34 +15,40 @@ $MabBase = MAB('MAB');
 		<?php
 		global $post;
 		$types = $MabBase->get_registered_action_box_types('all');
+
+		$disabledTypes = array();
+
 		foreach($types as $type => $info) {
 			$enabled = !empty( $info['status'] ) && $info['status'] == 'enabled' ? true : false;
-			
-			if( $enabled ){ ?>
-			<li>
-				<?php
-				$query_args = array( 'action' => 'edit', 'post' => $post->ID, 'action_box_set' => 1, 'action_box_type' => $type );
-				$url = add_query_arg( $query_args, admin_url('post.php') );
-				$url = wp_nonce_url( $url, 'action_box_set' );
-				?>
 
-				<?php if( $type === 'optin' || $type == 'gforms' ) : ?>
+			/* List all enabled types first */
+			if( $enabled ){ ?>
+				<li>
+					<?php
+					$query_args = array( 'action' => 'edit', 'post' => $post->ID, 'action_box_set' => 1, 'action_box_type' => $type );
+					$url = add_query_arg( $query_args, admin_url('post.php') );
+					$url = wp_nonce_url( $url, 'action_box_set' );
+					?>
+
 					<a class="mab-type-title" href="<?php echo esc_attr($url); ?>"><?php esc_html_e($info['name'], 'mab' ); ?></a><br />
-					<?php esc_html_e($info['description'], 'mab' ); ?>
-				<?php else: ?>
-					<span class="disabled-type"><?php esc_html_e($info['name'], 'mab' ); ?></span><br />
-					<em><small>(Available in <a href="http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=addScreen" target="_blank">Magic Action Box Pro</a>)</small></em><br />
-					<?php esc_html_e($info['description'], 'mab' ); ?><br />
-					
-				<?php endif; ?>
-			</li>
-			<?php } else { ?>
-			<li>
-				<span class="disabled-type"><?php esc_html_e($info['name'], 'mab' ); ?><?php echo apply_filters('mab_disabled_type_text', ' (Disabled)' ); ?></span><br />
-				<?php echo $info['description']; ?>
-			</li>
-			<?php }//endif
+					<?php echo wp_kses_post($info['description'], 'mab' ); ?>
+
+				</li>
+			<?php } else {
+				$disabledTypes[] = $info;
+			} //endif
 		}
+
+		/* List disabled types next */
+		foreach($disabledTypes as $info){
+			?>
+			<li>
+				<span class="disabled-type"><?php esc_html_e($info['name'], 'mab' ); ?><?php echo apply_filters('mab_disabled_type_text', ' <small>(' . __('Disabled') . ')</small>' ); ?></span><br />
+				<?php echo wp_kses_post($info['description']); ?>
+			</li>
+		<?php
+		}
+
 		?>
 	</ul>
 <?php /*
@@ -66,11 +72,9 @@ $MabBase = MAB('MAB');
 				<li>Use your own custom image for submit button in Opt-In Form action box type.</li>
 				<li>Display random action boxes on every page load.</li>
 				<li>Show a video (not just images) with your action boxes</li>
-				<li>Use Contact Form action box type with Contact Form 7.</li>
 				<li>Use Sales Box action box type.</li>
 				<li>Use Share Box action box type.</li>
 				<li>Future action box types not available in the lite version.</li>
-				<li>Use shortcodes and template tags.</li>
 				<li>VIP Customer Support</li>
 				<li>More pre-designed styles</li>
 				<li>Create and upload your own buttons (for Sales Boxes)</li>

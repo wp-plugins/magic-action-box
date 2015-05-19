@@ -35,6 +35,21 @@ class MAB_ActionBox extends MAB_Base{
 		
 		return $box;
 	}
+
+	/**
+	 * Returns an action box object
+	 *
+	 * @param $id ID of the action box to get
+	 * @return MAB_ActionBox|null null if action box does not exist.
+	 */
+	public static function get($id){
+		$mab = new MAB_ActionBox($id);
+
+		if(!$mab->isConfigured())
+			return null;
+		else
+			return $mab;
+	}
 	
 	function getTemplateObj(){
 		return $this->_template_obj;

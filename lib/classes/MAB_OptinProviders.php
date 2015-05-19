@@ -22,11 +22,18 @@ class MAB_OptinProviders extends MAB_Base{
 			'aweber' => array(
 				'id' => 'aweber', 
 				'name' => 'Aweber', 
-				'auto_allow' => false),
+				'auto_allow' => false
+			),
 			'mailchimp' => array(
 				'id' => 'mailchimp', 
 				'name' => 'MailChimp', 
-				'auto_allow' => false)
+				'auto_allow' => false
+			),
+			'constantcontact' => array(
+				'id' => 'constantcontact',
+				'name' => 'Constant Contact',
+				'auto_allow' => false
+			)
 		);
 
 		if(class_exists('WYSIJA_object')){
@@ -105,7 +112,7 @@ class MAB_OptinProviders extends MAB_Base{
 	public static function getAllAllowed(){
 		/** TODO: add a registerOptinProviders() function **/
 		
-		$settings = ProsulumMabCommon::getSettings();
+		$settings = MAB('settings')->getAll();
 		$allowed = array();
 		
 		foreach( self::getAll() as $k => $provider ){

@@ -1,36 +1,66 @@
 <?php
-/**
- * Based on http://www.aweber.com/faq/questions/396/Can+I+Use+My+Own+Form%3F
- */
+
 $meta = $data;
-$redirectUrl = !empty($meta['optin']['thank-you']) ? $meta['optin']['thank-you'] : 'http://www.aweber.com/thankyou-coi.htm?m=text';
-$trackingCode = !empty( $meta['optin']['aweber']['tracking-code'] ) ? $meta['optin']['aweber']['tracking-code'] : ''; 
+$optinMeta = $data['optin'];
+$redirectUrl = !empty($meta['optin']['redirect']) ? $meta['optin']['redirect'] : '';
+$actionUrl = '#submit';
+$submitValue = !empty( $meta['optin']['submit-value'] ) ? $meta['optin']['submit-value'] : 'Submit';
+$submitImage = !empty( $meta['optin']['submit-image'] ) ? $meta['optin']['submit-image'] : '';
 
-?>
-<form method="POST" action="http://www.aweber.com/scripts/addlead.pl">
-	<p class="mab-field">
-		<label for="mab-name">Name</label>
-		<input type="text" id="mab-name" placeholder="Enter your name" name="name" />
-	</p>
-	<p class="mab-field">
-		<label for="mab-email">Email Address</label>
-		<input type="email" id="mab-email" placeholder="Enter your email" name="email" />
-	</p>
-	<input class="mab-submit" type="submit" value="Submit" />
+//labels
+$fieldlabels = isset($optinMeta['field-labels']) && is_array( $optinMeta['field-labels'] ) ? $optinMeta['field-labels'] : array( 'email' => __('Email', 'mab'), 'fname' => __('First Name', 'mab'), 'lname' => __('Last Name', 'mab') );
 
-	<?php 
-	//might be usefule later
-	//<input type="hidden" name="meta_split_id" value="" />
-	//<input type="hidden" name="meta_redirect_onlist" value="http://pogidude.com" /> //redirect to url if user is already subscribed to the list 
-	//<input type="hidden" name="meta_message" value="1" /> //the follow up message subscribers will first receive when signing up to the list. In most cases, this is set to "1".
-	//<input type="hidden" name="meta_forward_vars" value="1" /> set to "1" to forward all submitted fields to the redirect/thank you page using GET method. ?>
+$infieldlabels = isset($optinMeta['infield-labels']) && is_array( $optinMeta['infield-labels'] ) ? $optinMeta['infield-labels'] : array( 'email' => __('Enter your email', 'mab'), 'fname' => __('Enter your name', 'mab'), 'lname' => __('Enter your last name', 'mab') );
+
+//fields
+$fnameOn = $lnameOn = false;
+if(!empty($optinMeta['enabled-fields'])){
+	$fnameOn = in_array('firstname',$optinMeta['enabled-fields']) ? true : false;
+	$lnameOn = in_array('lastname',$optinMeta['enabled-fields']) ? true : false;
+}
+?><form method="POST" action="<?php echo $actionUrl; ?>">
+
+	<?php if($fnameOn): ?>
+		<div class="mab-field mab-field-name mab-field-fname">
+			<?php if( !empty( $fieldlabels['fname']) ) : ?>
+				<label for="mab-name"><?php echo $fieldlabels['fname']; ?></label>
+			<?php endif; ?>
+			<input type="text" id="mab-name" placeholder="<?php echo $infieldlabels['fname']; ?>" name="fname" />
+		</div>
+	<?php endif; ?>
+	<?php if($lnameOn): ?>
+		<div class="mab-field mab-field-name mab-field-lname">
+			<?php if( !empty( $fieldlabels['lname']) ) : ?>
+				<label for="mab-name"><?php echo $fieldlabels['lname']; ?></label>
+			<?php endif; ?>
+			<input type="text" id="mab-name" placeholder="<?php echo $infieldlabels['lname']; ?>" name="lname" />
+		</div>
+	<?php endif; ?>
+
+	<div class="mab-field mab-field-email">
+		<?php if( !empty( $fieldlabels['email']) ) : ?>
+		<label for="mab-email"><?php echo $fieldlabels['email']; ?></label>
+		<?php endif; ?>
+		<input type="email" id="mab-email" placeholder="<?php echo $infieldlabels['email']; ?>" name="email" required />
+	</div>
+	<div class="mab-field mab-field-submit">
+		<?php
+		if($submitImage):
+		?>
+		<input type="image" class="mab-optin-submit mab-submit" src="<?php echo $submitImage; ?>" alt="Submit">
+		<?php else: ?>
+		<input class="mab-submit" type="submit" value="<?php echo $submitValue; ?>" />
+		<?php endif; ?>
+	</div>
+	<div class="mab-form-msg mab-alert" style="display: none; text-align: center;"></div>
+	<div class="clear"></div>
 	
-	<input type="hidden" name="listname" value="<?php echo $meta['optin']['aweber']['list']; ?>" />
+	<input type="hidden" name="list" value="<?php echo $meta['optin']['constantcontact']['list']; ?>" />
+	<?php if( !empty( $redirectUrl ) ): ?>
 	<input type="hidden" name="redirect" value="<?php echo $redirectUrl; ?>" />
-	<input type="hidden" name="meta_adtracking" value="<?php echo $meta['optin']['aweber']['tracking-code']; ?>" />
-	<input type="hidden" name="meta_message" value="1" />
-	
-	<?php //maybe have a way to set which fields are required? ?>
-	<input type="hidden" name="meta_required" value="name,email" />
-	
+	<?php endif; ?>
+
+	<input type="hidden" name="mabid" value="<?php echo $meta['ID']; ?>">
+	<input type="hidden" name="optin-provider" value="constantcontact">
+
 </form>

@@ -5,7 +5,7 @@ $actionBoxesSelect = $data['actionboxList'];
 <div class="themes-php">
 	<div class="wrap">
 		<?php screen_icon('edit-comments'); ?>
-		<h2 id="mab-settings-header">Magic Action Box Settings</h2>
+		<h1 id="mab-settings-header">Magic Action Box Settings</h1>
 		
 		<?php
 		$messages = $data['messages'];
@@ -43,7 +43,6 @@ $actionBoxesSelect = $data['actionboxList'];
 
 	<!-- ### GENERAL ### -->
 	<div id="mab-general" class="group">
-		<h3>General Settings</h3>
 		<div class="mab-tab-group-content">
 			<?php $others = $data['others']; ?>
 			<table class="form-table">
@@ -88,7 +87,6 @@ $actionBoxesSelect = $data['actionboxList'];
 	
 	<!-- ### ACCOUNTS ### -->
 	<div id="mab-accounts" class="group">
-		<h3><?php _e('Accounts (Integration)'); ?></h3>
 		<div class="mab-tab-group-content">
 			<?php $optin = $data['optin']; ?>
 			<h3><?php _e('Email Providers'); ?></h3>
@@ -108,7 +106,7 @@ $actionBoxesSelect = $data['actionboxList'];
 					</tr>
 				</tbody>
 			</table>
-
+			<hr>
 			<h4><?php _e('MailChimp', 'mab' ); ?></h4>
 			<table class="form-table">
 				<tbody>
@@ -121,7 +119,20 @@ $actionBoxesSelect = $data['actionboxList'];
 					</tr>
 				</tbody>
 			</table>
-
+			<hr>
+			<h4><?php _e('Constant Contact', 'mab'); ?></h4>
+			<table class="form-table">
+				<tbody>
+				<tr>
+					<th scope="row"><label for="mab-optin-constantcontact-authorization"><?php _e('Constant Contact Access Token', 'mab' ); ?></label></th>
+					<td>
+						<input type="text" class="code large-text" name="mab[optin][constantcontact-authorization]" id="mab-optin-constantcontact-authorization" value="<?php echo !empty($optin['constantcontact-authorization']) ? esc_attr($optin['constantcontact-authorization']) : ''; ?>"  /><br />
+						<a href="<?php echo $data['_optin_ConstantContactAuthenticationUrl']; ?>" target="_blank"><?php _e('Click here to get your access token.','mab' ); ?></a>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+			<hr>
 			<?php
 			$sendreach_key = !empty($optin['sendreach']['key']) ? esc_attr($optin['sendreach']['key']) : '';
 			$sendreach_secret = !empty($optin['sendreach']['secret']) ? esc_attr($optin['sendreach']['secret']) : '';
@@ -149,7 +160,6 @@ $actionBoxesSelect = $data['actionboxList'];
 	
 	<!-- ### DEFALT ### -->
 	<div id="mab-default" class="group">
-		<h3>Default Action Box</h3>
 		<div class="mab-tab-group-content">
 			<table class="form-table">
 				<tbody>
@@ -161,8 +171,8 @@ $actionBoxesSelect = $data['actionboxList'];
 							//remove default option since not needed for this setting
 							unset( $actionBoxesDefaultSelect['default'] ); 
 							?>
-							<select id="mab-default-actionbox" class="large-text" disabled>
-								<?php $defaultActionBox = ''; ?>
+							<select id="mab-default-actionbox" class="large-text" name="mab[global-mab][default][actionbox]">
+								<?php $defaultActionBox = isset( $globalMab['default']['actionbox'] ) ? $globalMab['default']['actionbox'] : ''; ?>
 								<?php foreach( $actionBoxesDefaultSelect as $boxId => $boxName ): ?>
 									<option value="<?php echo $boxId; ?>" <?php selected( $defaultActionBox, $boxId ); ?> ><?php echo $boxName; ?></option>
 								<?php endforeach; ?>
@@ -173,8 +183,8 @@ $actionBoxesSelect = $data['actionboxList'];
 					<tr>
 						<th scope="row"><strong><label for="mab-default-actionbox-placement"><?php _e('Action Box Placement','mab'); ?></label></strong></th>
 						<td>
-							<?php $defaultActionBoxPlacement = 'bottom'; ?>
-							<select id="mab-default-actionbox-placement" class="large-text" disabled>
+							<?php $defaultActionBoxPlacement = isset( $globalMab['default']['placement'] ) ? $globalMab['default']['placement'] : 'bottom'; ?>
+							<select id="mab-default-actionbox-placement" class="large-text" name="mab[global-mab][default][placement]">
 								<option value="top" <?php selected( $defaultActionBoxPlacement, 'top' ); ?> >Before Content</option>
 								<option value="bottom" <?php selected( $defaultActionBoxPlacement, 'bottom' ); ?> >After Content</option>
 								<option value="manual" <?php selected( $defaultActionBoxPlacement, 'manual' ); ?> >Manual Placement</option>
@@ -184,13 +194,11 @@ $actionBoxesSelect = $data['actionboxList'];
 					</tr>
 				</tbody>
 			</table>
-			<p class="mab-notice"><a href="http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=mainSettingsTabs">Upgrade to Magic Action Box Pro</a> to be able to assign a default action box for all your Posts and Pages.</p>
 		</div>
 	</div><!-- #mab-default -->
 	
 	<!-- ### PAGES ### -->
 	<div id="mab-pages" class="group">
-		<h3>Pages Action Box</h3>
 		<div class="mab-tab-group-content">
 			<table class="form-table">
 				<tbody>
@@ -200,10 +208,10 @@ $actionBoxesSelect = $data['actionboxList'];
 							<?php
 							$actionBoxesSelect = $data['actionboxList'];
 							?>
-							<select id="mab-pages-actionbox" class="large-text" disabled>
-								<?php $pageActionBox = ''; ?>
+							<select id="mab-pages-actionbox" class="large-text" name="mab[global-mab][page][actionbox]">
+								<?php $pageActionBox = isset( $globalMab['page']['actionbox'] ) ? $globalMab['page']['actionbox'] : ''; ?>
 								<?php foreach( $actionBoxesSelect as $boxId => $boxName ): ?>
-									<option value="<?php echo $boxId; ?>" <?php selected( $pageActionBox, $boxId ); ?> ><?php echo $boxName; ?></option>
+									<option value="<?php echo $boxId; ?>" <?php selected( $globalMab['page']['actionbox'], $boxId ); ?> ><?php echo $boxName; ?></option>
 								<?php endforeach; ?>
 							</select>
 							<p><?php _e('Default action box to use for all WP Pages.','mab' ); ?></p>
@@ -212,8 +220,8 @@ $actionBoxesSelect = $data['actionboxList'];
 					<tr>
 						<th scope="row"><strong><label for="mab-pages-actionbox-placement"><?php _e('Action Box Placement','mab'); ?></label></strong></th>
 						<td>
-							<?php $pageActionBoxPlacement = 'bottom'; ?>
-							<select id="mab-pages-actionbox-placement" class="large-text" disabled>
+							<?php $pageActionBoxPlacement = isset( $globalMab['page']['placement'] ) ? $globalMab['page']['placement'] : 'bottom'; ?>
+							<select id="mab-pages-actionbox-placement" class="large-text" name="mab[global-mab][page][placement]">
 								<option value="top" <?php selected( $pageActionBoxPlacement, 'top' ); ?> >Before Content</option>
 								<option value="bottom" <?php selected( $pageActionBoxPlacement, 'bottom' ); ?> >After Content</option>
 								<option value="manual" <?php selected( $pageActionBoxPlacement, 'manual' ); ?> >Manual Placement</option>
@@ -223,13 +231,11 @@ $actionBoxesSelect = $data['actionboxList'];
 					</tr>
 				</tbody>
 			</table>
-			<p class="mab-notice"><a href="http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=mainSettingsTabs">Upgrade to Magic Action Box Pro</a> to be able to assign a default action box for all WP Pages.</p>
 		</div>
 	</div><!-- #mab-pages -->
 	
 	<!-- ### POSTS ### -->
 	<div id="mab-posts" class="group">
-		<h3>Posts Action Box</h3>
 		<div class="mab-tab-group-content">
 			<table class="form-table">
 				<tbody>
@@ -239,8 +245,8 @@ $actionBoxesSelect = $data['actionboxList'];
 							<?php
 							$actionBoxesSelect = $data['actionboxList'];
 							?>
-							<select id="mab-post-actionbox" class="large-text" disabled>
-								<?php $postActionBox = ''; ?>
+							<select id="mab-post-actionbox" class="large-text" name="mab[global-mab][post][actionbox]">
+								<?php $postActionBox = isset( $globalMab['post']['actionbox'] ) ? $globalMab['post']['actionbox'] : ''; ?>
 								<?php foreach( $actionBoxesSelect as $boxId => $boxName ): ?>
 									<option value="<?php echo $boxId; ?>" <?php selected( $postActionBox, $boxId ); ?> ><?php echo $boxName; ?></option>
 								<?php endforeach; ?>
@@ -251,8 +257,8 @@ $actionBoxesSelect = $data['actionboxList'];
 					<tr>
 						<th scope="row"><strong><label for="mab-post-actionbox-placement"><?php _e('Action Box Placement','mab'); ?></label></strong></th>
 						<td>
-							<?php $postActionBoxPlacement = 'bottom'; ?>
-							<select id="mab-post-actionbox-placement" class="large-text" disabled>
+							<?php $postActionBoxPlacement = isset( $globalMab['post']['placement'] ) ? $globalMab['post']['placement'] : 'bottom'; ?>
+							<select id="mab-post-actionbox-placement" class="large-text" name="mab[global-mab][post][placement]">
 								<option value="top" <?php selected( $postActionBoxPlacement, 'top' ); ?> >Before Content</option>
 								<option value="bottom" <?php selected( $postActionBoxPlacement, 'bottom' ); ?> >After Content</option>
 								<option value="manual" <?php selected( $postActionBoxPlacement, 'manual' ); ?> >Manual Placement</option>
@@ -262,17 +268,14 @@ $actionBoxesSelect = $data['actionboxList'];
 					</tr>
 				</tbody>
 			</table>
-			<p class="mab-notice"><a href="http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=mainSettingsTabs">Upgrade to Magic Action Box Pro</a> to be able to assign a default action box for all Posts.</p>
 		</div>
 	</div><!-- #mab-posts -->
 	
 	<!-- ### CATEGORIES ### -->
 	<div id="mab-category" class="group">
-		<h3>Categories Action Box</h3>
 		<div class="mab-tab-group-content">
 			<p><?php _e('Specify an action box to use for blog posts under a specific category. This will take precedence over the default (global) action box set for blog posts.','mab' ); ?></p>
 			<p><?php _e('Action Box Placement will only take effect if corresponding Action Box is set to other values other than <em>Use Default</em>.','mab' ); ?></p>
-			<p class="mab-notice"><a href="http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=mainSettingsTabs">Upgrade to Magic Action Box Pro</a> to be able to use this feature.</p>
 			<table class="widefat">
 				<thead>
 					<tr>
@@ -287,8 +290,7 @@ $actionBoxesSelect = $data['actionboxList'];
 					<?php foreach( $categories as $catId => $cat ) : ?>
 					<tr>
 						<?php
-
-						$catActionBox = 'default';
+						$catActionBox = isset( $globalMab['category'][$catId]['actionbox'] ) ? $globalMab['category'][$catId]['actionbox'] : 'default';
 
 						//append cat parent name
 						$cat_parent_id = $cat->parent;
@@ -304,19 +306,18 @@ $actionBoxesSelect = $data['actionboxList'];
 							$cat_parent_id = $cat_parent->parent;
 							$cat_limit++;
 						}
-
 						?>
 						<th scope="row"><label for="mab-category-<?php echo $catId; ?>-actionbox"><?php echo $cat_name; ?></label></th>
 						<td>
-							<select id="mab-pages-actionbox" class="large-text" disabled>
+							<select id="mab-pages-actionbox" class="large-text" name="mab[global-mab][category][<?php echo $catId; ?>][actionbox]">
 								<?php foreach( $actionBoxesSelect as $boxId => $boxName ): ?>
 									<option value="<?php echo $boxId; ?>" <?php selected( $catActionBox, $boxId ); ?> ><?php echo $boxName; ?></option>
 								<?php endforeach; ?>
 							</select>
 						</td>
 						<td>
-							<?php $catActionBoxPlacement = 'bottom'; ?>
-							<select id="mab-category-<?php echo $catId; ?>-actionbox-placement" class="large-text" disabled>
+							<?php $catActionBoxPlacement = isset( $globalMab['category'][$catId]['placement'] ) ? $globalMab['category'][$catId]['placement'] : 'bottom'; ?>
+							<select id="mab-category-<?php echo $catId; ?>-actionbox-placement" class="large-text" name="mab[global-mab][category][<?php echo $catId; ?>][placement]">
 								<option value="top" <?php selected( $catActionBoxPlacement, 'top' ); ?> >Before Content</option>
 								<option value="bottom" <?php selected( $catActionBoxPlacement, 'bottom' ); ?> >After Content</option>
 								<option value="manual" <?php selected( $catActionBoxPlacement, 'manual' ); ?> >Manual Placement</option>

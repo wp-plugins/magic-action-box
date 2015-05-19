@@ -5,10 +5,14 @@ add_shortcode( 'mab_button', 'mab_button_shortcode');
 add_shortcode( 'mab_load_assets', 'mab_load_assets_shortcode');
 
 function mab_get_actionbox_shortcode_wrap( $atts = array(), $content = '', $code = '' ){
-	
-	$notice = '<div class="mab-shortcode-notice">Sorry, the <code>[magicactionbox]</code> shortcode is only available in the <a href="http://www.magicactionbox.com/pricing/?pk_campaign=LITE&pk_kwd=shortcode_notice">Pro version</a>.</div>';
-	wp_enqueue_style('mab-extras');
-	return $notice;
+
+	$default = array(
+		'id' => null,
+		'force_show' => false
+	);
+	extract( shortcode_atts( $default, $atts ) );
+
+	return mab_get_actionbox( $id, true, $force_show);
 }
 
 
@@ -16,9 +20,21 @@ function mab_get_actionbox_shortcode_wrap( $atts = array(), $content = '', $code
  * MAB Button Shortcode
  */
 function mab_button_shortcode($atts = array(), $content = '', $code = ''){
-	$notice = '<div class="mab-shortcode-notice">Sorry, the <code>[mab_button]</code> shortcode is only available in the <a href="http://www.magicactionbox.com/pricing/?pk_campaign=LITE&pk_kwd=shortcode_notice">Pro version</a>.</div>';
-	wp_enqueue_style('mab-extras');
-	return $notice;
+	$default = array(
+		'id' => null,
+		'url' => '',
+		'class' => 'help',
+		'target' => '',
+		'title' => '',
+		'name' => '',
+		'new_window' => false
+	);
+
+	$atts = shortcode_atts( $default, $atts );
+
+	$atts['text'] = trim($content);
+
+	return mab_button( $atts );
 }
 
 function mab_load_assets_shortcode($atts = array(), $content = '', $code = ''){

@@ -37,6 +37,7 @@ class MAB_Settings extends MAB_Base{
 				),
 			'optin' => array(
 				'aweber-authorization' => '',
+				'constantcontact-authorization' => '',
 				'mailchimp-api' => '',
 				'allowed' => array(
 					'manual' => 1

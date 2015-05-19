@@ -174,15 +174,17 @@ class ProsulumMabBase extends MAB_Base{
 	 */
 	private function _initialize_action_box_types(){
 		$boxes = array();
-		
+
+		$upgrade = sprintf(__('<em><small>(Available in <a href="%s" target="_blank">Magic Action Box Pro</a>)</small></em><br />'), 'http://www.magicactionbox.com/features/?pk_campaign=LITE&pk_kwd=addScreen');
+
 		//Optin
 		$boxes['optin'] = array( 'type' => 'optin', 'name' => __('Optin Form', 'mab' ), 'description' => __('An opt in form is used to build your email list.','mab'), 'template' => 'optin', 'status' => 'enabled' );
 		
 		//Sales Box
-		$boxes['sales-box'] = array( 'type' => 'sales-box', 'name' => __('Sales Box', 'mab' ), 'description' => __('A simple sales box. Use it to lead visitors to your sales page.','mab'), 'template' => 'sales-box', 'status' => 'enabled' );
+		$boxes['sales-box'] = array( 'type' => 'sales-box', 'name' => __('Sales Box', 'mab' ), 'description' => $upgrade . __('A simple sales box. Use it to lead visitors to your sales page.','mab'), 'template' => 'sales-box', 'status' => 'false' );
 		
 		//Social Media
-		$boxes['share-box'] = array( 'type' => 'share-box', 'name' => __('Share Box', 'mab' ), 'description' => __('Action box made for sharing your content','mab'), 'template' => 'share-box', 'status' => 'enabled' );
+		$boxes['share-box'] = array( 'type' => 'share-box', 'name' => __('Share Box', 'mab' ), 'description' => $upgrade . __('Action box made for sharing your content','mab'), 'template' => 'share-box', 'status' => 'false' );
 		
 		$this->_registered_action_box_types = apply_filters( 'mab_initialize_action_box_types', $boxes );
 	}
@@ -503,7 +505,7 @@ class ProsulumMabBase extends MAB_Base{
 			if( !get_option( $nag_notice ) ){
 			
 				echo '<div class="updated"><p>';
-				printf( __('Magic Action Box plugin has been updated to version %s | <a href="%s">Close</a>', 'mab'), MAB_VERSION, add_query_arg( array('mab-hide-update-notice' => 'true' ) ), $this->get_current_version(), admin_url('post-new.php?post_type=action-box') );
+				printf( __('Magic Action Box plugin has been updated to version %s. <a href="%s">Go to the dashboard</a>. | <a href="%s">Close</a>', 'mab'), MAB_VERSION, admin_url('admin.php?page=mab-main'), add_query_arg( array('mab-hide-update-notice' => 'true' ) ) );
 				echo '</p></div>';
 				/*
 				echo '<div class="updated"><p>';

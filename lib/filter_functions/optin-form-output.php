@@ -95,3 +95,20 @@ function mab_postmatic_form_html($html, $actionBoxObj){
 
 	return $form;
 }
+
+function mab_constantcontact_form_html($html, $actionBoxObj){
+	$settings = MAB('settings')->getAll();
+
+	if( $settings['optin']['allowed']['constantcontact'] == 0 )
+		return '';
+
+	$actionBoxObj->addClass('mab-ajax');
+
+	$meta = $actionBoxObj->getMeta();
+	$meta['ID'] = $actionBoxObj->getId();
+	$filename = 'optinforms/constant-contact.php';
+	$form = MAB_Utils::getView( $filename, $meta );
+
+	return $form;
+
+}

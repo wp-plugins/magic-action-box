@@ -42,5 +42,13 @@
 				Before Content
 			</label>
 		</li>
+		<li class="mab-actionbox-placement-manual">
+			<label for="mab-post-action-box-placement-manual">
+				<p><span>Show action boxes manually using the <code>[magicactionbox]</code> shortcode or the <code>mab_get_actionbox()</code> PHP function.</span></p>
+				<input id="mab-post-action-box-placement-manual" value="manual" type="radio" <?php checked( $placement, 'manual'); ?> name="mabpostmeta[post-action-box-placement]" />
+				Manual
+			</label>
+		</li>
 	</ul>
+	You may also use the shortcode <span style="font-weight: bold; font-family: Consolas,Monaco,monospace;">[magicactionbox id="ACTIONBOX ID"]</span> to manually position your magic action box. You may also use the function <span style="font-weight: bold; font-family: Consolas,Monaco,monospace">mab_get_actionbox()</span> in your theme files to do the same thing. Example: <span style="font-weight: bold; font-family: Consolas,Monaco,monospace">echo mab_get_actionbox();</span>
 </div>

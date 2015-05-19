@@ -1,4 +1,12 @@
 <?php
+
+use Ctct\ConstantContact;
+use Ctct\Components\Contacts\Contact;
+use Ctct\Components\Contacts\ContactList;
+use Ctct\Components\Contacts\EmailAddress;
+use Ctct\Components\Account\AccountInfo;
+use Ctct\Exceptions\CtctException;
+
 class ProsulumMabAdmin extends MAB_Base{
 	
 	var $_data_RegisteredActionBoxes = array();
@@ -8,7 +16,10 @@ class ProsulumMabAdmin extends MAB_Base{
 	var $_optin_AweberAuthenticationUrl = 'https://auth.aweber.com/1.0/oauth/authorize_app/';
 	var $_optin_AweberFormActionUrl = 'http://www.aweber.com/scripts/addlead.pl';
 	var $_optin_AweberListsTransient = '_mab_aweber_lists_transient';
-	var $_optin_ConstantContactKey = '07671de3-6060-4ef8-b431-f1f48f8de026';
+	var $_optin_ConstantContactKey = 'sz292ybks39us6j5ywnwy3ba';
+	var $_optin_ConstantContactAccessToken = ''; // filled from database
+	var $_optin_ConstantContactAuthenticationUrl = 'https://oauth2.constantcontact.com/oauth2/password.htm?client_id=sz292ybks39us6j5ywnwy3ba';
+	var $_optin_ConstantContactListsTransient = 'mab_ctct_lists_transient';
 	var $_optin_MailChimpListsTransient = 'mab_mailchimp_lists_transient';
 
 	var $_optin_SendReachListsTransient = 'mab_sendreach_lists_transient';
@@ -100,23 +111,30 @@ class ProsulumMabAdmin extends MAB_Base{
 		$MabButton = MAB('button');
 		
 		$hooks = array( 'post-new.php', 'post.php' );
-		
+
+		$permission = 'manage_options';
+
+		## MAIN MENU
+		$hooks[] = add_menu_page( __('Magic Action Box', 'mab'), __('Magic Action Box', 'mab'), $permission, 'mab-main', array( __CLASS__, 'displayDashboard' ), MAB_ASSETS_URL . 'images/cube.png', '66.5' );
+
+		## DASHBOARD
+		$welcomeTitle = __('Dashboard', 'mab');
+		$hooks[] = add_submenu_page( 'mab-main', $welcomeTitle, $welcomeTitle, $permission, 'mab-main', array(__CLASS__, 'displayDashboard') );
+
 		## MAIN SETTINGS
-		$hooks[] = add_menu_page( __('Magic Action Box', 'mab'), __('Magic Action Box', 'mab'), 'manage_options', 'mab-main', array( &$this, 'displaySettingsPage' ), MAB_ASSETS_URL . 'images/cube.png', '66.5' );
-		## MAIN SETTINGS
-		$hooks[] = add_submenu_page( 'mab-main', __('Main Settings', 'mab' ), __('Main Settings', 'mab' ), 'manage_options', 'mab-main', array( &$this, 'displaySettingsPage' ) );
+		$hooks[] = add_submenu_page( 'mab-main', __('Main Settings', 'mab' ), __('Main Settings', 'mab' ), $permission, 'mab-settings', array( &$this, 'displaySettingsPage' ) );
 
 		## ACTION BOXES
-		$hooks[] = add_submenu_page( 'mab-main', __('Action Boxes','mab'), __('Action Boxes','mab'), 'manage_options', 'edit.php?post_type=' . $MabBase->get_post_type() );
+		$hooks[] = add_submenu_page( 'mab-main', __('Action Boxes','mab'), __('Action Boxes','mab'), $permission, 'edit.php?post_type=' . $MabBase->get_post_type() );
 		
-		$hooks[] = add_submenu_page( 'mab-main', __('New Action Box','mab'), __('New Action Box','mab'), 'manage_options', 'post-new.php?post_type=' . $MabBase->get_post_type() );
+		$hooks[] = add_submenu_page( 'mab-main', __('New Action Box','mab'), __('New Action Box','mab'), $permission, 'post-new.php?post_type=' . $MabBase->get_post_type() );
 
 		## ACTION BOX SETTINGS
 		//$hooks[] = add_submenu_page( 'mab-main', __('Action Box Settings', 'mab' ), __('Action Box Settings', 'mab' ), 'manage_options', 'mab-actionbox-settings', array( &$this, 'displayActionBoxSettingsPage' ) );
 		
 		## DESIGN
 		
-		$hooks[] = add_submenu_page( 'mab-main', __('Styles &amp; Buttons', 'mab' ), __('Styles &amp; Buttons', 'mab' ), 'manage_options', 'mab-design', array( &$this, 'displayDesignsPage' ) );
+		$hooks[] = add_submenu_page( 'mab-main', __('Styles &amp; Buttons', 'mab' ), __('Styles &amp; Buttons', 'mab' ), $permission, 'mab-design', array( &$this, 'displayDesignsPage' ) );
 		
 		## ADD/EDIT DESIGN/STYLE
 		$styleTitle = __( 'Add Style', 'mab' );
@@ -124,7 +142,7 @@ class ProsulumMabAdmin extends MAB_Base{
 			$styleTitle = __('Edit Style', 'mab' );
 		}
 		//TODO: Rename $styleTitle when editing a style
-		$hooks[] = add_submenu_page( 'mab-main', $styleTitle, $styleTitle, 'manage_options', 'mab-style-settings', array( &$this, 'displayStyleSettingsPage' ) );
+		$hooks[] = add_submenu_page( 'mab-main', $styleTitle, $styleTitle, $permission, 'mab-style-settings', array( &$this, 'displayStyleSettingsPage' ) );
 		
 		## ADD/EDIT BUTTONS
 		$buttonTitle = __( 'Add Button', 'mab' );
@@ -132,10 +150,8 @@ class ProsulumMabAdmin extends MAB_Base{
 			$buttonTitle = __('Edit Button', 'mab' );
 		}
 		
-		$hooks[] = add_submenu_page( 'mab-main', $buttonTitle , $buttonTitle , 'manage_options', 'mab-button-settings', array( &$this, 'displayButtonSettingsPage' ) );
+		$hooks[] = add_submenu_page( 'mab-main', $buttonTitle , $buttonTitle , $permission, 'mab-button-settings', array( &$this, 'displayButtonSettingsPage' ) );
 
-		$hooks[] = add_submenu_page( 'mab-main', __('Support', MAB_DOMAIN ), __('Support &amp; Links', MAB_DOMAIN), 'manage_options', 'mab-support', array( &$this, 'displaySupportPage' ) );
-		
 		$mab_hooks = apply_filters( 'mab_add_submenu_filter', $hooks );
 		
 		## ATTACH ASSETS
@@ -194,37 +210,42 @@ class ProsulumMabAdmin extends MAB_Base{
 	//DISPLAY SETTINGS CALLBACKS
 	function displaySettingsPage(){
 		$MabBase = MAB();
-		
+
 		$data = $this->getSettings();
 
 		//get all created action boxes
 		$actionBoxesObj = get_posts( array( 'numberposts' => -1, 'post_type' => $MabBase->get_post_type(), 'orderby' => 'title', 'order' =>'ASC' ) );
-		
+
 		//create actio box content type array
 		$actionBoxes = array();
 		$actionBoxes['none'] = 'None';
 		$actionBoxes['default'] = 'Use Default';
-		
+		foreach( $actionBoxesObj as $aBox ){
+			$actionBoxes[ $aBox->ID ] = $aBox->post_title;
+		}
+
 		//get all categories and store in array
 		$categoriesObj = get_categories( array( 'hide_empty' => 0 ) );
 		foreach( $categoriesObj as $cat ){
 			$categories[ $cat->cat_ID ] = $cat;
 		}
-		
+
 		//add other variables as keys to the data array
 		$data['actionboxList'] = $actionBoxes;
 		$data['categories'] = $categories;
 		$data['_optin_AweberAuthenticationUrl'] = $this->_optin_AweberAuthenticationUrl;
 		$data['_optin_AweberApplicationId'] = $this->_optin_AweberApplicationId;
-		
+
+		$data['_optin_ConstantContactAuthenticationUrl'] = $this->_optin_ConstantContactAuthenticationUrl;
+
 		//get messages and add to data array
 		$messages = get_transient( $this->_option_SettingsTransient );
 		$data['messages'] = $messages;
-		
+
 		$filename = $this->getSettingsViewTemplate( 'main' );
-		
+
 		$settings_page = ProsulumMabCommon::getView( $filename, $data );
-		
+
 		echo $settings_page;
 		
 		//use a switch block here
@@ -322,6 +343,11 @@ class ProsulumMabAdmin extends MAB_Base{
 		$out = ProsulumMabCommon::getView( $filename );
 
 		echo $out;
+	}
+
+	public static function displayDashboard(){
+		$filename = 'settings/dashboard.php';
+		echo MAB_Utils::getView($filename);
 	}
 	
 	function getSettingsViewTemplate( $template = '' ){
@@ -626,6 +652,32 @@ class ProsulumMabAdmin extends MAB_Base{
 			$settings['optin']['aweber-account-info'] = !empty($old_settings['optin']['aweber-account-info']) ? $old_settings['optin']['aweber-account-info'] : '';
 			$settings['optin']['allowed']['aweber'] = !empty($old_settings['optin']['allowed']['aweber']) ? $old_settings['optin']['allowed']['aweber'] : 0;
 			$settings['optin']['aweber-lists'] = !empty($old_settings['optin']['aweber-lists']) ? $old_settings['optin']['aweber-lists'] : array();
+		}
+
+		//process constant contact (ctct)
+		$ctctSettingsChanged = false;
+		if( !isset($old_settings['optin']['constantcontact-authorization'])){
+			$old_settings['optin']['constantcontact-authorization'] = '';
+		}
+		if( $settings['optin']['constantcontact-authorization'] != $old_settings['optin']['constantcontact-authorization'] ){
+			$ctctSettingsChanged = true;
+			//validate access token
+			$ctctCheck = $this->validateConstantContactAuthorization( $settings['optin']['constantcontact-authorization'] );
+
+			if(is_array($ctctCheck) && !empty($ctctCheck['error'])){
+				// error during validation
+				$settings['optin']['allowed']['constantcontact'] = 0;
+				$errors[] = $ctctCheck['error'];
+				$settings['optin']['constantcontact-authorization'] = '';
+			} else {
+				// valid access token
+				$settings['optin']['allowed']['constantcontact'] = 1;
+			}
+
+		} else {
+			$settings['optin']['allowed']['constantcontact'] = !empty($old_settings['optin']['allowed']['constantcontact']) ? $old_settings['optin']['allowed']['constantcontact'] : 0;
+			$settings['optin']['constantcontact-lists'] = !empty($old_settings['optin']['constantcontact-lists']) ? $old_settings['optin']['constantcontact-lists'] : array();
+			$settings['optin']['constantcontact-authorization'] = !empty($old_settings['optin']['constantcontact-authorization']) ? $old_settings['optin']['constantcontact-authorization'] : '';
 		}
 		
 		//process mailchimp
@@ -1117,6 +1169,155 @@ class ProsulumMabAdmin extends MAB_Base{
 		return $this->_optin_AweberFormActionUrl;
 	}
 
+
+	/**
+	 * Constant Contact
+	 */
+
+	/**
+	 * Load Constant Contact library
+	 */
+	public function initializeConstantContactApi(){
+		require_once MAB_LIB_DIR . 'integration/Ctct/autoload.php';
+
+		$settings = MAB('settings')->getAll();
+
+		if(empty($settings['optin']['constantcontact-authorization'])){
+			return false;
+		}
+
+		$this->_optin_ConstantContactAccessToken = $settings['optin']['constantcontact-authorization'];
+
+		return true;
+	}
+
+	/**
+	 * Validate access token (authorization code)
+	 */
+	public function validateConstantContactAuthorization($token){
+		$this->initializeConstantContactApi();
+
+		$cc = new ConstantContact($this->_optin_ConstantContactKey);
+
+		try{
+			$info = $cc->getAccountInfo($token);
+		} catch( Exception $e ){
+			return array('error' => __('Validation of access token failed - ') . $e->getMessage());
+		}
+
+		if($info instanceof AccountInfo){
+			return $info;
+		} else {
+			return array('error' => 'Validation of access token failed.');
+		}
+	}
+
+	/**
+	 * Get Constant Contact lists
+	 */
+	function getConstantContactLists( $forceUpdate = false ) {
+
+		if ( ! $forceUpdate ) {
+			//check from cache
+			$lists = get_transient( $this->_optin_ConstantContactListsTransient );
+
+			if ( $lists !== false ) {
+				return $lists;
+			}
+		}
+
+		if(!$this->initializeConstantContactApi()){
+			return array();
+		}
+
+		$cc = new ConstantContact($this->_optin_ConstantContactKey);
+
+		try {
+			$ccLists = $cc->getLists( $this->_optin_ConstantContactAccessToken );
+		} catch(Exception $e){
+			$this->log($e->getMessage(), 'debug');
+			$ccLists = array();
+		}
+
+		$lists = array();
+		foreach($ccLists as $list){
+			$lists[] = array('id' => $list->id, 'name' => $list->name);
+		}
+
+		set_transient( $this->_optin_ConstantContactListsTransient, $lists, 24*60*60 );
+
+		return $lists;
+	}
+
+
+	/**
+	 * Sign up user to constant contact
+	 * @param string $list list ID
+	 * @param string $email
+	 * @param array $vars extra contact data i.e. first name, last name
+	 *      $vars['firstname']
+	 *      $vars['lastname']
+	 *
+	 * @return bool|array TRUE on success, array with errors on failure
+	 */
+	public function signupConstantContact($list, $email, $vars = array()){
+
+		if(!$this->initializeConstantContactApi()){
+			return array('Access token invalid.');
+		}
+
+		$cc = new ConstantContact($this->_optin_ConstantContactKey);
+
+		try{
+			// check to see if a contact already exists
+			$response = $cc->getContactByEmail($this->_optin_ConstantContactAccessToken, $email );
+
+			if(empty($response->results)){
+				// contact does not exist. create it
+				$contact = new Contact();
+				$contact->addEmail($email);
+				$contact->addList($list);
+				if(!empty($vars['firstname']))
+					$contact->first_name = $vars['firstname'];
+
+				if(!empty($vars['lastname']))
+					$contact->last_name = $vars['lastname'];
+
+				/*
+				 * The third parameter of addContact defaults to false, but if this were set to true it would tell Constant
+				 * Contact that this action is being performed by the contact themselves, and gives the ability to
+				 * opt contacts back in and trigger Welcome/Change-of-interest emails.
+				 *
+				 * See: http://developer.constantcontact.com/docs/contacts-api/contacts-index.html#opt_in
+				 */
+				$returnContact = $cc->addContact($this->_optin_ConstantContactAccessToken, $contact, true);
+
+			} else {
+				// contact exists. update it
+				$contact = $response->results[0];
+				$contact->addList($list);
+
+				if(!empty($vars['firstname']))
+					$contact->first_name = $vars['firstname'];
+
+				if(!empty($vars['lastname']))
+					$contact->last_name = $vars['lastname'];
+				/*
+				 * The third parameter of updateContact defaults to false, but if this were set to true it would tell
+				 * Constant Contact that this action is being performed by the contact themselves, and gives the ability to
+				 * opt contacts back in and trigger Welcome/Change-of-interest emails.
+				 *
+				 * See: http://developer.constantcontact.com/docs/contacts-api/contacts-index.html#opt_in
+				 */
+				$returnContact = $cc->updateContact($this->_optin_ConstantContactAccessToken, $contact, true);
+			}
+
+		} catch(CtctException $e){
+			return $e->getErrors();
+		}
+
+		return true;
+	}
 	
 	/**
 	 * MailChimp
@@ -1291,99 +1492,6 @@ class ProsulumMabAdmin extends MAB_Base{
 		return $lists;
 	}
 	
-	/**
-	 * Constant Contact
-	 */
-	function setupConstantContactUtility($apikey, $username, $password, $action = 'ACTION_BY_CONTACT') {
-		CCUtility::$sapikey = $apikey;
-		CCUtility::$susername = $username;
-		CCUtility::$spassword = $password;
-		CCUtility::$saction = $action;
-	}
-	
-	function getConstantContactLists( $forceUpdate = false ) {
-		require_once( MAB_LIB_DIR . 'constant_contact_api/constant_contact_api.php' );
-
-		$settings = $this->getSettings();
-		$optin = $settings['optin'];
-		$this->setupConstantContactUtility($this->_optin_ConstantContactKey, $optin['constant-contact-username'], $optin['constant-contact-password']);
-
-		$lists = new ListsCollection();
-		list($items) = $lists->getLists();
-
-		$return = array();
-		foreach($items as $item) {
-			$return[] = array('id' => preg_replace('/[^0-9]/', '', (string)$item->getId()), 'name' => (string)$item->getName());
-		}
-		return array_slice($return, 3);
-	}
-	
-	function signupUserForConstantContact($firstname, $lastname, $email, $list) {
-		require_once( MAB_LIB_DIR . 'constant_contact_api/constant_contact_api.php' );
-
-		$settings = $this->getSettings();
-		$optin = $settings['optin'];
-		$this->setupConstantContactUtility($this->_optin_ConstantContactKey, $optin['constant-contact-username'], $optin['constant-contact-password']);
-
-		
-		//check if user exists
-		$collection = new ContactsCollection();
-		list($search) = $collection->searchByEmail($email);
-		if(!empty($search)) {
-			foreach($search as $possible) {
-				if($email == $possible->getEmailAddress()) {
-					$contact = $collection->getContact($possible->getLink());
-					break;
-				}
-			}
-		}
-
-		$listKey = 'http://api.constantcontact.com/ws/customers/'.$optin['constant-contact-username'].'/lists/'.$list;
-		if($contact) {
-			$existingLists = $contact->getLists();
-
-			if(in_array($listKey, $existingLists)) {
-				return array('error' => __('You have already subscribed to this mailing list', 'mab' ));
-			} else {
-				$contact->setLists($listKey);
-			}
-			$contact->setFirstName($firstname);
-			$contact->setLastName($lastname);
-			$result = $collection->updateContact($contact->getId(), $contact);
-		} else {
-			$contact = new Contact();
-			$contact->setFirstName($firstname);
-			$contact->setLastName($lastname);
-			$contact->setEmailAddress($email);
-			$contact->setLists($listKey);
-
-			$result = $collection->createContact($contact);
-		}
-
-		$first = substr((string)$result,0,1);
-
-		if($first == 2) {
-			return true;
-		} else {
-			return array('error' => __('Could not subscribe you to this mailing list', 'mab' ));
-		}
-	}
-	
-	function validateConstantContactCredentials($username, $password) {
-		require_once( MAB_LIB_DIR . 'constant_contact_api/constant_contact_api.php' );
-
-		$this->setupConstantContactUtility($this->_optin_ConstantContactKey, $username, $password);
-
-		$utility = new CCUtility();
-		$result = $utility->ping();
-
-		if(!empty($result['error'])) {
-			return array('error' => __('Invalid Constant Contact credentials.', 'mab' ));
-		}
-
-		return true;
-	}
-	
 	
 	/**
 	 * FUNCTIONAL CALLBACKS
@@ -1427,6 +1535,9 @@ class ProsulumMabAdmin extends MAB_Base{
 				break;
 			case 'sendreach':
 				$lists = $this->getSendReachLists(true);
+				break;
+			case 'constantcontact':
+				$lists = $this->getConstantContactLists(true);
 				break;
 		}
 		
@@ -1793,7 +1904,7 @@ class ProsulumMabAdmin extends MAB_Base{
 			$result = ob_get_clean();
 			$filename = 'interceptions/post-new.php';	
 			//$data = $result;
-			$view = ProsulumMabCommon::getView( $filename, $data );
+			$view = ProsulumMabCommon::getView( $filename );
 			echo $view;
 		}
 	}
