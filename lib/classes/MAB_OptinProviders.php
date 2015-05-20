@@ -29,11 +29,11 @@ class MAB_OptinProviders extends MAB_Base{
 				'name' => 'MailChimp', 
 				'auto_allow' => false
 			),
-			'constantcontact' => array(
-				'id' => 'constantcontact',
-				'name' => 'Constant Contact',
-				'auto_allow' => false
-			)
+//			'constantcontact' => array(
+//				'id' => 'constantcontact',
+//				'name' => 'Constant Contact',
+//				'auto_allow' => false
+//			)
 		);
 
 		if(class_exists('WYSIJA_object')){

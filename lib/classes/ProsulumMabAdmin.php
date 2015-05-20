@@ -1,11 +1,13 @@
 <?php
 
+/*
 use Ctct\ConstantContact;
 use Ctct\Components\Contacts\Contact;
 use Ctct\Components\Contacts\ContactList;
 use Ctct\Components\Contacts\EmailAddress;
 use Ctct\Components\Account\AccountInfo;
 use Ctct\Exceptions\CtctException;
+*/
 
 class ProsulumMabAdmin extends MAB_Base{
 	
@@ -653,7 +655,7 @@ class ProsulumMabAdmin extends MAB_Base{
 			$settings['optin']['allowed']['aweber'] = !empty($old_settings['optin']['allowed']['aweber']) ? $old_settings['optin']['allowed']['aweber'] : 0;
 			$settings['optin']['aweber-lists'] = !empty($old_settings['optin']['aweber-lists']) ? $old_settings['optin']['aweber-lists'] : array();
 		}
-
+/*
 		//process constant contact (ctct)
 		$ctctSettingsChanged = false;
 		if( !isset($old_settings['optin']['constantcontact-authorization'])){
@@ -679,7 +681,7 @@ class ProsulumMabAdmin extends MAB_Base{
 			$settings['optin']['constantcontact-lists'] = !empty($old_settings['optin']['constantcontact-lists']) ? $old_settings['optin']['constantcontact-lists'] : array();
 			$settings['optin']['constantcontact-authorization'] = !empty($old_settings['optin']['constantcontact-authorization']) ? $old_settings['optin']['constantcontact-authorization'] : '';
 		}
-		
+		*/
 		//process mailchimp
 		$mailChimpSettingsChanged = false;
 		if($settings['optin']['mailchimp-api'] != $old_settings['optin']['mailchimp-api']) {
@@ -1178,7 +1180,8 @@ class ProsulumMabAdmin extends MAB_Base{
 	 * Load Constant Contact library
 	 */
 	public function initializeConstantContactApi(){
-		require_once MAB_LIB_DIR . 'integration/Ctct/autoload.php';
+		return false;
+		//require_once MAB_LIB_DIR . 'integration/Ctct/autoload.php';
 
 		$settings = MAB('settings')->getAll();
 

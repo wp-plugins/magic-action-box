@@ -505,7 +505,11 @@ class ProsulumMabBase extends MAB_Base{
 			if( !get_option( $nag_notice ) ){
 			
 				echo '<div class="updated"><p>';
-				printf( __('Magic Action Box plugin has been updated to version %s. <a href="%s">Go to the dashboard</a>. | <a href="%s">Close</a>', 'mab'), MAB_VERSION, admin_url('admin.php?page=mab-main'), add_query_arg( array('mab-hide-update-notice' => 'true' ) ) );
+				//printf( __('Magic Action Box plugin has been updated to version %s. <a href="%s">Go to the dashboard</a>. | <a href="%s">Close</a>', 'mab'), MAB_VERSION, admin_url('admin.php?page=mab-main'), add_query_arg( array('mab-hide-update-notice' => 'true' ) ) );
+				printf(__('Magic Action Box updated to v2.16.8 - this is an emergency release update. We have temporarily removed built-in
+integration with Constant
+Contact. See <a href="%s" target="_blank">emergency release announcement</a> for details. |
+ <a href="%s">Close</a>', 'mab'), 'http://www.magicactionbox.com/?p=1383', admin_url('admin.php?page=mab-main'), add_query_arg( array('mab-hide-update-notice' => 'true' ) ) );
 				echo '</p></div>';
 				/*
 				echo '<div class="updated"><p>';
