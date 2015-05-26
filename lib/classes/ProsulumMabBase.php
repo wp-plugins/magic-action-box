@@ -491,32 +491,47 @@ class ProsulumMabBase extends MAB_Base{
 	}
 
 	function get_current_version(){
-		return get_option( $this->_option_CurrentVersion, 'x' );
+		return get_option( $this->_option_CurrentVersion, '0.1' );
 	}
 
 	function updated_plugin_notice(){
 		global $current_user;
 
-		$nag_notice = $this->_option_NagNotice . $this->get_current_version();
-		//$nag_notice = $this->_option_NagNotice . '2.9.4'; //manually set since v2.9.5 is a very minor update
+		/** Welcome Message */
+		$is_multisite = is_multisite();
+		$is_network_admin = current_user_can('manage_network');
 
-		if ( current_user_can( 'manage_options' ) ){
+		$check_new_install = false;
+		if($is_multisite){
+			if($is_network_admin){
+				$check_new_install = true;
+			}
+		} else {
+			if(current_user_can('manage_options')){
+				$check_new_install = true;
+			}
+		}
+
+		$is_showing_welcome = false;
+		if($check_new_install && !get_option(MAB::KEY_INSTALL_DATE)){
+			$is_showing_welcome = true;
+			echo '<div class="updated"><p>';
+			printf( __('You have installed Magic Action Box %1$s. <a href="%2$s">Close</a>', 'mab'), MAB_VERSION, add_query_arg( array('mab-hide-welcome-notice' => 'true' ) ) );
+			echo '</p></div>';
+		}
+
+		/** Update Message */
+		$nag_version = get_option(MAB::KEY_NOTICE, '0.1');
+
+		if ( !$is_showing_welcome && current_user_can( 'manage_options' ) ){
+
 			//check that this noticed hasn't already been dismissed
-			if( !get_option( $nag_notice ) ){
+			if( version_compare( $nag_version, MAB_VERSION, '<' ) ){
 			
 				echo '<div class="updated"><p>';
-				//printf( __('Magic Action Box plugin has been updated to version %s. <a href="%s">Go to the dashboard</a>. | <a href="%s">Close</a>', 'mab'), MAB_VERSION, admin_url('admin.php?page=mab-main'), add_query_arg( array('mab-hide-update-notice' => 'true' ) ) );
-				printf(__('Magic Action Box updated to v2.16.8 - this is an emergency release update. We have temporarily removed built-in
-integration with Constant
-Contact. See <a href="%1$s" target="_blank">emergency release announcement</a> for details. |
- <a href="%3$s">Close</a>', 'mab'), 'http://www.magicactionbox.com/?p=1383', admin_url('admin.php?page=mab-main'), add_query_arg( array('mab-hide-update-notice' => 'true' ) ) );
+				printf( __('Magic Action Box plugin has been updated to version %s. <a href="%s">Go to the dashboard</a>. | <a href="%s">Close</a>', 'mab'), MAB_VERSION, admin_url('admin.php?page=mab-main'), add_query_arg( array('mab-hide-update-notice' => 'true' ) ) );
 				echo '</p></div>';
-				/*
-				echo '<div class="updated"><p>';
-				printf( __('Magic Action Box now has integrated support for the <a href="http://www.wysija.com/?aff=8" target="_blank" title="Wysija Newsletter plugin">Wysija Newsletter</a> plugin. You can now select it as a Mailing List provider in the Opt In form metabox section (used in Opt In and Share Box action box types). <a href="%3$s">Hide Notice</a>.','mab'), $this->get_current_version(), add_query_arg( array('page'=>'mab-main'), admin_url('admin.php') ), add_query_arg( array('mab-hide-update-notice' => 'true' ) ) );
-				echo '</p></div>';
-				*/
-				
+
 			}
 			
 			//check Magic Action Popup
@@ -534,18 +549,18 @@ Contact. See <a href="%1$s" target="_blank">emergency release announcement</a> f
 	
 	function updated_plugin_notice_hide(){
 		
-		$nag_notice = $this->_option_NagNotice . $this->get_current_version();
-		//$nag_notice = $this->_option_NagNotice . '2.9.4'; //manually set since v2.9.5 is a very minor update
-
 		/*if user clicks to ignore the notice, then save that setting to option */
 		if( isset( $_GET['mab-hide-update-notice'] ) && 'true' == $_GET['mab-hide-update-notice'] ){
-			$val = 1;
-			update_option( $nag_notice, $val );
+			update_option( MAB::KEY_NOTICE, MAB_VERSION );
 		}
 		
 		if( isset( $_GET['mab-hide-map-notice'] ) && 'true' == $_GET['mab-hide-map-notice'] ){
 			$val = 1;
 			update_option( 'map-incompatible-version-' . $this->get_current_version(), $val );
+		}
+
+		if( isset( $_GET['mab-hide-welcome-notice'] ) && 'true' == $_GET['mab-hide-welcome-notice'] ){
+			update_option( MAB::KEY_INSTALL_DATE, time() );
 		}
 	}
 	

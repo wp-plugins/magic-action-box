@@ -251,7 +251,9 @@ class MAB_MetaBoxes{
 		//get buttons
 		$data['buttons'] = $MabButton->getConfiguredButtons();
 
-		if($provider == 'mailchimp' && !empty($data['meta']['optin']['mailchimp'])){
+		$settings = MAB('settings')->getAll();
+
+		if($provider == 'mailchimp' && !empty($data['meta']['optin']['mailchimp']) && !empty($settings['optin']['allowed']['mailchimp'])){
 			$listId = !empty($data['meta']['optin']['mailchimp']['list']) ? $data['meta']['optin']['mailchimp']['list'] : '';
 
 			$data['mcGroups'] = $MabAdmin->getMailChimpGroups($listId);

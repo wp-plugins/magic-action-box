@@ -1,8 +1,4 @@
 <?php
-namespace Ctct\Exceptions;
-
-use Exception;
-
 /**
  * General exception
  *

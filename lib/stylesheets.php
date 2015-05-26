@@ -363,7 +363,7 @@ function mab_make_stylesheet_path_writable() {
 		mkdir(mab_get_stylesheet_location('path'));
 	}
     if ( !is_writable(mab_get_stylesheet_location('path')) ) {
-        @chmod(mab_get_stylesheet_location('path'), 0777);
+        @chmod(mab_get_stylesheet_location('path'), 0775);
     }
     if ( is_writable(mab_get_stylesheet_location('path')) ) {
         return true;

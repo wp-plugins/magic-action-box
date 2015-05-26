@@ -397,6 +397,9 @@ ul#mab-style-preview li .mab-style-description strong{
 .about-wrap ul.bullet{ list-style: disc inside none; }
 .about-wrap img.screenshot{ box-shadow: 0 0 6px rgba(0,0,0,0.15); }
 
+.mab-page .error-text{ color: #ff0000; }
+.mab-page .success-text{ color: #008000; }
+
 /** Support Page **/
 .mab-support-links{ margin: 20px auto; overflow: hidden;}
 	.mab-support-links li{ float: left; margin-right: 18px; }

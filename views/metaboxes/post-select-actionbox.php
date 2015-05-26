@@ -13,7 +13,7 @@
 		<option value="default" <?php selected( $selected_action_box, 'default' ); ?> >Use Default</option>
 		<?php //Get action boxes available
 			$action_boxes_obj = get_posts( array( 'numberposts' => -1, 'orderby' => 'title date', 'post_type' => $MabBase->get_post_type() ) );
-			foreach( $action_boxes_obj as $action_box ):
+			foreach( MAB_ActionBox::getAll() as $action_box ):
 		?>
 			<option value="<?php echo $action_box->ID; ?>" <?php selected( $selected_action_box, $action_box->ID ); ?> ><?php echo $action_box->post_title; ?></option>
 		<?php endforeach; ?>

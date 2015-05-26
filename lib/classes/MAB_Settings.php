@@ -3,9 +3,17 @@
 class MAB_Settings extends MAB_Base{
 	protected $metaKey = '_mab_settings';
 
-	function getAll(){
-		//get from cache
-		$settings = wp_cache_get( $this->metaKey, $this->metaKey );
+	/**
+	 * @param bool $cache set to false to bypass wp db cache
+	 *
+	 * @return array|bool|mixed|void
+	 */
+	function getAll($cache=true){
+		$settings = array();
+		if($cache){
+			//get from cache
+			$settings = wp_cache_get( $this->metaKey, $this->metaKey );
+		}
 
 		if( !$settings || !is_array( $settings ) ){
 			$settings = get_option( $this->metaKey );
@@ -37,7 +45,7 @@ class MAB_Settings extends MAB_Base{
 				),
 			'optin' => array(
 				'aweber-authorization' => '',
-				//'constantcontact-authorization' => '',
+				'constantcontact-authorization' => '',
 				'mailchimp-api' => '',
 				'allowed' => array(
 					'manual' => 1

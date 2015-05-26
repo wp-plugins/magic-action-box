@@ -9,6 +9,7 @@ class MAB extends ProsulumMabBase{
 	const KEY_DESIGN_SETTINGS = '_mab_design_settings';
 	const KEY_CURRENT_VERSION = '_mab_current_version';
 	const KEY_NOTICE = '_mab_nag_notice';
+	const KEY_INSTALL_DATE = '_mab_install_date';
 
 	public static function activate(){
 		$MabBase = MAB();

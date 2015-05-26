@@ -1,14 +1,11 @@
 <?php
-
-namespace Ctct\Util;
-
 /**
- * A CurlResponse object to be returned from a RestClientInterface implementation
+ * A CtctCurlResponse object to be returned from a RestClientInterface implementation
  *
  * @package     Util
  * @author      Constant Contact
  */
-class CurlResponse
+class CtctCurlResponse
 {
 
     public $body;
@@ -17,7 +14,7 @@ class CurlResponse
 
     public static function create($body, $info, $error = null)
     {
-        $curl = new CurlResponse();
+        $curl = new CtctCurlResponse();
 
         $curl->body = $body;
         $curl->info = $info;

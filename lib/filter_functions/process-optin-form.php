@@ -82,12 +82,12 @@ function mab_process_postmatic_optin_submit($result, $data){
 function mab_process_constantcontact_optin_submit($result, $data){
 
 	if(empty($data['email']) || !is_email($data['email'])){
-		MAB_Ajax::addMessage('Invalid email address.');
+		MAB_Ajax::addMessage(__('Invalid email address.', 'mab'));
 		return false;
 	}
 
 	if(empty($data['list'])){
-		MAB_Ajax::addMessage('Email list is not set.');
+		MAB_Ajax::addMessage(__('Email list is not set.', 'mab'));
 		return false;
 	}
 
@@ -111,13 +111,75 @@ function mab_process_constantcontact_optin_submit($result, $data){
 
 	$actionBox = MAB_ActionBox::get($data['mabid']);
 	if(!$actionBox){
-		MAB_Ajax::addMessage('Action box does not exist.');
+		MAB_Ajax::addMessage(__('Action box does not exist.', 'mab'));
 		return false;
 	}
 
 	$meta = $actionBox->getMeta();
 	if(!empty($meta['optin']['success-message'])){
 		MAB_Ajax::addMessage(wp_kses_post($meta['optin']['success-message']));
+	}
+
+	if(!empty($meta['optin']['redirect'])){
+		return array('redirect' => esc_url($meta['optin']['redirect']));
+	}
+
+	return true;
+}
+
+
+function mab_process_wysija_optin_submit($result, $data){
+
+	if(!class_exists('WYSIJA_object')){
+		MAB_Ajax::addMessage(__('MailPoet is not set up properly: WYSIJA_object does not exist.', 'mab'));
+		return false;
+	}
+
+	if(empty($data['email']) || !is_email($data['email'])){
+		MAB_Ajax::addMessage(__('Invalid email address.', 'mab'));
+		return false;
+	}
+
+	if(empty($data['lists'])){
+		MAB_Ajax::addMessage(__('Email list is not set.', 'mab'));
+		return false;
+	}
+
+	$list['list_ids'] = explode(',', $data['lists']);
+
+	$user = array();
+
+	$user['email'] = $data['email'];
+
+	if(!empty($data['fname']))
+		$user['firstname'] = $data['fname'];
+
+	if(!empty($data['lname']))
+		$user['lastname'] = $data['lname'];
+
+	$subscriber = array(
+		'user' => $user,
+		'user_list' => $list
+	);
+
+	if(!empty($data['mabid'])){
+		$actionBox = MAB_ActionBox::get($data['mabid']);
+		if(!$actionBox){
+			MAB_Ajax::addMessage('Action box does not exist.');
+			return false;
+		}
+	}
+
+	$result = WYSIJA::get( 'user', 'helper' )->addSubscriber( $subscriber );
+
+	if(false === $result){
+		MAB_Ajax::addMessage(__('Email signup failed.', 'mab'));
+		return false;
+	}
+
+	$meta = $actionBox->getMeta();
+	if(!empty($meta['optin']['wysija']['success-message'])){
+		MAB_Ajax::addMessage(wp_kses_post($meta['optin']['wysija']['success-message']));
 	}
 
 	if(!empty($meta['optin']['redirect'])){

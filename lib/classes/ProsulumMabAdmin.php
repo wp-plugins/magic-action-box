@@ -1,14 +1,5 @@
 <?php
 
-/*
-use Ctct\ConstantContact;
-use Ctct\Components\Contacts\Contact;
-use Ctct\Components\Contacts\ContactList;
-use Ctct\Components\Contacts\EmailAddress;
-use Ctct\Components\Account\AccountInfo;
-use Ctct\Exceptions\CtctException;
-*/
-
 class ProsulumMabAdmin extends MAB_Base{
 	
 	var $_data_RegisteredActionBoxes = array();
@@ -655,7 +646,7 @@ class ProsulumMabAdmin extends MAB_Base{
 			$settings['optin']['allowed']['aweber'] = !empty($old_settings['optin']['allowed']['aweber']) ? $old_settings['optin']['allowed']['aweber'] : 0;
 			$settings['optin']['aweber-lists'] = !empty($old_settings['optin']['aweber-lists']) ? $old_settings['optin']['aweber-lists'] : array();
 		}
-/*
+
 		//process constant contact (ctct)
 		$ctctSettingsChanged = false;
 		if( !isset($old_settings['optin']['constantcontact-authorization'])){
@@ -681,7 +672,7 @@ class ProsulumMabAdmin extends MAB_Base{
 			$settings['optin']['constantcontact-lists'] = !empty($old_settings['optin']['constantcontact-lists']) ? $old_settings['optin']['constantcontact-lists'] : array();
 			$settings['optin']['constantcontact-authorization'] = !empty($old_settings['optin']['constantcontact-authorization']) ? $old_settings['optin']['constantcontact-authorization'] : '';
 		}
-		*/
+
 		//process mailchimp
 		$mailChimpSettingsChanged = false;
 		if($settings['optin']['mailchimp-api'] != $old_settings['optin']['mailchimp-api']) {
@@ -1180,8 +1171,8 @@ class ProsulumMabAdmin extends MAB_Base{
 	 * Load Constant Contact library
 	 */
 	public function initializeConstantContactApi(){
-		return false;
-		//require_once MAB_LIB_DIR . 'integration/Ctct/autoload.php';
+
+		require_once MAB_LIB_DIR . 'integration/Ctct/Ctct.php';
 
 		$settings = MAB('settings')->getAll();
 
@@ -1196,11 +1187,15 @@ class ProsulumMabAdmin extends MAB_Base{
 
 	/**
 	 * Validate access token (authorization code)
+	 *
+	 * @param string $token constant contact api key
+	 * @return stdClass or array['error'] on failure
 	 */
 	public function validateConstantContactAuthorization($token){
 		$this->initializeConstantContactApi();
 
-		$cc = new ConstantContact($this->_optin_ConstantContactKey);
+		//$cc = new ConstantContact($this->_optin_ConstantContactKey);
+		$cc = new Ctct($this->_optin_ConstantContactKey);
 
 		try{
 			$info = $cc->getAccountInfo($token);
@@ -1208,11 +1203,7 @@ class ProsulumMabAdmin extends MAB_Base{
 			return array('error' => __('Validation of access token failed - ') . $e->getMessage());
 		}
 
-		if($info instanceof AccountInfo){
-			return $info;
-		} else {
-			return array('error' => 'Validation of access token failed.');
-		}
+		return $info;
 	}
 
 	/**
@@ -1233,7 +1224,7 @@ class ProsulumMabAdmin extends MAB_Base{
 			return array();
 		}
 
-		$cc = new ConstantContact($this->_optin_ConstantContactKey);
+		$cc = new Ctct($this->_optin_ConstantContactKey);
 
 		try {
 			$ccLists = $cc->getLists( $this->_optin_ConstantContactAccessToken );
@@ -1269,17 +1260,29 @@ class ProsulumMabAdmin extends MAB_Base{
 			return array('Access token invalid.');
 		}
 
-		$cc = new ConstantContact($this->_optin_ConstantContactKey);
-
+		$cc = new Ctct($this->_optin_ConstantContactKey);
+//return array('this is a test error', 'this is another error');
 		try{
 			// check to see if a contact already exists
 			$response = $cc->getContactByEmail($this->_optin_ConstantContactAccessToken, $email );
 
-			if(empty($response->results)){
+			if(empty($response)){
 				// contact does not exist. create it
-				$contact = new Contact();
-				$contact->addEmail($email);
-				$contact->addList($list);
+				$contact = new stdClass;
+
+				$emailObj = new stdClass;
+				$emailObj->email_address = $email;
+				$contact->email_addresses = array();
+				$contact->email_addresses[] = $emailObj;
+
+				$listObj = new stdClass;
+				$listObj->id = $list;
+				$contact->lists = array();
+				$contact->lists[] = $listObj;
+
+				//$contact = new Contact();
+				//$contact->addEmail($email);
+				//$contact->addList($list);
 				if(!empty($vars['firstname']))
 					$contact->first_name = $vars['firstname'];
 
@@ -1297,8 +1300,13 @@ class ProsulumMabAdmin extends MAB_Base{
 
 			} else {
 				// contact exists. update it
-				$contact = $response->results[0];
-				$contact->addList($list);
+				$contact = $response[0];
+				$listObj = new stdClass;
+				$listObj->id = $list;
+
+				if(empty($contact->lists) || !is_array($contact->lists)) $contact->lists = array();
+
+				$contact->lists[] = $listObj;
 
 				if(!empty($vars['firstname']))
 					$contact->first_name = $vars['firstname'];
@@ -1316,7 +1324,12 @@ class ProsulumMabAdmin extends MAB_Base{
 			}
 
 		} catch(CtctException $e){
-			return $e->getErrors();
+			$exErrors = $e->getErrors();
+			$errors = array();
+			foreach($exErrors as $exError){
+				$errors[] = $exError['error_message'];
+			}
+			return $errors;
 		}
 
 		return true;
@@ -1325,6 +1338,37 @@ class ProsulumMabAdmin extends MAB_Base{
 	/**
 	 * MailChimp
 	 */
+
+	/**
+	 * Loads MailChimp SDK and returns MailChimp object if successful
+	 *
+	 * @param $apikey
+	 * @return MailChimp|null null on failure
+	 */
+	function initMailChimp(){
+		require_once MAB_LIB_DIR . 'integration/mailchimp/Mailchimp.php';
+
+		$settings = $this->getSettings();
+
+		if(empty($settings['optin']['mailchimp-api'])) return null;
+
+		$key = $settings['optin']['mailchimp-api'];
+
+		try{
+			$mailchimp = new Mailchimp($key);
+		} catch(Exception $e){
+			$this->log('Failed to initialize MailChimp: ' . $e->getMessage(), 'debug');
+			return null;
+		}
+
+		if($mailchimp instanceof Mailchimp){
+			return $mailchimp;
+		} else {
+			return null;
+		}
+	}
+
+
 	function getMailChimpAccountInfo( $apikey = '' ){
 		$MabBase = MAB();
 		$details = $MabBase->get_mailchimp_account_details( $apikey );
@@ -1342,22 +1386,24 @@ class ProsulumMabAdmin extends MAB_Base{
 				return $mailChimpLists;
 			}
 		}
-		
-		require_once MAB_LIB_DIR . 'integration/mailchimp/Mailchimp.php';
-
-		$settings = $this->getSettings();
-		$mailchimp = new Mailchimp($settings['optin']['mailchimp-api']);
-		try{
-			$data = $mailchimp->lists->getList(array(), 0, 100);
-		} catch(Exception $e) {
-			$this->log($e->getMessage(), 'debug');
-			$data = array();
-		}
 
 		$lists = array();
-		if(is_array($data) && is_array($data['data'])) {
-			foreach($data['data'] as $item) {
-				$lists[] = array('id' => $item['id'], 'name' => $item['name'], 'data' => $item );
+
+		$mailchimp = $this->initMailChimp();
+
+		if($mailchimp instanceof Mailchimp) {
+
+			try{
+				$data = $mailchimp->lists->getList(array(), 0, 100);
+			} catch(Exception $e) {
+				$this->log($e->getMessage(), 'debug');
+				$data = array();
+			}
+
+			if(is_array($data) && is_array($data['data'])) {
+				foreach($data['data'] as $item) {
+					$lists[] = array('id' => $item['id'], 'name' => $item['name'], 'data' => $item );
+				}
 			}
 		}
 
@@ -1369,9 +1415,9 @@ class ProsulumMabAdmin extends MAB_Base{
 	
 	function getMailChimpListSingle( $listId ){
 		
-		$settings = $this->getSettings();
-		require_once MAB_LIB_DIR . 'integration/mailchimp/Mailchimp.php';
-		$mailchimp = new Mailchimp($settings['optin']['mailchimp-api']);
+		$mailchimp = $this->initMailChimp();
+
+		if(empty($mailchimp)) return '';
 
 		try {
 			$data = $mailchimp->lists->getList( array( 'list_id' => $listId ) );
@@ -1394,9 +1440,9 @@ class ProsulumMabAdmin extends MAB_Base{
 
 		if(empty($listId)) return array();
 
-		$settings = $this->getSettings();
-		require_once MAB_LIB_DIR . 'integration/mailchimp/Mailchimp.php';
-		$mailchimp = new Mailchimp($settings['optin']['mailchimp-api']);
+		$mailchimp = $this->initMailChimp();
+
+		if(empty($mailchimp)) return array();
 
 		try {
 			$groups = $mailchimp->lists->interestGroupings( $listId );

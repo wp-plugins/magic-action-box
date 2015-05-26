@@ -50,6 +50,33 @@ class MAB_ActionBox extends MAB_Base{
 		else
 			return $mab;
 	}
+
+	/**
+	 * Get all action boxes
+	 *
+	 * @param array $options
+	 * @return array of $post objects
+	 */
+	public static function getAll($options = array()){
+
+		$defaults = array();
+
+		$opt = wp_parse_args($options, $defaults);
+
+		$actionBoxesList = array();
+
+		$actionBoxesObj = get_posts( array( 'numberposts' => -1, 'orderby' => 'title date', 'order' => 'ASC', 'post_type' => MAB::POST_TYPE ) );
+
+		foreach($actionBoxesObj as $ab){
+			// do not include our actionbox type
+			//$abType = $MabBase->get_action_box_type($ab->ID);
+			//if( in_array($abType, $exclude)) continue;
+
+			$actionBoxesList[$ab->ID] = $ab;
+		}
+
+		return $actionBoxesList;
+	}
 	
 	function getTemplateObj(){
 		return $this->_template_obj;

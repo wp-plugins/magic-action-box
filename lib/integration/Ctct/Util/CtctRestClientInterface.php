@@ -1,14 +1,11 @@
 <?php
-
-namespace Ctct\Util;
-
 /**
  * Interface for issuing HTTP requests
  *
  * @package Util
  * @author Constant Contact
  */
-interface RestClientInterface
+interface CtctRestClientInterface
 {
     /**
      * Make an Http GET request

@@ -56,25 +56,14 @@ function mab_wysija_form_html($html, $actionBoxObj){
 
 	//make sure Wysija plugin is activated
 	if( !class_exists( 'WYSIJA' ) ) return '';
-	
-	$wysijaView =& WYSIJA::get("widget_nl","view","front");
-	
-	/** Print wysija scripts **/
-	//$wysijaView->addScripts();
 
-	wp_enqueue_script('wysija-validator-lang');
-	wp_enqueue_script('wysija-validator');
-	wp_enqueue_script('wysija-front-subscribers');
-	wp_enqueue_script('jquery-ui-datepicker');
-	wp_enqueue_style('validate-engine-css');
-	
+	$actionBoxObj->addClass('mab-ajax');
+
 	$meta = $actionBoxObj->getMeta();
 
-	/** TODO: generate fields using wysija's field generator **/
-	
-	$meta['subscriber-nonce'] = $wysijaView->secure(array('action' => 'save', 'controller' => 'subscribers'),false,false);
 	$meta['mab-html-id'] = $actionBoxObj->getHtmlId();
-	
+	$meta['ID'] = $actionBoxObj->getId();
+
 	$filename = 'optinforms/wysija.php';
 	$form = MAB_Utils::getView( $filename, $meta );
 

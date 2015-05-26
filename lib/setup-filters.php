@@ -18,6 +18,7 @@ if(defined('DOING_AJAX')){
  */
 add_filter('mab_process_postmatic_optin_submit', 'mab_process_postmatic_optin_submit', 10, 2);
 add_filter('mab_process_constantcontact_optin_submit', 'mab_process_constantcontact_optin_submit', 10, 2);
+add_filter('mab_process_wysija_optin_submit', 'mab_process_wysija_optin_submit', 10, 2);
 
 /**
  * Setup Widgets

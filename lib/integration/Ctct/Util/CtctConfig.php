@@ -1,13 +1,11 @@
 <?php
-namespace Ctct\Util;
-
 /**
  * Configuration class to hold endpoints, urls, errors messages etc.
  *
  * @package     Util
  * @author      Constant Contact
  */
-class Config
+class CtctConfig
 {
     /**
      * @var array - array of configuration properties
@@ -128,7 +126,7 @@ class Config
     );
 
     /**
-     * Get a configuration property given a specified location, example usage: Config::get('auth.token_endpoint')
+     * Get a configuration property given a specified location, example usage: CtctConfig::get('auth.token_endpoint')
      * @param $index - location of the property to obtain
      * @return string
      */

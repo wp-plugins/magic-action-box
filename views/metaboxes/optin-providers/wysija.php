@@ -19,14 +19,14 @@ if( !class_exists( 'WYSIJA' ) ):
 	?>
 	<div id="mab-wysija-settings" data-option-box="field-labels">
 		<div class="mab-option-box">
-			<h4><?php _e('Select List:','mab' ); ?></h4>
-			<p><?php _e('Select which newsletter list a user will be subscribed to.','mab' ); ?></p>
+			<h4><?php _e('Select Email List:','mab' ); ?></h4>
+			<p><?php _e('Select which email lists a user will be subscribed to.','mab' ); ?></p>
 			<?php 
 			$selectedLists = isset( $wysija['lists'] ) && is_array( $wysija['lists'] ) ? $wysija['lists'] : array(); 
 			$lists = $wysijaLists; 
 			?>
 			<?php foreach( $lists as $list ) : ?>
-				<p style="margin: 0 0 5px 0; float: left;"><label for="mab-wys-list-<?php echo $list['list_id']; ?>"><input type="checkbox" id="mab-wys-list-<?php echo $list['list_id']; ?>" name="mab[optin][wysija][lists][]" value="<?php echo $list['list_id']; ?>" <?php checked( true, in_array( $list['list_id'],$selectedLists) ); ?> /> <?php echo $list['name']; ?></label></p>
+				<p style="margin: 0 10px 5px 0; float: left;"><label for="mab-wys-list-<?php echo $list['list_id']; ?>"><input type="checkbox" id="mab-wys-list-<?php echo $list['list_id']; ?>" name="mab[optin][wysija][lists][]" value="<?php echo $list['list_id']; ?>" <?php checked( true, in_array( $list['list_id'],$selectedLists) ); ?> /> <?php echo $list['name']; ?></label></p>
 			<?php endforeach; ?>
 			<div class="clear"></div>
 		</div>
@@ -78,6 +78,10 @@ if( !class_exists( 'WYSIJA' ) ):
 			$message = isset( $wysija['success-message'] ) ? wp_kses_post($wysija['success-message']) : 'You\'ve successfully subscribed. Check your inbox now to confirm your subscription.'; 
 			?>
 			<textarea id="mab-wysija-success-message" class="large-text" name="mab[optin][wysija][success-message]"><?php echo $message; ?></textarea>
+		</div>
+
+		<div class="mab-option-box">
+			<?php echo mab_option_box('redirect', $data); ?>
 		</div>
 
 		<div class="mab-option-box">

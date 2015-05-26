@@ -1,8 +1,4 @@
 <?php
-namespace Ctct\Exceptions;
-
-use Exception;
-
 /**
  * Exception thrown if there is an illegal argument passed to a particular method
  *

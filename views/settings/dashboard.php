@@ -14,6 +14,9 @@
 		<a href="#changelog" class="nav-tab">
 			<?php _e( 'Change log', 'mab' ); ?>
 		</a>
+		<a href="#debug" class="nav-tab">
+			<?php _e('Debug', 'mab'); ?>
+		</a>
 	</h2>
 
 	<div id="start" class="changelog group">
@@ -65,12 +68,61 @@ integration</a>.', 'mab'), 'http://www.magicactionbox.com/user-guide/integration
 	<div id="changelog" class="changelog group">
 		<div class="feature-section">
 			<ul class="bullet">
-				<li>Fix MailChimp api error when another MailChimp plugin is active</li>
-				<li>Improve styling for responsive view</li>
-				<li>Added native support for Constant Contact</li>
+				<li>Restore built-in integration with Constant Contact</li>
+				<li>Add debug tab in dashboard</li>
+				<li>Some refactoring, nothing else exciting</li>
 			</ul>
 		</div>
 	</div><!-- #changelog -->
+
+	<div id="debug" class="changelog group">
+		<div class="feature-section">
+			<a class="button button-primary" href="<?php echo add_query_arg(array('mab_debug' => 1)); ?>"><?php _e('Show debug info', 'mab'); ?></a>
+			<?php if(!empty($_GET['mab_debug'])): ?>
+				<table class="form-table">
+					<tbody>
+					<tr>
+						<th><strong><?php _e('Version', 'mab'); ?></strong></th>
+						<td><?php echo MAB_VERSION; ?></td>
+					</tr>
+					<tr>
+						<th><strong><?php _e('PHP Version', 'mab'); ?></strong></th>
+						<td><?php echo phpversion(); ?></td>
+					</tr>
+					<?php $css_dir = mab_get_stylesheet_location('path'); ?>
+					<tr>
+						<th><strong><?php _e('CSS directory', 'mab'); ?></strong></th>
+						<td>
+							<pre><?php print_r($css_dir); ?></pre>
+							<?php if(!mab_make_stylesheet_path_writable()){
+								if( !is_dir($css_dir)) {
+									$dir_text = '<p class="error-text">' . __('CSS directory does not exist. ', 'mab') . '</p>';
+								} elseif ( !is_writable(mab_get_stylesheet_location('path')) ) {
+									$dir_text = '<p class="error-text">' . __('Directory exists but is not writable.', 'mab') . '</p>';
+								}
+							} else {
+								$dir_text = '<p class="success-text">' . __('Directory exists.', 'mab') . '</p>';
+							} ?>
+							<?php echo $dir_text; ?>
+						</td>
+					</tr>
+
+					<?php if(is_dir($css_dir)): ?>
+					<tr>
+						<th><strong>CSS directory contents</strong></th>
+						<td><pre><textarea class="large-text" rows="20" readonly style="background: #fff;"><?php print_r(@scandir($css_dir)); ?></textarea></pre></td>
+					</tr>
+					<?php endif; ?>
+
+					<tr>
+						<th><strong>_mab_settings</strong></th>
+						<td><pre><textarea class="large-text" rows="30" readonly style="background: #fff;"><?php print_r(MAB('settings')->getAll(false)); ?></textarea></pre></td>
+					</tr>
+					</tbody>
+				</table>
+			<?php endif; ?>
+		</div>
+	</div>
 
 </div><!-- #mab-dashboard -->
 </div><!-- .wrap -->

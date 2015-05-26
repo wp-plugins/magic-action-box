@@ -1,15 +1,11 @@
 <?php
-namespace Ctct\Util;
-
-use Ctct\Exceptions\CtctException;
-
 /**
  * Wrapper for curl HTTP request
  *
  * @package Util
  * @author Constant Contact
  */
-class RestClient implements RestClientInterface
+class CtctRestClient implements CtctRestClientInterface
 {
     /**
      * Make an Http GET request
@@ -75,7 +71,7 @@ class RestClient implements RestClientInterface
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_HEADER, 0);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_USERAGENT, "ConstantContact AppConnect PHP Library v" . Config::get('settings.version'));
+        curl_setopt($curl, CURLOPT_USERAGENT, "ConstantContact AppConnect PHP Library v" . CtctConfig::get('settings.version'));
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
@@ -85,7 +81,7 @@ class RestClient implements RestClientInterface
             curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
         }
 
-        $response = CurlResponse::create(curl_exec($curl), curl_getinfo($curl), curl_error($curl));
+        $response = CtctCurlResponse::create(curl_exec($curl), curl_getinfo($curl), curl_error($curl));
         curl_close($curl);
 
         // check if any errors were returned
@@ -105,6 +101,6 @@ class RestClient implements RestClientInterface
      * @return string
      */
     public static function getVersionHeader(){
-        return 'x-ctct-request-source: sdk.php.' . Config::get('settings.version');
+        return 'x-ctct-request-source: sdk.php.' . CtctConfig::get('settings.version');
     }
 }
